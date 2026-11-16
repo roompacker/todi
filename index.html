@@ -585,17 +585,10 @@ function rowCelebrate(id, cat){
         t.style.opacity = 0; g.style.opacity = 0; setTimeout(()=>{ t.remove(); g.remove(); }, 380);
       })(p0);
     };
-    if(kind === 'wv'){                                   // 곰돌이 투디는 왼쪽에서 달려 들어옴
-      t.style.left = '-80px'; t.src = TODI_IMG.dash_0;
-      const t0 = performance.now(), D = 600;
-      (function step(now){ const u = Math.min(1,(now-t0)/D), e = 1-Math.pow(1-u,2);
-        t.style.left = (-80 + (stopX+80)*e)+'px'; t.src = TODI_IMG['dash_'+(Math.floor((now-t0)/66)%10)];
-        if(u < 1) return requestAnimationFrame(step); play(); })(t0);
-    } else {                                             // 다른 옷 투디는 그 자리에 톡 나타남
-      t.style.left = stopX+'px'; t.src = FR[0]; t.style.transformOrigin = '50% 100%';
-      t.animate([{transform:'scale(.2)',opacity:0},{transform:'scale(1.08)',opacity:1,offset:.7},{transform:'scale(1)',opacity:1}],{duration:260,easing:'ease-out'});
-      setTimeout(play, 240);
-    }
+    // 달려오지 않고, 그 자리에 톡 나타나서 동작
+    t.style.left = stopX+'px'; t.src = FR[0]; t.style.transformOrigin = '50% 100%';
+    t.animate([{transform:'scale(.2)',opacity:0},{transform:'scale(1.08)',opacity:1,offset:.7},{transform:'scale(1)',opacity:1}],{duration:260,easing:'ease-out'});
+    setTimeout(play, 240);
   }catch(e){ console.error('완료 모션 오류', e); }
 }
 function simpleRow(t, day){
