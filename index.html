@@ -244,11 +244,16 @@ body.fit{padding-bottom:0}
 .trow .acts{display:flex;gap:6px;flex:none}
 .trow .acts button{font-size:12px;font-weight:800;border-radius:99px;padding:6px 10px;background:#f4efe8}
 .trow .acts .del{background:#ffe3e3;color:#a33}
-.addbar{flex:none;margin-top:10px;background:#fff;border-radius:999px;padding:7px 7px 7px 18px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px #2b2b331a}
+.addbar{flex:none;margin:6px 0 22px;background:#fff;border-radius:999px;padding:7px 7px 7px 18px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px #2b2b331a}
 .addbar input{flex:1;min-width:0;border:none;outline:none;background:none;font-size:15px;font-weight:600}
 .addbar>button{width:42px;height:42px;border-radius:50%;background:var(--pink);color:#fff;font-size:24px;flex:none}
 .addbar .seg{margin:0;flex:none}
-.addhint{flex:none;font-size:12px;color:var(--muted);padding:5px 16px 0;min-height:20px}
+.dchip{position:relative;flex:none;background:#fff;border-radius:999px;padding:5px 11px;font-size:12.5px;color:var(--ink);box-shadow:0 2px 6px #2b2b3314}
+.dchip input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:none}
+.addhint.mrow{display:flex;align-items:center;gap:8px;padding:8px 6px 0;min-height:36px}
+.addhint .apc{border-radius:999px;padding:4px 10px;margin-left:4px;font-size:12px;font-weight:700;background:#fff;color:var(--muted);box-shadow:0 2px 6px #2b2b3314}
+.addhint .apc.on{background:var(--mint);color:#fff}
+.addhint{flex:none;font-size:12px;color:var(--muted);padding:8px 14px 0;min-height:30px}
 .fab{position:fixed;right:18px;bottom:calc(82px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:50%;background:var(--pink);color:#fff;font-size:32px;display:grid;place-items:center;box-shadow:0 6px 16px #ff8fb166;z-index:40}
 .wk{margin:0 0 10px}
 /* ===== 가운데 ＋ 탭 + 스르륵 숨는 메뉴바 ===== */
@@ -432,6 +437,8 @@ const won = n => Math.round(n).toLocaleString('ko-KR');
 const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function dLabel(s, wd){ const d = new Date(s+'T12:00'); return `${d.getMonth()+1}월 ${d.getDate()}일${wd?' '+WD[d.getDay()]+'요일':''}`; }
+/* 시간 보여주기: 20:00 → 오후 8:00 */
+function fmtTime(t){ if(!t) return ''; const [h,m] = t.split(':').map(Number); return `${h<12?'오전':'오후'} ${h%12||12}:${pad(m)}`; }
 function niceDate(s){ if(s===today()) return '오늘'; if(s===addDays(today(),1)) return '내일'; const d=new Date(s+'T12:00'); return `${d.getMonth()+1}/${d.getDate()}(${WD[d.getDay()]})`; }
 
 /* ===================== 3. 저장소 ===================== */
@@ -487,8 +494,8 @@ function addStep(h){
 }
 
 /* ===================== 5. 말하듯 입력 해석 ===================== */
-function parseTodo(text){
-  let s = ' '+text+' ', date = today(), time = '';
+function parseTodo(text, base){
+  let s = ' '+text+' ', date = base || today(), time = '', amb = false;   // base: 달력에서 고른 날짜
   try{
     const rel = {'오늘':0,'내일':1,'모레':2};
     s = s.replace(/(오늘|내일|모레)/, m=>{ date = addDays(today(), rel[m]); return ' '; });
@@ -500,14 +507,23 @@ function parseTodo(text){
     s = s.replace(/(오전|오후|아침|저녁|밤)?\s*(\d{1,2})시\s*(반|(\d{1,2})분)?/, (_,ap,h,half,mi)=>{
       h = +h; const m = half==='반' ? 30 : (mi ? +mi : 0);
       if((ap==='오후'||ap==='저녁'||ap==='밤') && h<12) h += 12;
-      if(!ap && h>=1 && h<=6) h += 12;
+      else if((ap==='오전'||ap==='아침') && h===12) h = 0;
+      else if(!ap && h>=1 && h<=12){               // 오전/오후를 안 적었을 때
+        amb = true;
+        let pm = (h<=6 || h===12);                 // 기본 짐작: 1~6시·12시는 오후, 7~11시는 오전
+        const n = new Date();
+        if(!pm && date===today() && (h*60+m) < (n.getHours()*60+n.getMinutes())) pm = true;   // 오늘인데 이미 지난 오전이면 오후로
+        if(apPick) pm = apPick==='pm';             // 직접 고른 게 있으면 그걸 따름
+        h = (h%12) + (pm?12:0);
+      }
       time = `${pad(Math.min(h,23))}:${pad(m)}`; return ' ';
     });
   }catch(e){ console.error('해석 오류', e); }
-  return {title: s.replace(/\s+/g,' ').trim() || text.trim(), date, time};
+  return {title: s.replace(/\s+/g,' ').trim() || text.trim(), date, time, amb};
 }
 function parseMoney(text, typeSel){
-  let amount = 0, s = text;
+  let amount = 0, s = text, date = '';
+  s = s.replace(/(그제|그저께|어제|오늘|내일)/, w=>{ date = addDays(today(), {'그제':-2,'그저께':-2,'어제':-1,'오늘':0,'내일':1}[w]); return ' '; });
   const m = s.match(/(\d+(?:[.,]\d+)*)\s*(만\s*원?|천\s*원?|원)?/);
   if(m){
     let n = parseFloat(m[1].replace(/,/g,''));
@@ -519,7 +535,7 @@ function parseMoney(text, typeSel){
   if(['월급','수입','입금','용돈','정산','환급','부수입'].some(w=>title.includes(w))) type = 'in';
   let cat = '기타';
   for(const [n,v] of Object.entries(MCATS)) if(v.k.some(w=>title.toLowerCase().includes(w))){ cat = n; break; }
-  return {amount, title, type, cat};
+  return {amount, title, type, cat, date};
 }
 
 /* ===================== 6. 화면 그리기 ===================== */
@@ -556,6 +572,8 @@ function drawerHTML(){
 }
 function openDrawer(on){ $('drawer').classList.toggle('on', on); }
 let planDay = today(), filter = 'all', month = today().slice(0,7), mType = 'out';
+let moneyDay = today();   // 가계부에 적을 날짜
+let apPick = null;          // 오전/오후를 직접 골랐을 때 'am' | 'pm'
 const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}" data-slot="${id}" data-cat="${cat}" data-mode="${mode}" data-tap="${tap||'replay'}" ${arrive?'data-arrive="1"':''} style="background:${(CATS[cat]||CATS.etc).bg}"></div>`;
 
 let lastTab = null, openRow = null;
@@ -577,7 +595,7 @@ function rowCelebrate(id, cat){
     const t = document.createElement('img'); t.className = 'todi-run'; t.alt = ''; t.style.height = H+'px'; t.style.top = y+'px'; document.body.appendChild(t);
     const say = kind==='joy' ? '오늘 끝!' : ((CATS[cat]||CATS.etc).head || '해냈다!');
     const play = ()=>{                                   // 멈춘 자리에서 동작 재생 → 스르륵 사라짐
-      const p0 = performance.now(), per = 1000/8;
+      const p0 = performance.now(), per = 1000/6.5;
       const g = document.createElement('div'); g.className = 'todi-tag'; g.textContent = say; g.style.left = (stopX + (kind==='dogw'?74:62))+'px'; g.style.top = (y+6)+'px'; document.body.appendChild(g);
       requestAnimationFrame(()=>{ g.style.transform = 'scale(1)'; });
       (function tick(now){ const k = Math.floor((now-p0)/per);
@@ -596,7 +614,7 @@ function simpleRow(t, day){
   return `<div class="trow ${t.done?'done':''}" data-row="${t.id}">
     <button class="chk" data-act="toggle" data-id="${t.id}" aria-label="완료">${t.done?'✓':''}</button>
     <button class="tx1" data-act="rowmenu" data-id="${t.id}">${pinned?'★ ':''}${esc(t.title)}</button>
-    ${open ? `<span class="acts"><button data-act="pin" data-id="${t.id}">${pinned?'★ 해제':'☆ 꼭 할 일'}</button><button class="del" data-act="delTask" data-id="${t.id}">삭제</button></span>` : `<span class="tm num">${t.time||''}</span>`}
+    ${open ? `<span class="acts"><button data-act="pin" data-id="${t.id}">${pinned?'★ 해제':'☆ 꼭 할 일'}</button><button class="del" data-act="delTask" data-id="${t.id}">삭제</button></span>` : `<span class="tm num">${fmtTime(t.time)}</span>`}
   </div>`;
 }
 function render(){
@@ -669,7 +687,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.17 01:19 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.17 01:28 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
@@ -698,8 +716,8 @@ function planPage(){
       return `<button class="wd ${s===planDay?'on':''}" data-act="day" data-d="${s}"><span>${WD[d.getDay()]}</span><b>${d.getDate()}</b><i class="${S.tasks.some(t=>t.date===s)?'on':''}"></i></button>`; }).join('')}</div>
     <button class="mbtn" data-act="week" data-d="7">›</button></div>
   <section class="lcard"><div class="scroll">${list.length ? list.map(t=>simpleRow(t,planDay)).join('') : '<div class="empty">이 날은 할 일이 없어요</div>'}</div></section>
-  <div class="addbar"><input id="todoIn" placeholder="할 일을 적어 보세요 (예: 내일 7시 운동)" autocomplete="off"><button data-act="addTodo" aria-label="추가">+</button></div>
   <div class="addhint" id="todoPrev"></div>
+  <div class="addbar"><input id="todoIn" placeholder="할 일 적기 (예: 8시 운동)" autocomplete="off"><button data-act="addTodo" aria-label="추가">+</button></div>
   </div>`;
 }
 
@@ -719,7 +737,7 @@ function focusPage(){
 function taskRow(t){
   const c = CATS[t.cat]||CATS.etc, pinned = S.priority[t.date]===t.id;
   return `<div class="task ${t.done?'done':''} ${pinned?'pin':''}">
-    <div class="tt"><strong>${esc(t.title)}</strong><span class="small">${[t.time, niceDate(t.date)].filter(Boolean).join(' · ')}</span>
+    <div class="tt"><strong>${esc(t.title)}</strong><span class="small">${[fmtTime(t.time), niceDate(t.date)].filter(Boolean).join(' · ')}</span>
       <span class="mot">${c.emoji} ${t.done?c.done:c.prep}</span></div>
     ${slotDiv(t.id, t.cat, t.done?'idle':'prep', 'slot', t.done?'cut':'replay', true).replace('data-slot','data-task="'+t.id+'" data-slot')}
     <div style="display:grid;gap:2px;justify-items:center">
@@ -760,8 +778,8 @@ function moneyPage(){
       <div class="amt num ${x.type==='in'?'in':''}">${x.type==='in'?'+':'−'}${won(x.amount)}원</div>
       <button class="ico" data-act="delTx" data-id="${x.id}">✕</button></div>`; }).join('') : '<div class="empty">이달 기록이 없어요</div>'}</div>
   </section>
+  <div class="addhint mrow"><label class="dchip">📅 <b>${niceDate(moneyDay)}</b> ▾<input type="date" id="moneyDate" value="${moneyDay}"></label><span id="moneyPrev"></span></div>
   <div class="addbar"><div class="seg" id="mSeg"><button class="${mType==='out'?'on':''}" data-act="mtype" data-t="out">지출</button><button class="${mType==='in'?'on':''}" data-act="mtype" data-t="in">수입</button></div><input id="moneyIn" placeholder="${mType==='out'?'점심 김밥 9000':'월급 300만'}" autocomplete="off"><button data-act="addMoney" aria-label="추가">+</button></div>
-  <div class="addhint" id="moneyPrev"></div>
   </div>`;
 }
 function reportPage(){
@@ -907,7 +925,7 @@ document.addEventListener('click', e=>{
           const o = S.opt, nm = S.name, base = seed(); base.tasks = []; base.tx = []; base.priority = {}; base.paid = {}; base.budget = {}; base.steps = {}; base.bills = []; base.savings = {goal:null, entries:[]}; base.seen = [];
           S = base; S.opt = o; S.name = nm; window.DECO = S.deco; save(); tab = 'home'; location.hash = 'home'; render(); toast('모든 기록을 지웠어요'); } break;
       case 'plus': document.body.classList.toggle('add-open'); break;
-      case 'addGo': { const to = b.dataset.to; tab = to; location.hash = to; if(to==='plan') planDay = today(); render(); setTimeout(()=>{ try{ $(to==='plan'?'todoIn':'moneyIn').focus(); }catch(e){} }, 80); break; }
+      case 'addGo': { const to = b.dataset.to, was = tab; tab = to; location.hash = to; if(to==='plan' && was!=='plan') planDay = today(); if(to==='money' && was!=='money'){ moneyDay = today(); month = moneyDay.slice(0,7); } render(); setTimeout(()=>{ try{ $(to==='plan'?'todoIn':'moneyIn').focus(); }catch(e){} }, 80); break; }
       case 'rowmenu': openRow = openRow===b.dataset.id ? null : b.dataset.id; render(); break;
       case 'fab': tab = 'plan'; location.hash = 'plan'; render(); setTimeout(()=>{ try{ $('todoIn').focus(); }catch(e){} }, 60); break;
       case 'toggle': {
@@ -941,8 +959,9 @@ document.addEventListener('click', e=>{
         save(); render(); break;
       }
       case 'treset': S.timer = {dur:S.timer.dur, remaining:S.timer.dur, endsAt:null}; save(); render(); break;
-      case 'month': { const [y,m] = month.split('-').map(Number); const d = new Date(y, m-1+(+b.dataset.d), 1); month = `${d.getFullYear()}-${pad(d.getMonth()+1)}`; render(); break; }
+      case 'month': { const [y,m] = month.split('-').map(Number); const d = new Date(y, m-1+(+b.dataset.d), 1); month = `${d.getFullYear()}-${pad(d.getMonth()+1)}`; moneyDay = month===today().slice(0,7) ? today() : month+'-01'; render(); break; }
       case 'mtype': mType = b.dataset.t; render(); break;
+      case 'ap': apPick = b.dataset.v; todoHint(); try{ $('todoIn').focus(); }catch(e){} break;
       case 'addMoney': addMoney(); break;
       case 'delTx': S.tx = S.tx.filter(x=>x.id!==id); save(); render(); toast('삭제했어요'); break;
       case 'payBill': {
@@ -969,15 +988,13 @@ document.addEventListener('click', e=>{
 document.addEventListener('input', e=>{
   if(e.target.id==='todoIn'){
     const v = e.target.value.trim();
-    if(!v){ $('todoPrev').textContent = ''; return; }
-    const p = parseTodo(v), c = CATS[detectCat(p.title)];
-    $('todoPrev').innerHTML = `📅 <b>${niceDate(p.date)}</b>${p.time?' · ⏰ <b>'+p.time+'</b>':''} · ${c.emoji} <b>${c.name}</b>`;
+    todoHint();
   }
   if(e.target.id==='moneyIn'){
     const v = e.target.value.trim();
     if(!v){ $('moneyPrev').textContent = ''; return; }
     const p = parseMoney(v, mType);
-    $('moneyPrev').innerHTML = p.amount ? `${p.type==='in'?'💚 수입':MCATS[p.cat].e+' '+p.cat} · <b>${won(p.amount)}원</b> · ${esc(p.title)}` : '금액(숫자)을 함께 적어주세요';
+    $('moneyPrev').innerHTML = p.amount ? (p.date?`📅 <b>${niceDate(p.date)}</b> · `:'') + `${p.type==='in'?'💚 수입':MCATS[p.cat].e+' '+p.cat} · <b>${won(p.amount)}원</b> · ${esc(p.title)}` : '금액(숫자)을 함께 적어주세요';
   }
 });
 document.addEventListener('keydown', e=>{
@@ -985,9 +1002,27 @@ document.addEventListener('keydown', e=>{
   if(e.target.id==='todoIn') addTodo();
   if(e.target.id==='moneyIn') addMoney();
 });
+/* 할 일 입력칸 아래 미리보기 (날짜 · 시간 · 종류) + 오전/오후 고르기 */
+function todoHint(){
+  try{
+    const el = $('todoPrev'), inp = $('todoIn'); if(!el || !inp) return;
+    const v = inp.value.trim();
+    if(!v){ el.textContent = ''; apPick = null; return; }
+    const p = parseTodo(v, planDay), c = CATS[detectCat(p.title)];
+    let tm = '';
+    if(p.time && p.amb){ const pm = +p.time.slice(0,2) >= 12, hm = fmtTime(p.time).split(' ')[1];
+      tm = ` · ⏰<button class="apc ${pm?'':'on'}" data-act="ap" data-v="am">오전 ${hm}</button><button class="apc ${pm?'on':''}" data-act="ap" data-v="pm">오후 ${hm}</button>`; }
+    else if(p.time) tm = ` · ⏰ <b>${fmtTime(p.time)}</b>`;
+    el.innerHTML = `📅 <b>${niceDate(p.date)}</b>${tm} · ${c.emoji} <b>${c.name}</b>`;
+  }catch(e){ console.error('미리보기 오류', e); }
+}
+document.addEventListener('change', e=>{
+  try{ if(e.target.id==='moneyDate' && e.target.value){ moneyDay = e.target.value; month = moneyDay.slice(0,7); render(); } }catch(err){ console.error('날짜 선택 오류', err); }
+});
 function addTodo(){
   const v = $('todoIn').value.trim(); if(!v) return;
-  const p = parseTodo(v);
+  const p = parseTodo(v, planDay);
+  apPick = null;
   S.tasks.push({id:uid(), title:p.title, date:p.date, time:p.time, cat:detectCat(p.title), done:false});
   planDay = p.date; filter = 'all'; save(); render();
   toast(`${CATS[detectCat(p.title)].emoji} "${p.title}" 추가 · ${niceDate(p.date)}`);
@@ -997,8 +1032,8 @@ function addMoney(){
   const p = parseMoney(v, mType);
   if(!p.amount){ toast('금액을 숫자로 적어주세요'); return; }
   const nid = uid();
-  S.tx.push({id:nid, date:today(), title:p.title, type:p.type, amount:p.amount, cat:p.type==='in'?'수입':p.cat});
-  month = today().slice(0,7);
+  S.tx.push({id:nid, date:p.date || moneyDay, title:p.title, type:p.type, amount:p.amount, cat:p.type==='in'?'수입':p.cat});
+  month = (p.date || moneyDay).slice(0,7);
   if(p.type==='out'){ const got = addStep('record'); save(); render(); celebrate('tx-'+nid, 'spend', `${won(p.amount)}원`, got); }
   else { save(); render(); celebrate('tx-'+nid, 'save', `+${won(p.amount)}원`); }
 }
