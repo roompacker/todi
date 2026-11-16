@@ -687,7 +687,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.17 01:28 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.17 08:16 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
@@ -1075,7 +1075,7 @@ document.addEventListener('change', e=>{
 
 /* ===================== 9-0-1. 스르륵 숨는 메뉴바 ===================== */
 try{
-  const lastTop = new WeakMap();
+  const lastTop = new WeakMap(); let navLock = 0;
   // 목록을 아래로 넘기면 메뉴바가 내려가고, 위로 되돌리면 다시 올라옴 (인터넷 앱 주소창과 같은 방식)
   document.addEventListener('scroll', e=>{
     const el = e.target === document ? document.scrollingElement : e.target;
@@ -1083,8 +1083,12 @@ try{
     const prev = lastTop.get(el) || 0, cur = el.scrollTop, d = cur - prev; lastTop.set(el, cur);
     if(document.body.classList.contains('add-open')) return;
     if(!S.opt.navHide){ document.body.classList.remove('nav-hide'); return; }
-    if(d > 6 && cur > 24) document.body.classList.add('nav-hide');
-    else if(d < -4 || cur <= 4) document.body.classList.remove('nav-hide');
+    // 메뉴바가 숨으면 화면이 살짝 커져서 목록 위치가 저절로 바뀜 → 그걸 손가락 움직임으로 착각해 숨었다 나왔다 반복하던 문제 방지
+    if(performance.now() < navLock) return;                      // 방금 바뀌었으면 0.5초 동안은 그대로 둠
+    const hidden = document.body.classList.contains('nav-hide');
+    const room = el.scrollHeight - el.clientHeight;              // 넘길 수 있는 길이
+    if(!hidden && d > 6 && cur > 24 && room > 120){ document.body.classList.add('nav-hide'); navLock = performance.now() + 500; }
+    else if(hidden && d < -4){ document.body.classList.remove('nav-hide'); navLock = performance.now() + 500; }
   }, true);
   $('navHandle').addEventListener('click', ()=>document.body.classList.remove('nav-hide'));
   // ＋ 선택창: 다른 곳을 누르면 닫힘
