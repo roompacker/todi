@@ -592,13 +592,18 @@ function rowCelebrate(id, cat){
     else if(/학원|학교|등교|하교|등원|하원|수업|과외|자전거|라이딩/.test(title)) kind = 'bike';   // 학원 가방 멘 너구리 투디가 자전거 타기
     else if(allDone) kind = 'joy';
     const FR = (typeof TODI_FX !== 'undefined' && TODI_FX[kind]) || []; if(!FR.length) return;
+    try{ row.scrollIntoView({block:'nearest'}); }catch(e){}          // 줄이 화면 밖이면 보이는 곳으로
     const rb = row.getBoundingClientRect(), H = 84;
-    const y = Math.max(62, rb.bottom - H - 2), stopX = Math.min(window.innerWidth - 160, rb.right - 150) - (kind==='doc' ? 44 : 0);   // 둘이 나오는 장면은 넓어서 왼쪽으로 조금 당김
+    const WK = {doc:107, dogw:74, bike:70}, W = WK[kind] || 63;      // 장면 가로 크기
+    // 그 줄의 글씨 바로 옆에 서도록: 글씨가 끝나는 곳을 잼
+    let textR = rb.left + 120;
+    try{ const tx = row.querySelector('.tx1'), rg = document.createRange(); rg.selectNodeContents(tx); textR = Math.min(rg.getBoundingClientRect().right, tx.getBoundingClientRect().right); }catch(e){}
+    const y = Math.max(62, rb.bottom - H - 2), stopX = Math.max(rb.left + 40, Math.min(textR + 12, window.innerWidth - W - 86));
     const t = document.createElement('img'); t.className = 'todi-run'; t.alt = ''; t.style.height = H+'px'; t.style.top = y+'px'; document.body.appendChild(t);
     const say = kind==='joy' ? '오늘 끝!' : kind==='bike' ? '다녀왔어!' : kind==='doc' ? '튼튼해요!' : ((CATS[cat]||CATS.etc).head || '해냈다!');
     const play = ()=>{                                   // 멈춘 자리에서 동작 재생 → 스르륵 사라짐
       const p0 = performance.now(), per = 1000/6.5;
-      const g = document.createElement('div'); g.className = 'todi-tag'; g.textContent = say; g.style.left = (stopX + (kind==='doc' ? 104 : (kind==='dogw'||kind==='bike') ? 74 : 62))+'px'; g.style.top = (y+6)+'px'; document.body.appendChild(g);
+      const g = document.createElement('div'); g.className = 'todi-tag'; g.textContent = say; g.style.left = (stopX + W - 2)+'px'; g.style.top = (y+6)+'px'; document.body.appendChild(g);
       requestAnimationFrame(()=>{ g.style.transform = 'scale(1)'; });
       (function tick(now){ const k = Math.floor((now-p0)/per);
         if(k < FR.length){ t.src = FR[k]; return requestAnimationFrame(tick); }
@@ -638,7 +643,7 @@ function render(){
 /* ---------- 6-1. 플랜 ---------- */
 function homePage(){
   const t = today(), m = t.slice(0,7);
-  const list = S.tasks.filter(x=>x.date===t).sort((a,b)=>(a.done-b.done) || (S.priority[t]===b.id)-(S.priority[t]===a.id) || (a.time||'99').localeCompare(b.time||'99'));
+  const list = S.tasks.filter(x=>x.date===t).sort((a,b)=>(S.priority[t]===b.id)-(S.priority[t]===a.id) || (a.time||'99').localeCompare(b.time||'99'));
   const done = list.filter(x=>x.done).length, left = list.length-done, allDone = list.length && left===0;
   const {spent, budget, remaining} = monthData(m);
   const daysLeft = (()=>{ const d = new Date(); return new Date(d.getFullYear(), d.getMonth()+1, 0).getDate() - d.getDate() + 1; })();
@@ -689,7 +694,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.17 09:18 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.17 09:23 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
@@ -704,7 +709,7 @@ function importText(txt){
   save(); tab = 'home'; location.hash = 'home'; render(); toast('백업을 불러왔어요'); return true;
 }
 function planPage(){
-  const list = S.tasks.filter(t=>t.date===planDay).sort((a,b)=>(a.done-b.done) || (S.priority[planDay]===b.id)-(S.priority[planDay]===a.id) || (a.time||'99').localeCompare(b.time||'99'));
+  const list = S.tasks.filter(t=>t.date===planDay).sort((a,b)=>(S.priority[planDay]===b.id)-(S.priority[planDay]===a.id) || (a.time||'99').localeCompare(b.time||'99'));
   const done = list.filter(t=>t.done).length, allDone = list.length && done===list.length;
   const wk0 = (()=>{ const d = new Date(planDay+'T12:00'); return addDays(planDay, -((d.getDay()+6)%7)); })();
   return `<div class="screen">
