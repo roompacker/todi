@@ -220,6 +220,10 @@ body.fit{padding-bottom:0}
 .tabbar2 button.on{color:var(--ink)}
 #drawer{z-index:70}
 .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
+.laysw{flex:none;display:flex;align-items:center;gap:6px;padding:0 4px 8px;font-size:12px;color:var(--muted)}
+.laysw span{margin-right:auto;font-weight:700}
+.laysw button{padding:6px 12px;border-radius:999px;background:#fff;font-size:12.5px;font-weight:700;color:var(--muted);box-shadow:0 2px 6px #2b2b3312}
+.laysw button.on{background:var(--ink);color:#fff}
 .srow.col{flex-direction:column;align-items:stretch;gap:8px}
 .seg.lay{width:100%;margin:0}.seg.lay button{flex:1;padding:9px 4px;font-size:13px}
 /* A 무대형 */
@@ -600,6 +604,19 @@ let apPick = null;          // 오전/오후를 직접 골랐을 때 'am' | 'pm'
 const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}" data-slot="${id}" data-cat="${cat}" data-mode="${mode}" data-tap="${tap||'replay'}" ${arrive?'data-arrive="1"':''} style="background:${(CATS[cat]||CATS.etc).bg}"></div>`;
 
 let lastTab = null, openRow = null;
+/* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
+const BUILD = '11.17 16:14';
+(function autoUpdate(){
+  try{
+    if(!/^https?:/.test(location.protocol)) return;
+    fetch('version.txt?t='+Date.now(), {cache:'no-store'}).then(r=>r.ok ? r.text() : '').then(v=>{
+      v = v.trim();
+      if(!v || v === BUILD) return;
+      if(new URLSearchParams(location.search).get('v') === v) return;      // 이미 한 번 갈아탔으면 또 하지 않음 (무한 새로고침 방지)
+      location.replace(location.pathname + '?v=' + encodeURIComponent(v) + location.hash);
+    }).catch(()=>{});
+  }catch(e){ console.error('새 버전 확인 오류', e); }
+})();
 let cardHold = null, boxRun = 0;   // 카드 모양: 방금 완료해서 투디가 움직이는 중인 할 일 / 무대·카드 재생 번호
 /* 완료한 할 일에 어떤 투디가 나올지 고르기 */
 function celebKind(T, cat, allDone){
@@ -745,7 +762,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.17 16:03 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.17 16:14 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
@@ -780,7 +797,9 @@ function planPage(){
     ${slotDiv('title-plan','hello', allDone?'idle':'prep','title-slot','poke',true)}
   </div>`;
   }
+  const laySw = `<div class="laysw"><span>화면 모양</span>${[['row','기본'],['stage','A 무대'],['card','C 카드']].map(([k,n])=>`<button class="${lay===k?'on':''}" data-act="layout" data-v="${k}">${n}</button>`).join('')}</div>`;
   return `<div class="screen">
+  ${laySw}
   ${top}
   <div class="wk"><button class="mbtn" data-act="week" data-d="-7">‹</button>
     <div class="week">${Array.from({length:7},(_,i)=>{ const s = addDays(wk0,i), d = new Date(s+'T12:00');
@@ -1032,7 +1051,7 @@ document.addEventListener('click', e=>{
       }
       case 'treset': S.timer = {dur:S.timer.dur, remaining:S.timer.dur, endsAt:null}; save(); render(); break;
       case 'month': { const [y,m] = month.split('-').map(Number); const d = new Date(y, m-1+(+b.dataset.d), 1); month = `${d.getFullYear()}-${pad(d.getMonth()+1)}`; moneyDay = month===today().slice(0,7) ? today() : month+'-01'; render(); break; }
-      case 'layout': S.opt.layout = b.dataset.v; save(); render(); toast('할 일 화면 모양을 바꿨어요'); break;
+      case 'layout': S.opt.layout = b.dataset.v; cardHold = null; save(); render(); break;
       case 'mtype': mType = b.dataset.t; render(); break;
       case 'ap': apPick = b.dataset.v; todoHint(); try{ $('todoIn').focus(); }catch(e){} break;
       case 'addMoney': addMoney(); break;
