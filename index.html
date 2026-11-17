@@ -605,7 +605,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.17 16:14';
+const BUILD = '11.17 16:22';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -645,7 +645,7 @@ function rowCelebrate(id, cat){
     const allDone = S.tasks.filter(x=>x.date===T.date).every(x=>x.done);
     const kind = celebKind(T, cat, allDone);
     const FR = (typeof TODI_FX !== 'undefined' && TODI_FX[kind]) || []; if(!FR.length) return;
-    const box = tab==='plan' ? document.getElementById('todiBox') : null;
+    const box = document.getElementById('todiBox');     // 무대나 카드가 화면에 있으면 무조건 그 안에서 재생
     if(box){                                             // A 무대형 · C 한 장 카드: 줄 위가 아니라 무대/카드 안에서 재생
       const img = box.querySelector('img'), tg = box.querySelector('.btag'), my = ++boxRun, p0 = performance.now(), per = 1000/6.5;
       tg.textContent = celebSay(kind, cat); tg.classList.add('on'); if(kind==='party') img.style.height = '92px';   // 친구가 여럿인 넓은 장면은 조금 작게
@@ -762,7 +762,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.17 16:14 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.17 16:22 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
@@ -1026,7 +1026,7 @@ document.addEventListener('click', e=>{
           if(S.priority[T.date]===T.id) got = addStep('priority') || got;
           if((CATS[T.cat]||{}).move) got = addStep('move') || got;
           if(T.cat==='save') got = addStep('saving') || got;
-          if(tab==='plan' && S.opt.layout==='card' && S.opt.motion) cardHold = T.id;   // 카드 모양: 투디가 움직이는 동안 그 할 일을 카드에 그대로 둠
+          if(S.opt.layout==='card' && S.opt.motion && document.querySelector('.nowc')) cardHold = T.id;   // 카드 모양: 투디가 움직이는 동안 그 할 일을 카드에 그대로 둠
           openRow = null; render(); rowCelebrate(T.id, T.cat);
           const dayList = S.tasks.filter(x=>x.date===T.date), allDone = dayList.every(x=>x.done);
           if(allDone) celebrate(tab==='home' ? 'title-home' : 'title-plan', T.cat, '· 오늘 할 일 끝!', got);
