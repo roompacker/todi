@@ -220,6 +220,29 @@ body.fit{padding-bottom:0}
 .tabbar2 button.on{color:var(--ink)}
 #drawer{z-index:70}
 .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
+.srow.col{flex-direction:column;align-items:stretch;gap:8px}
+.seg.lay{width:100%;margin:0}.seg.lay button{flex:1;padding:9px 4px;font-size:13px}
+/* A 무대형 */
+.stage{flex:none;height:132px;background:#E4F6EE;border-radius:22px;position:relative;overflow:hidden;margin-bottom:8px}
+.stage .floor{position:absolute;left:0;right:0;bottom:0;height:20px;background:#CFEEDF}
+.stage .stxt{position:absolute;left:16px;top:14px;right:150px}
+.stage .overline{font-size:12.5px;font-weight:700;color:#1d6b4d;margin-bottom:3px}
+.stage h1{font-size:22px;font-weight:900;letter-spacing:-.05em;line-height:1.25}
+.stage img{position:absolute;right:14px;bottom:6px;height:116px}
+.btag{position:absolute;background:#fff;color:#1d6b4d;font-weight:800;font-size:13px;padding:5px 11px;border-radius:999px;white-space:nowrap;opacity:0;transform:scale(.6);transition:opacity .2s,transform .2s;z-index:2}
+.btag.on{opacity:1;transform:scale(1)}
+.stage .btag{left:16px;bottom:30px}
+/* C 한 장 카드 */
+.nowc{flex:none;height:158px;background:#FFE3EC;border-radius:22px;padding:14px 12px 14px 16px;display:flex;gap:6px;position:relative;overflow:hidden;margin-bottom:8px}
+.nowc .ntxt{flex:1;min-width:0;display:flex;flex-direction:column}
+.nowc .overline{font-size:12px;font-weight:700;color:#c0506f}
+.nowc .nt{font-size:21px;font-weight:900;letter-spacing:-.04em;line-height:1.25;margin:4px 0 2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nowc .nm{font-size:13px;color:#c0506f}
+.nowc .go{margin-top:auto;align-self:flex-start;background:var(--pink,#FF8FB1);color:#fff;font-weight:800;padding:9px 18px;border-radius:999px;font-size:15px}
+.nowc .npic{flex:none;position:relative;display:flex;align-items:flex-end;justify-content:flex-end;min-width:96px}
+.nowc .npic img{height:124px}
+.nowc .npic .btag{right:0;top:-4px}
+.nsub{flex:none;font-size:12px;color:var(--muted);padding:0 8px 4px}
 .hd2{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;padding:4px 4px 6px;flex:none}
 .hd2 .overline{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:4px}
 .hd2 h1{font-size:27px;line-height:1.25;font-weight:900;letter-spacing:-.05em}
@@ -577,24 +600,47 @@ let apPick = null;          // 오전/오후를 직접 골랐을 때 'am' | 'pm'
 const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}" data-slot="${id}" data-cat="${cat}" data-mode="${mode}" data-tap="${tap||'replay'}" ${arrive?'data-arrive="1"':''} style="background:${(CATS[cat]||CATS.etc).bg}"></div>`;
 
 let lastTab = null, openRow = null;
+let cardHold = null, boxRun = 0;   // 카드 모양: 방금 완료해서 투디가 움직이는 중인 할 일 / 무대·카드 재생 번호
+/* 완료한 할 일에 어떤 투디가 나올지 고르기 */
+function celebKind(T, cat, allDone){
+  const title = (T && T.title) || '';
+  // 어떤 투디가 나올지: 강아지 산책 → 모자 투디와 강아지 / 출근·회의 → 정장 투디 / 학원·학교·자전거 → 자전거 탄 너구리 투디 / 오늘 할 일 전부 끝 → 활짝 웃는 투디 / 그 외 → 곰돌이 투디
+  let kind = 'wv';
+  if(cat === 'dog') kind = 'dogw';
+  else if(/출근|퇴근|회의|미팅|업무|회사|보고서|출장|면접/.test(title)) kind = 'suit';
+  else if(/음악|노래|디제이|DJ|dj|플레이리스트|콘서트|공연|클럽|댄스|춤|악기|기타 연습|피아노|드럼|작곡|믹싱/.test(title)) kind = 'dj';   // 헤드폰 쓴 디제이 투디
+  else if(/물\s?주기|화분|식물|꽃|텃밭|정원|가드닝|분갈이|화초|모종|씨앗|나무 심기/.test(title)) kind = 'plant';   // 초록 후드 투디가 화분에 물 주면 꽃이 핌
+  else if(/생일|생파|파티|축하|기념일|케이크|돌잔치/.test(title)) kind = 'party';   // 친구들이 다 모여 생일 케이크 파티
+  else if(/병원|진료|검진|치과|약국|주사|접종|한의원|내과|안과|이비인후과|정형외과|피부과/.test(title)) kind = 'doc';   // 사자 의사 선생님이 곰돌이 투디를 진찰
+  else if(/학원|학교|등교|하교|등원|하원|수업|과외|자전거|라이딩/.test(title)) kind = 'bike';   // 학원 가방 멘 너구리 투디가 자전거 타기
+  else if(allDone) kind = 'joy';
+  return kind;
+}
+function celebSay(kind, cat){
+  return kind==='joy' ? '오늘 끝!' : kind==='bike' ? '다녀왔어!' : kind==='doc' ? '튼튼해요!' : kind==='party' ? '축하해!' : kind==='dj' ? '둠칫 둠칫!' : kind==='plant' ? '활짝 폈어!' : ((CATS[cat]||CATS.etc).head || '해냈다!');
+}
+
 /* 할 일을 완료한 순간: 투디가 그 줄로 달려와서 → 정면으로 서고 → 스르륵 사라짐 */
 function rowCelebrate(id, cat){
   try{
     if(!S.opt.motion) return;
-    const row = document.querySelector(`[data-row="${id}"]`); if(!row) return;
     const T = S.tasks.find(x=>x.id===id) || {}, title = T.title || '';
     const allDone = S.tasks.filter(x=>x.date===T.date).every(x=>x.done);
-    // 어떤 투디가 나올지: 강아지 산책 → 모자 투디와 강아지 / 출근·회의 → 정장 투디 / 학원·학교·자전거 → 자전거 탄 너구리 투디 / 오늘 할 일 전부 끝 → 활짝 웃는 투디 / 그 외 → 곰돌이 투디
-    let kind = 'wv';
-    if(cat === 'dog') kind = 'dogw';
-    else if(/출근|퇴근|회의|미팅|업무|회사|보고서|출장|면접/.test(title)) kind = 'suit';
-    else if(/음악|노래|디제이|DJ|dj|플레이리스트|콘서트|공연|클럽|댄스|춤|악기|기타 연습|피아노|드럼|작곡|믹싱/.test(title)) kind = 'dj';   // 헤드폰 쓴 디제이 투디
-    else if(/물\s?주기|화분|식물|꽃|텃밭|정원|가드닝|분갈이|화초|모종|씨앗|나무 심기/.test(title)) kind = 'plant';   // 초록 후드 투디가 화분에 물 주면 꽃이 핌
-    else if(/생일|생파|파티|축하|기념일|케이크|돌잔치/.test(title)) kind = 'party';   // 친구들이 다 모여 생일 케이크 파티
-    else if(/병원|진료|검진|치과|약국|주사|접종|한의원|내과|안과|이비인후과|정형외과|피부과/.test(title)) kind = 'doc';   // 사자 의사 선생님이 곰돌이 투디를 진찰
-    else if(/학원|학교|등교|하교|등원|하원|수업|과외|자전거|라이딩/.test(title)) kind = 'bike';   // 학원 가방 멘 너구리 투디가 자전거 타기
-    else if(allDone) kind = 'joy';
+    const kind = celebKind(T, cat, allDone);
     const FR = (typeof TODI_FX !== 'undefined' && TODI_FX[kind]) || []; if(!FR.length) return;
+    const box = tab==='plan' ? document.getElementById('todiBox') : null;
+    if(box){                                             // A 무대형 · C 한 장 카드: 줄 위가 아니라 무대/카드 안에서 재생
+      const img = box.querySelector('img'), tg = box.querySelector('.btag'), my = ++boxRun, p0 = performance.now(), per = 1000/6.5;
+      tg.textContent = celebSay(kind, cat); tg.classList.add('on'); if(kind==='party') img.style.height = '92px';   // 친구가 여럿인 넓은 장면은 조금 작게
+      (function tick(now){
+        if(my !== boxRun) return;                        // 그 사이 다른 할 일을 완료했으면 이전 재생은 멈춤
+        const k = Math.floor((now-p0)/per);
+        if(k < FR.length){ img.src = FR[k]; return requestAnimationFrame(tick); }
+        setTimeout(()=>{ if(my === boxRun){ cardHold = null; render(); } }, 400);
+      })(p0);
+      return;
+    }
+    const row = document.querySelector(`[data-row="${id}"]`); if(!row) return;
     try{ row.scrollIntoView({block:'nearest'}); }catch(e){}          // 줄이 화면 밖이면 보이는 곳으로
     const rb = row.getBoundingClientRect(), H = kind==='party' ? 112 : 84;   // 친구가 여럿인 장면은 조금 크게
     const WK = {doc:107, dogw:74, bike:70, party:204, dj:92, plant:96}, W = WK[kind] || 63;      // 장면 가로 크기
@@ -603,7 +649,7 @@ function rowCelebrate(id, cat){
     try{ const tx = row.querySelector('.tx1'), rg = document.createRange(); rg.selectNodeContents(tx); textR = Math.min(rg.getBoundingClientRect().right, tx.getBoundingClientRect().right); }catch(e){}
     const y = Math.max(62, rb.bottom - H - 2), stopX = Math.max(rb.left + 40, Math.min(textR + 12, window.innerWidth - W - (kind==='party' ? 10 : 86)));
     const t = document.createElement('img'); t.className = 'todi-run'; t.alt = ''; t.style.height = H+'px'; t.style.top = y+'px'; document.body.appendChild(t);
-    const say = kind==='joy' ? '오늘 끝!' : kind==='bike' ? '다녀왔어!' : kind==='doc' ? '튼튼해요!' : kind==='party' ? '축하해!' : kind==='dj' ? '둠칫 둠칫!' : kind==='plant' ? '활짝 폈어!' : ((CATS[cat]||CATS.etc).head || '해냈다!');
+    const say = celebSay(kind, cat);
     const play = ()=>{                                   // 멈춘 자리에서 동작 재생 → 스르륵 사라짐
       const p0 = performance.now(), per = 1000/6.5;
       const g = document.createElement('div'); g.className = 'todi-tag'; g.textContent = say; g.style.left = (kind==='party' ? stopX + W/2 - 40 : stopX + W - 2)+'px'; g.style.top = (kind==='party' ? y - 22 : y + 6)+'px'; document.body.appendChild(g);
@@ -683,6 +729,8 @@ function settingsPage(){
   </section>
   <section class="card set">
     <h2>화면</h2>
+    <div class="srow col"><div><strong>할 일 화면 모양</strong><span class="small">세 가지를 바꿔 가며 써 보세요. 기록은 그대로예요</span></div>
+      <div class="seg lay">${[['row','기본'],['stage','A 무대형'],['card','C 한 장 카드']].map(([k,n])=>`<button class="${(o.layout||'row')===k?'on':''}" data-act="layout" data-v="${k}">${n}</button>`).join('')}</div></div>
     <div class="srow"><div><strong>메뉴바 자동으로 숨기기</strong><span class="small">목록을 넘기면 아래 메뉴바가 스르륵 내려가요</span></div>${sw('navHide',o.navHide)}</div>
     <div class="srow"><div><strong>완료할 때 투디 나오기</strong><span class="small">할 일을 체크하면 투디가 달려와요</span></div>${sw('motion',o.motion)}</div>
     <div class="srow"><div><strong>진동</strong><span class="small">완료할 때 짧게 진동해요</span></div>${sw('vibrate',o.vibrate)}</div>
@@ -697,7 +745,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.17 15:41 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.17 16:03 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
@@ -715,17 +763,30 @@ function planPage(){
   const list = S.tasks.filter(t=>t.date===planDay).sort((a,b)=>(S.priority[planDay]===b.id)-(S.priority[planDay]===a.id) || (a.time||'99').localeCompare(b.time||'99'));
   const done = list.filter(t=>t.done).length, allDone = list.length && done===list.length;
   const wk0 = (()=>{ const d = new Date(planDay+'T12:00'); return addDays(planDay, -((d.getDay()+6)%7)); })();
-  return `<div class="screen">
-  <div class="hd2 s">
-    <div><div class="overline">${dLabel(planDay,true)} · ${done} / ${list.length} 완료</div>
-      <h1>${planDay===today()?'오늘 할 일':dLabel(planDay)+' 할 일'}</h1></div>
+  const lay = S.opt.layout || 'row', idleImg = (typeof TODI_IMG !== 'undefined' && TODI_IMG.idle_0) || '';
+  const ttl = planDay===today() ? '오늘 할 일' : dLabel(planDay)+' 할 일', over = `${dLabel(planDay,true)} · ${done} / ${list.length} 완료`;
+  let top, rows = list;
+  if(lay==='stage'){                                     // A 무대형: 위쪽에 투디 무대
+    top = `<div class="stage" id="todiBox"><div class="floor"></div><div class="stxt"><div class="overline">${over}</div><h1>${ttl}</h1></div><span class="btag"></span><img alt="" src="${allDone && TODI_FX.joy ? TODI_FX.joy[TODI_FX.joy.length-1] : idleImg}"></div>`;
+  } else if(lay==='card'){                               // C 한 장 카드: 지금 할 일 하나를 크게
+    const cur = (cardHold && list.find(t=>t.id===cardHold)) || list.find(t=>!t.done);
+    rows = list.filter(t=>t!==cur);
+    top = cur ? `<div class="nowc" id="todiBox"><div class="ntxt"><span class="overline">${over}</span><span class="nt">${esc(cur.title)}</span><span class="nm">${fmtTime(cur.time)}</span>${cur.done?'':`<button class="go" data-act="toggle" data-id="${cur.id}">완료했어요</button>`}</div><div class="npic"><span class="btag"></span><img alt="" src="${idleImg}"></div></div>`
+      : `<div class="nowc" id="todiBox"><div class="ntxt"><span class="overline">${over}</span><span class="nt">${list.length?'전부 끝!':'할 일이 없어요'}</span></div><div class="npic"><span class="btag"></span><img alt="" src="${list.length && TODI_FX.joy ? TODI_FX.joy[TODI_FX.joy.length-1] : idleImg}"></div></div>`;
+  } else {
+    top = `<div class="hd2 s">
+    <div><div class="overline">${over}</div>
+      <h1>${ttl}</h1></div>
     ${slotDiv('title-plan','hello', allDone?'idle':'prep','title-slot','poke',true)}
-  </div>
+  </div>`;
+  }
+  return `<div class="screen">
+  ${top}
   <div class="wk"><button class="mbtn" data-act="week" data-d="-7">‹</button>
     <div class="week">${Array.from({length:7},(_,i)=>{ const s = addDays(wk0,i), d = new Date(s+'T12:00');
       return `<button class="wd ${s===planDay?'on':''}" data-act="day" data-d="${s}"><span>${WD[d.getDay()]}</span><b>${d.getDate()}</b><i class="${S.tasks.some(t=>t.date===s)?'on':''}"></i></button>`; }).join('')}</div>
     <button class="mbtn" data-act="week" data-d="7">›</button></div>
-  <section class="lcard"><div class="scroll">${list.length ? list.map(t=>simpleRow(t,planDay)).join('') : '<div class="empty">이 날은 할 일이 없어요</div>'}</div></section>
+  ${lay==='card' ? '<div class="nsub">다음 할 일</div>' : ''}<section class="lcard"><div class="scroll">${rows.length ? rows.map(t=>simpleRow(t,planDay)).join('') : `<div class="empty">${list.length ? '남은 할 일이 없어요' : '이 날은 할 일이 없어요'}</div>`}</div></section>
   <div class="addhint" id="todoPrev"></div>
   <div class="addbar"><input id="todoIn" placeholder="할 일 적기 (예: 8시 운동)" autocomplete="off"><button data-act="addTodo" aria-label="추가">+</button></div>
   </div>`;
@@ -946,6 +1007,7 @@ document.addEventListener('click', e=>{
           if(S.priority[T.date]===T.id) got = addStep('priority') || got;
           if((CATS[T.cat]||{}).move) got = addStep('move') || got;
           if(T.cat==='save') got = addStep('saving') || got;
+          if(tab==='plan' && S.opt.layout==='card' && S.opt.motion) cardHold = T.id;   // 카드 모양: 투디가 움직이는 동안 그 할 일을 카드에 그대로 둠
           openRow = null; render(); rowCelebrate(T.id, T.cat);
           const dayList = S.tasks.filter(x=>x.date===T.date), allDone = dayList.every(x=>x.done);
           if(allDone) celebrate(tab==='home' ? 'title-home' : 'title-plan', T.cat, '· 오늘 할 일 끝!', got);
@@ -970,6 +1032,7 @@ document.addEventListener('click', e=>{
       }
       case 'treset': S.timer = {dur:S.timer.dur, remaining:S.timer.dur, endsAt:null}; save(); render(); break;
       case 'month': { const [y,m] = month.split('-').map(Number); const d = new Date(y, m-1+(+b.dataset.d), 1); month = `${d.getFullYear()}-${pad(d.getMonth()+1)}`; moneyDay = month===today().slice(0,7) ? today() : month+'-01'; render(); break; }
+      case 'layout': S.opt.layout = b.dataset.v; save(); render(); toast('할 일 화면 모양을 바꿨어요'); break;
       case 'mtype': mType = b.dataset.t; render(); break;
       case 'ap': apPick = b.dataset.v; todoHint(); try{ $('todoIn').focus(); }catch(e){} break;
       case 'addMoney': addMoney(); break;
