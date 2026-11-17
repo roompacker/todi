@@ -220,6 +220,12 @@ body.fit{padding-bottom:0}
 .tabbar2 button.on{color:var(--ink)}
 #drawer{z-index:70}
 .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
+.bigov{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:rgba(255,246,236,0);transition:background .25s;-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0)}
+.bigov.on{background:rgba(255,246,236,.78);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.bigin{display:flex;flex-direction:column;align-items:center;gap:10px;transform:scale(.3);opacity:0;transition:transform .28s cubic-bezier(.3,1.5,.6,1),opacity .2s;margin-top:-8vh}
+.bigov.on .bigin{transform:scale(1);opacity:1}
+.bigtag{background:#DDF5EA;color:#1d6b4d;font-weight:900;font-size:19px;padding:8px 18px;border-radius:999px;box-shadow:0 4px 12px #2b2b3318}
+.bigpic{background-repeat:no-repeat}
 .laysw{flex:none;display:flex;align-items:center;gap:6px;padding:0 4px 8px;font-size:12px;color:var(--muted)}
 .laysw span{margin-right:auto;font-weight:700}
 .laysw button{padding:6px 12px;border-radius:999px;background:#fff;font-size:12.5px;font-weight:700;color:var(--muted);box-shadow:0 2px 6px #2b2b3312}
@@ -508,6 +514,8 @@ if(!S || S.v !== 1) S = seed();
 if(S.name === '여백 친구') S.name = '투디';
 try{ S.deco = S.deco || {}; S.deco.style = 'img'; S.deco.glasses = 0; }catch(e){}   // 예전 3D·선글라스 설정은 쓰지 않음
 S.opt = Object.assign({navHide:true, motion:true, vibrate:true}, S.opt||{});   // 설정 (없으면 기본값)
+if(!S.opt.bigSet){ S.opt.layout = 'big'; S.opt.bigSet = 1; }                      // 처음 한 번은 '가운데 크게'로 맞춰 둠
+if(S.opt.layout==='stage' || S.opt.layout==='card') S.opt.layout = 'big';
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ console.error('저장 실패', e); } }
 window.DECO = S.deco;
 
@@ -608,7 +616,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.17 16:26';
+const BUILD = '11.17 16:36';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -620,6 +628,71 @@ const BUILD = '11.17 16:26';
     }).catch(()=>{});
   }catch(e){ console.error('새 버전 확인 오류', e); }
 })();
+/* 가운데 크게: 큰 그림은 따로 둔 파일(fx/종류.webp)을 필요할 때만 불러옴 */
+const FXL = {"wv": {"n": 20, "cols": 6, "w": 305, "h": 400}, "joy": {"n": 20, "cols": 6, "w": 351, "h": 400}, "suit": {"n": 22, "cols": 6, "w": 234, "h": 400}, "dogw": {"n": 22, "cols": 6, "w": 399, "h": 400}, "bike": {"n": 20, "cols": 6, "w": 338, "h": 400}, "doc": {"n": 24, "cols": 6, "w": 509, "h": 400}, "party": {"n": 22, "cols": 6, "w": 600, "h": 330}, "dj": {"n": 23, "cols": 6, "w": 444, "h": 400}, "plant": {"n": 23, "cols": 6, "w": 428, "h": 400}};
+const fxlImg = {};
+function fxlLoad(kind){
+  if(!FXL[kind] || !/^https?:/.test(location.protocol)) return null;
+  if(!fxlImg[kind]){ const im = new Image(); im.src = 'fx/'+kind+'.webp?v=1'; fxlImg[kind] = im; }
+  return fxlImg[kind];
+}
+/* 오늘 남은 할 일에 필요한 그림을 미리 받아 둠 → 완료하는 순간 바로 나오게 */
+let preT = 0;
+function fxlPreload(){
+  clearTimeout(preT);
+  preT = setTimeout(()=>{ try{
+    if((S.opt.layout||'row')!=='big' || !S.opt.motion) return;
+    const days = [today(), planDay];
+    S.tasks.filter(t=>!t.done && days.includes(t.date)).forEach(t=>fxlLoad(celebKind(t, t.cat, false)));
+    fxlLoad('joy');
+  }catch(e){ console.error('미리 받기 오류', e); } }, 400);
+}
+let bigEl = null;
+function bigCelebrate(kind, cat, row, FR){
+  try{
+    if(bigEl){ bigEl.remove(); bigEl = null; }
+    const m = FXL[kind], sheet = fxlLoad(kind);
+    const ov = document.createElement('div'); ov.className = 'bigov'; bigEl = ov;
+    const asp = m ? m.w/m.h : 0.75;
+    let H = Math.min(250, Math.round(window.innerHeight*0.33)), W = Math.round(H*asp);
+    if(W > window.innerWidth - 28){ W = window.innerWidth - 28; H = Math.round(W/asp); }
+    ov.innerHTML = `<div class="bigin"><div class="bigtag">${celebSay(kind, cat)}</div><div class="bigpic" style="width:${W}px;height:${H}px"></div></div>`;
+    document.body.appendChild(ov);
+    const pic = ov.querySelector('.bigpic'), inn = ov.querySelector('.bigin');
+    let done = false;
+    const end = ()=>{                                   // 끝나면 누른 줄 쪽으로 쏙 들어가며 사라짐
+      if(done) return; done = true;
+      try{
+        const a = inn.getBoundingClientRect(), b = row ? row.getBoundingClientRect() : null;
+        const dx = b ? (b.left + 28) - (a.left + a.width/2) : 0, dy = b ? (b.top + b.height/2) - (a.top + a.height/2) : 40;
+        inn.style.transition = 'transform .38s cubic-bezier(.5,0,.8,.4), opacity .38s'; inn.style.transform = `translate(${dx}px,${dy}px) scale(.12)`; inn.style.opacity = 0;
+      }catch(e){}
+      ov.classList.remove('on'); setTimeout(()=>{ ov.remove(); if(bigEl===ov) bigEl = null; }, 400);
+    };
+    ov.addEventListener('click', end);                 // 화면을 누르면 바로 넘어감
+    const start = big=>{
+      if(done) return;
+      const n = big ? m.n : FR.length, p0 = performance.now(), per = 1000/6.5;
+      if(big){ pic.style.backgroundImage = `url(${sheet.src})`; pic.style.backgroundSize = `${m.cols*W}px ${Math.ceil(m.n/m.cols)*H}px`; }
+      else pic.innerHTML = `<img alt="" src="${FR[0]}" style="width:100%;height:100%;object-fit:contain">`;
+      const im = pic.querySelector('img');
+      requestAnimationFrame(()=>ov.classList.add('on'));
+      (function tick(now){
+        if(done) return;
+        const k = Math.floor((now-p0)/per);
+        if(k >= n) return setTimeout(end, 250);
+        if(big) pic.style.backgroundPosition = `-${(k%m.cols)*W}px -${Math.floor(k/m.cols)*H}px`; else im.src = FR[k];
+        requestAnimationFrame(tick);
+      })(p0);
+    };
+    // 큰 그림이 준비됐으면 바로, 아직 받는 중이면 최대 1.5초 기다렸다가 안 되면 작은 그림으로
+    if(sheet && sheet.complete && sheet.naturalWidth) start(true);
+    else if(sheet){ let go = false; const t = setTimeout(()=>{ if(!go){ go = true; start(false); } }, 1500);
+      sheet.addEventListener('load', ()=>{ if(!go){ go = true; clearTimeout(t); start(true); } });
+      sheet.addEventListener('error', ()=>{ if(!go){ go = true; clearTimeout(t); start(false); } }); }
+    else start(false);
+  }catch(e){ console.error('가운데 크게 재생 오류', e); }
+}
 let cardHold = null, boxRun = 0;   // 카드 모양: 방금 완료해서 투디가 움직이는 중인 할 일 / 무대·카드 재생 번호
 /* 완료한 할 일에 어떤 투디가 나올지 고르기 */
 function celebKind(T, cat, allDone){
@@ -648,6 +721,7 @@ function rowCelebrate(id, cat){
     const allDone = S.tasks.filter(x=>x.date===T.date).every(x=>x.done);
     const kind = celebKind(T, cat, allDone);
     const FR = (typeof TODI_FX !== 'undefined' && TODI_FX[kind]) || []; if(!FR.length) return;
+    if((S.opt.layout||'row')==='big'){ bigCelebrate(kind, cat, document.querySelector(`[data-row="${id}"]`), FR); return; }
     const box = document.getElementById('todiBox');     // 무대나 카드가 화면에 있으면 무조건 그 안에서 재생
     if(box){                                             // A 무대형 · C 한 장 카드: 줄 위가 아니라 무대/카드 안에서 재생
       const img = box.querySelector('img'), tg = box.querySelector('.btag'), my = ++boxRun, p0 = performance.now(), per = 1000/6.5;
@@ -695,6 +769,7 @@ function simpleRow(t, day){
 }
 function render(){
   try{
+    fxlPreload();
     if(tab !== lastTab){ window.ARRIVE_EPOCH = (window.ARRIVE_EPOCH||0) + 1; lastTab = tab; }
     $('drawerNav').innerHTML = drawerHTML();
     const tb = (id,ic,n)=>`<button data-tab="${id}" class="${tab===id?'on':''}"><i>${ic}</i>${n}</button>`;
@@ -721,7 +796,7 @@ function homePage(){
   <div class="hd2">
     <div><div class="overline">${dLabel(t,true)}</div>
       <h1>${!list.length ? '오늘 할 일을<br>적어 볼까요?' : allDone ? '오늘 할 일을<br><em>전부</em> 해냈어요!' : `오늘 할 일<br><em>${left}개</em> 남았어요`}</h1></div>
-    ${(S.opt.layout||'row')==='row' ? slotDiv('title-home','hello', allDone?'idle':'prep','title-slot','poke',true) : `<div class="hbox" id="todiBox"><span class="btag"></span><img alt="" src="${allDone && TODI_FX.joy ? TODI_FX.joy[TODI_FX.joy.length-1] : ((typeof TODI_IMG !== 'undefined' && TODI_IMG.idle_0) || '')}"></div>`}
+    ${true ? slotDiv('title-home','hello', allDone?'idle':'prep','title-slot','poke',true) : `<div class="hbox" id="todiBox"><span class="btag"></span><img alt="" src="${allDone && TODI_FX.joy ? TODI_FX.joy[TODI_FX.joy.length-1] : ((typeof TODI_IMG !== 'undefined' && TODI_IMG.idle_0) || '')}"></div>`}
   </div>
   <div class="tiles">
     <button class="tile" data-tab="plan"><small>오늘 할 일</small><b class="num">${done} <u>/ ${list.length} 완료</u></b><div class="bar"><i style="width:${list.length?done/list.length*100:0}%;background:var(--mint)"></i></div></button>
@@ -749,8 +824,8 @@ function settingsPage(){
   </section>
   <section class="card set">
     <h2>화면</h2>
-    <div class="srow col"><div><strong>할 일 화면 모양</strong><span class="small">세 가지를 바꿔 가며 써 보세요. 기록은 그대로예요</span></div>
-      <div class="seg lay">${[['row','기본'],['stage','A 무대형'],['card','C 한 장 카드']].map(([k,n])=>`<button class="${(o.layout||'row')===k?'on':''}" data-act="layout" data-v="${k}">${n}</button>`).join('')}</div></div>
+    <div class="srow col"><div><strong>완료할 때 투디 크기</strong><span class="small">가운데 크게: 화면 한가운데에서 크게 움직여요</span></div>
+      <div class="seg lay">${[['row','줄 옆에 작게'],['big','가운데 크게']].map(([k,n])=>`<button class="${(o.layout||'row')===k?'on':''}" data-act="layout" data-v="${k}">${n}</button>`).join('')}</div></div>
     <div class="srow"><div><strong>메뉴바 자동으로 숨기기</strong><span class="small">목록을 넘기면 아래 메뉴바가 스르륵 내려가요</span></div>${sw('navHide',o.navHide)}</div>
     <div class="srow"><div><strong>완료할 때 투디 나오기</strong><span class="small">할 일을 체크하면 투디가 달려와요</span></div>${sw('motion',o.motion)}</div>
     <div class="srow"><div><strong>진동</strong><span class="small">완료할 때 짧게 진동해요</span></div>${sw('vibrate',o.vibrate)}</div>
@@ -765,7 +840,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.17 16:26 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.17 16:36 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
@@ -783,7 +858,8 @@ function planPage(){
   const list = S.tasks.filter(t=>t.date===planDay).sort((a,b)=>(S.priority[planDay]===b.id)-(S.priority[planDay]===a.id) || (a.time||'99').localeCompare(b.time||'99'));
   const done = list.filter(t=>t.done).length, allDone = list.length && done===list.length;
   const wk0 = (()=>{ const d = new Date(planDay+'T12:00'); return addDays(planDay, -((d.getDay()+6)%7)); })();
-  const lay = S.opt.layout || 'row', idleImg = (typeof TODI_IMG !== 'undefined' && TODI_IMG.idle_0) || '';
+  const lay = 'row';   // 무대형·카드형은 접음
+  const layNow = S.opt.layout || 'row', idleImg = (typeof TODI_IMG !== 'undefined' && TODI_IMG.idle_0) || '';
   const ttl = planDay===today() ? '오늘 할 일' : dLabel(planDay)+' 할 일', over = `${dLabel(planDay,true)} · ${done} / ${list.length} 완료`;
   let top, rows = list;
   if(lay==='stage'){                                     // A 무대형: 위쪽에 투디 무대
@@ -800,7 +876,7 @@ function planPage(){
     ${slotDiv('title-plan','hello', allDone?'idle':'prep','title-slot','poke',true)}
   </div>`;
   }
-  const laySw = `<div class="laysw"><span>화면 모양</span>${[['row','기본'],['stage','A 무대'],['card','C 카드']].map(([k,n])=>`<button class="${lay===k?'on':''}" data-act="layout" data-v="${k}">${n}</button>`).join('')}</div>`;
+  const laySw = `<div class="laysw"><span>완료 동작</span>${[['row','줄 옆에 작게'],['big','가운데 크게']].map(([k,n])=>`<button class="${layNow===k?'on':''}" data-act="layout" data-v="${k}">${n}</button>`).join('')}</div>`;
   return `<div class="screen">
   ${laySw}
   ${top}
@@ -1029,7 +1105,7 @@ document.addEventListener('click', e=>{
           if(S.priority[T.date]===T.id) got = addStep('priority') || got;
           if((CATS[T.cat]||{}).move) got = addStep('move') || got;
           if(T.cat==='save') got = addStep('saving') || got;
-          if(S.opt.layout==='card' && S.opt.motion && document.querySelector('.nowc')) cardHold = T.id;   // 카드 모양: 투디가 움직이는 동안 그 할 일을 카드에 그대로 둠
+             // 카드 모양: 투디가 움직이는 동안 그 할 일을 카드에 그대로 둠
           openRow = null; render(); rowCelebrate(T.id, T.cat);
           const dayList = S.tasks.filter(x=>x.date===T.date), allDone = dayList.every(x=>x.done);
           if(allDone) celebrate(tab==='home' ? 'title-home' : 'title-plan', T.cat, '· 오늘 할 일 끝!', got);
@@ -1054,7 +1130,7 @@ document.addEventListener('click', e=>{
       }
       case 'treset': S.timer = {dur:S.timer.dur, remaining:S.timer.dur, endsAt:null}; save(); render(); break;
       case 'month': { const [y,m] = month.split('-').map(Number); const d = new Date(y, m-1+(+b.dataset.d), 1); month = `${d.getFullYear()}-${pad(d.getMonth()+1)}`; moneyDay = month===today().slice(0,7) ? today() : month+'-01'; render(); break; }
-      case 'layout': S.opt.layout = b.dataset.v; cardHold = null; save(); render(); break;
+      case 'layout': S.opt.layout = b.dataset.v; cardHold = null; save(); render(); fxlPreload(); break;
       case 'mtype': mType = b.dataset.t; render(); break;
       case 'ap': apPick = b.dataset.v; todoHint(); try{ $('todoIn').focus(); }catch(e){} break;
       case 'addMoney': addMoney(); break;
