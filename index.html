@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#FFF7EE">
+<meta name="theme-color" content="#F6F0E5">
 <link rel="manifest" href="app.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -14,12 +14,21 @@
 <style>
 /* ===================== 1. 투디 색상·기본 ===================== */
 :root{
-  --canvas:#FFF7EE; --paper:#FFFBF5; --ink:#2B2B33; --muted:#75757f; --line:#2b2b331f; --pink:#FF8FB1; --mint:#3DBE8B; --pink2:#FFD7E3; --mint2:#CDEFDF;
-  --lemon:#FFD7E3; --sage:#CDEFDF; --blue:#DCE8F5; --beige:#FFEAD8; --lav:#FFE3EC; --white:#ffffff; --alert:#842c29; --yellow:#F2CE3E;
+  /* 롤리 믹스 (낮): 바탕 Chalk · 할 일 Brook Green · 지출 Thulian Pink · 수입·글씨 Midnight blue · 강조 Tan */
+  --canvas:#F6F0E5; --paper:#FFFCF7; --card:#FFFCF7; --ink:#0F414A; --muted:#6E7E7A; --line:#0f414a1f; --soft:#EFE7DA;
+  --pink:#B5728A; --mint:#6F8F7C; --inc:#2E6E78; --pink2:#F3E2E8; --mint2:#E1EAE3; --inc2:#DCEAEC; --tan:#EFE1CF; --tan2:#D8BA98;
+  --veil:rgba(246,240,229,.45); --onacc:#fff;
+  --lemon:#F3E2E8; --sage:#E1EAE3; --blue:#DCEAEC; --beige:#EFE1CF; --lav:#F3E2E8; --white:#FFFCF7; --alert:#9b3349; --yellow:#D8BA98;
   --r:24px;
   
 }
 
+/* 롤리 믹스 (밤): 바탕 Midnight blue */
+body.night{--canvas:#0F414A; --paper:#175059; --card:#175059; --ink:#F4EDE0; --muted:#A3B3A9; --line:#f4ede024; --soft:#1E5A62;
+  --pink:#C98AA1; --mint:#8FA897; --inc:#D8BA98; --pink2:#4B4150; --mint2:#255A5F; --inc2:#3E5550; --tan:#1F5A62; --tan2:#D8BA98;
+  --veil:rgba(15,65,74,.5); --lemon:#4B4150; --sage:#255A5F; --blue:#3E5550; --beige:#1F5A62; --lav:#4B4150; --white:#175059; --alert:#F0A3B5; --yellow:#D8BA98}
+body.night input{color:var(--ink)}
+body.night input::placeholder{color:var(--muted)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--canvas);color:var(--ink);font-family:Pretendard,'Noto Sans KR','Apple SD Gothic Neo',sans-serif;letter-spacing:-.03em;-webkit-font-smoothing:antialiased}
 body{padding-bottom:30px;min-height:100vh}
@@ -35,7 +44,7 @@ button{border:none;background:none;cursor:pointer}
 .wordmark{display:flex;align-items:center;gap:8px;font-size:22px;font-weight:900;letter-spacing:-.06em}
 .logo{width:28px;height:28px;border-radius:9px;display:grid;grid-template-columns:repeat(2,5px);grid-template-rows:repeat(2,5px);gap:3px;place-content:center;background:var(--ink);transform:rotate(-6deg)}
 .logo i{background:var(--lemon);border-radius:3px}.logo i:first-child{grid-row:span 2}.logo i:last-child{opacity:.55}
-.steps-pill{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:12px;font-weight:700;background:#f2f2ed}
+.steps-pill{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:12px;font-weight:700;background:var(--soft)}
 
 /* ===================== 3. 페이지 제목 + 제목 캐릭터 ===================== */
 .head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;padding:20px 2px 14px}
@@ -125,7 +134,7 @@ button{border:none;background:none;cursor:pointer}
 .tx:last-child{border-bottom:none}
 .tx .k{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;font-size:15px;flex:none}
 .tx .tt{flex:1;min-width:0}.tx .tt strong{display:block;font-size:14px}
-.tx .amt{font-weight:760;font-size:14px;white-space:nowrap}.tx .amt.in{color:#315638}
+.tx .amt{font-weight:760;font-size:14px;white-space:nowrap}.tx .amt.in{color:var(--inc)}
 
 /* ===================== 7. 친구 (키링) ===================== */
 .stage{height:330px;border-radius:20px;background:#efe3d3;position:relative}
@@ -182,7 +191,7 @@ button{border:none;background:none;cursor:pointer}
 .home .hrow:last-child{border-bottom:none}
 .home .hrow strong{flex:1;min-width:0;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .home .hrow .small{flex:none}
-.home .chk{width:30px;height:30px;background:#fff}
+.home .chk{width:30px;height:30px;background:var(--card)}
 .home .hrow.done strong{opacity:.45;text-decoration:line-through}
 .home .hrow.done .chk{background:var(--mint);border-color:var(--mint);color:#fff}
 .home .go{font-size:12.5px;font-weight:800;color:var(--ink);background:#ffffffb3;border-radius:99px;padding:6px 11px}
@@ -208,33 +217,88 @@ button{border:none;background:none;cursor:pointer}
 /* ===== 3D 글씨 (투디처럼 말랑한 입체) ===== */
 .t3d{font-weight:900;color:#ffd84a;text-shadow:0 1px 0 #f2c232,0 2px 0 #e8b526,0 3px 0 #dba71c,0 4px 0 #cc9813,0 5px 1px #b5840d,0 7px 10px rgba(90,60,0,.32);-webkit-text-stroke:.6px #f6c93a}
 /* ===== 덜어낸 디자인: 흰 카드 + 큰 숫자 + 아래 탭 ===== */
-.card,.card.lemon,.card.sage,.card.blue,.card.beige,.card.lav{background:#fff;box-shadow:0 1px 0 #2b2b3312}
+.card,.card.lemon,.card.sage,.card.blue,.card.beige,.card.lav{background:var(--card);box-shadow:0 1px 0 #2b2b3312}
 .menu-btn{display:none}
-.steps-pill{background:#fff}
+.steps-pill{background:var(--card)}
 body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
 body.fit{padding-bottom:0}
 .screen{height:calc(100dvh - 59px - 66px - env(safe-area-inset-bottom));padding-bottom:10px}
-.tabbar2{position:fixed;left:0;right:0;bottom:0;z-index:56;height:calc(66px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:#fff;border-top:1px solid var(--line);display:flex}
+.tabbar2{position:fixed;left:0;right:0;bottom:0;z-index:56;height:calc(66px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:var(--card);border-top:1px solid var(--line);display:flex}
 .tabbar2 button{flex:1;display:grid;place-items:center;align-content:center;gap:2px;font-size:11.5px;font-weight:800;color:#a6a6ae}
 .tabbar2 button i{font-style:normal;font-size:21px;line-height:1}
 .tabbar2 button.on{color:var(--ink)}
 #drawer{z-index:70}
 .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
 .bigov{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:rgba(255,246,236,0);transition:background .25s;-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0)}
-.bigov.on{background:rgba(255,246,236,.42);-webkit-backdrop-filter:blur(1.2px);backdrop-filter:blur(1.2px)}
+.bigov.on{background:var(--veil);-webkit-backdrop-filter:blur(1.2px);backdrop-filter:blur(1.2px)}
 .bigin{display:flex;flex-direction:column;align-items:center;gap:10px;transform:scale(.3);opacity:0;transition:transform .28s cubic-bezier(.3,1.5,.6,1),opacity .2s;margin-top:-8vh}
 .bigov.on .bigin{transform:scale(1);opacity:1}
-.bigtag{background:#DDF5EA;color:#1d6b4d;font-weight:900;font-size:17px;padding:7px 16px;border-radius:999px;box-shadow:0 4px 12px #2b2b3318}
+.bigtag{background:var(--mint2);color:var(--ink);font-weight:900;font-size:17px;padding:7px 16px;border-radius:999px;box-shadow:0 4px 12px #2b2b3318}
 .bigpic{background-repeat:no-repeat}
-.tstrip{height:0;overflow:hidden;display:flex;align-items:flex-end;justify-content:flex-end;gap:8px;padding-right:6px;background:#EEF6FF;border-radius:0 0 14px 14px;transition:height .32s ease}
+.tstrip{height:0;overflow:hidden;display:flex;align-items:flex-end;justify-content:flex-end;gap:8px;padding-right:6px;background:var(--mint2);border-radius:0 0 14px 14px;transition:height .32s ease}
 .tstrip.on{height:112px}
 .tstrip img{height:104px;flex:none}
-.tstrip .stag{align-self:center;background:#fff;color:#1d6b4d;font-weight:800;font-size:13px;padding:5px 11px;border-radius:999px;white-space:nowrap;opacity:0;transform:scale(.6);transition:opacity .2s .15s,transform .2s .15s}
+.tstrip .stag{align-self:center;background:var(--card);color:var(--ink);font-weight:800;font-size:13px;padding:5px 11px;border-radius:999px;white-space:nowrap;opacity:0;transform:scale(.6);transition:opacity .2s .15s,transform .2s .15s}
 .tstrip .stag.on{opacity:1;transform:scale(1)}
-.trow.opened{background:#EEF6FF;border-radius:14px 14px 0 0;border-bottom-color:transparent}
+.trow.opened{background:var(--mint2);border-radius:14px 14px 0 0;border-bottom-color:transparent}
+.seg button.on{background:var(--ink);color:var(--canvas)}
+.vseg{flex:none;margin:2px 0 8px}
+.vrow{display:flex;align-items:center;justify-content:space-between;flex:none}.vrow .vseg{margin:2px 0 8px}
+.vrow .mon{font-size:12.5px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px}
+.home .hhead{flex:none;padding:6px 2px 6px}.home .hhead .overline{margin:0;font-size:13px;font-weight:700}
+.chips3{flex:none;display:flex;gap:8px;margin-bottom:8px}
+.chips3 button,.sc.c2,.sc.c3{flex:1;min-width:0;text-align:left;border-radius:16px;padding:9px 11px}
+.chips3 small,.sc.c2 small,.sc.c3 small{display:block;font-size:11.5px;font-weight:700;opacity:.85}
+.chips3 b{display:block;font-size:16px;font-weight:900;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chips3 .c1{background:var(--mint2);color:var(--mint)}.chips3 .c2,.sc.c2{background:var(--pink2);color:var(--pink)}.chips3 .c3,.sc.c3{background:var(--inc2);color:var(--inc)}
+.lcard.tl .scroll{padding:6px 12px 6px 6px;position:relative}
+.lcard.tl .scroll:before{content:'';position:absolute;left:76px;top:0;bottom:0;width:2px;background:var(--line)}
+.tli{position:relative;min-height:46px}
+.tli .tlh{width:46px;flex:none;text-align:right;font-size:12px;font-weight:700;color:var(--muted);line-height:1.1;padding-right:2px}
+.tli .tlh small{display:block;font-size:9.5px;font-weight:600}
+.tli .chk{position:relative;z-index:1;background:var(--card)}
+.tli .tdot{width:12px;height:12px;border-radius:50%;flex:none;margin:0 7px;position:relative;z-index:1;box-shadow:0 0 0 3px var(--card)}
+.tmo.out .tdot{background:var(--pink)}.tmo.in .tdot{background:var(--inc)}
+.tmo .tx1{font-weight:700}
+.tmo .amt{flex:none;font-size:15px;font-weight:900}.tmo.out .amt{color:var(--pink)}.tmo.in .amt{color:var(--inc)}
+.tlnow{display:flex;align-items:center;height:44px;position:relative}
+.tlnow .tlh{width:46px;flex:none;text-align:right;font-size:12px;font-weight:900;color:var(--pink);padding-right:2px}
+.tlnow i{flex:1;height:2px;background:var(--pink);margin-left:10px;border-radius:2px}
+.tlnow img{height:44px;margin-left:4px}
+.tlsec{font-size:11.5px;font-weight:800;color:var(--muted);padding:12px 0 2px 58px}
+.hbar{padding-left:5px}.hbar input{min-width:0}
+.hseg{padding:2px}.hseg button{padding:7px 10px}
+.hseg button.k-todo.on{background:var(--mint);color:#fff}.hseg button.k-out.on{background:var(--pink);color:#fff}.hseg button.k-in.on{background:var(--inc);color:var(--card)}
+.home .addhint{padding-top:4px;min-height:22px}
+.screen.scrolly{height:auto;display:block;padding-bottom:110px}
+.sc{background:var(--card);border-radius:18px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 0 #0f414a12}
+.sc>small{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.sc.shero{display:flex;align-items:center;background:var(--tan);gap:8px}
+.sc.shero>div{flex:1}.sc.shero small{display:block;font-size:12px;font-weight:700;color:var(--muted)}
+.sc.shero b{display:block;font-size:34px;font-weight:900;letter-spacing:-.04em;line-height:1.15}
+.sc.shero span{font-size:13px;font-weight:800}
+.sc.shero img{height:96px;flex:none}
+.vbars{display:flex;align-items:flex-end;gap:5px;height:96px}
+.vbars>div{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;min-width:0}
+.vbars i{display:block;width:100%;min-height:3px;border-radius:5px 5px 2px 2px}
+.vbars span{font-size:10px;color:var(--muted);margin-top:3px;height:12px}
+.hb{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;font-weight:700}
+.hb .n{width:82px;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hb .bar{flex:1;height:8px;border-radius:9px;background:var(--soft);overflow:hidden}.hb .bar i{display:block;height:100%;border-radius:9px}
+.hb .v{width:62px;flex:none;text-align:right;font-size:12px;color:var(--muted)}
+.lt{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px;font-weight:700}
+.lt:last-child{border:none}.lt span{flex:1;min-width:0}.lt em{display:block;font-style:normal;font-size:11px;color:var(--muted);font-weight:600}
+.lt button{flex:none;font-size:12px;font-weight:800;background:var(--mint2);color:var(--mint);padding:6px 10px;border-radius:999px}
+.sc.ring{display:flex;align-items:center;gap:14px}
+.rg{width:76px;height:76px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center}
+.rg div{width:56px;height:56px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px}
+.sc.ring small{display:block;font-size:12px;font-weight:700;color:var(--muted)}.sc.ring b{display:block;font-size:24px;font-weight:900;letter-spacing:-.04em}.sc.ring span{font-size:12px;color:var(--muted);font-weight:700}
+.two{display:flex;gap:10px}.two>.sc{flex:1}.sc.c2 b,.sc.c3 b{font-size:18px;font-weight:900}
+.cmp{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:700}.cmp b{color:var(--ink)}
+.cmpm{margin-top:6px;font-size:14px;font-weight:900;color:var(--pink)}.cmpm.good{color:var(--mint)}
 .laysw{flex:none;display:flex;align-items:center;gap:6px;padding:0 4px 8px;font-size:12px;color:var(--muted)}
 .laysw span{margin-right:auto;font-weight:700}
-.laysw button{padding:6px 12px;border-radius:999px;background:#fff;font-size:12.5px;font-weight:700;color:var(--muted);box-shadow:0 2px 6px #2b2b3312}
+.laysw button{padding:6px 12px;border-radius:999px;background:var(--card);font-size:12.5px;font-weight:700;color:var(--muted);box-shadow:0 2px 6px #2b2b3312}
 .laysw button.on{background:var(--ink);color:#fff}
 .srow.col{flex-direction:column;align-items:stretch;gap:8px}
 .seg.lay{width:100%;margin:0}.seg.lay button{flex:1;padding:9px 4px;font-size:13px}
@@ -245,7 +309,7 @@ body.fit{padding-bottom:0}
 .stage .overline{font-size:12.5px;font-weight:700;color:#1d6b4d;margin-bottom:3px}
 .stage h1{font-size:22px;font-weight:900;letter-spacing:-.05em;line-height:1.25}
 .stage img{position:absolute;right:14px;bottom:6px;height:116px}
-.btag{position:absolute;background:#fff;color:#1d6b4d;font-weight:800;font-size:13px;padding:5px 11px;border-radius:999px;white-space:nowrap;opacity:0;transform:scale(.6);transition:opacity .2s,transform .2s;z-index:2}
+.btag{position:absolute;background:var(--card);color:#1d6b4d;font-weight:800;font-size:13px;padding:5px 11px;border-radius:999px;white-space:nowrap;opacity:0;transform:scale(.6);transition:opacity .2s,transform .2s;z-index:2}
 .btag.on{opacity:1;transform:scale(1)}
 .stage .btag{left:16px;bottom:30px}
 /* C 한 장 카드 */
@@ -269,31 +333,31 @@ body.fit{padding-bottom:0}
 .hd2 .title-slot{width:104px;height:118px;flex:none;background:transparent!important;margin-bottom:-4px}
 .hd2.s h1{font-size:25px}.hd2.s .title-slot{width:84px;height:94px}
 .tiles{display:flex;gap:10px;margin-bottom:10px;flex:none}
-.tile{flex:1;min-width:0;background:#fff;border-radius:20px;padding:12px 14px;box-shadow:0 1px 0 #2b2b3312;text-align:left;display:block}
+.tile{flex:1;min-width:0;background:var(--card);border-radius:20px;padding:12px 14px;box-shadow:0 1px 0 #2b2b3312;text-align:left;display:block}
 .tile small{display:block;font-size:12.5px;color:var(--muted);font-weight:700}
 .tile b{display:block;font-size:23px;font-weight:900;margin-top:2px;letter-spacing:-.04em;white-space:nowrap}
 .tile b u{text-decoration:none;font-size:13.5px;font-weight:700}
-.tile .bar{height:6px;border-radius:9px;background:#f1ece4;margin-top:8px;overflow:hidden}.tile .bar i{display:block;height:100%;border-radius:9px;transition:width .4s}
-.lcard{flex:1;min-height:0;background:#fff;border-radius:22px;box-shadow:0 1px 0 #2b2b3312;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.tile .bar{height:6px;border-radius:9px;background:var(--soft);margin-top:8px;overflow:hidden}.tile .bar i{display:block;height:100%;border-radius:9px;transition:width .4s}
+.lcard{flex:1;min-height:0;background:var(--card);border-radius:22px;box-shadow:0 1px 0 #2b2b3312;display:flex;flex-direction:column;overflow:hidden;position:relative}
 .lcard .scroll{margin:0;padding:2px 16px}
 .trow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #2b2b3312;position:relative}
 .trow:last-child{border-bottom:none}
 .trow .tx1{flex:1;min-width:0;text-align:left;font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .25s}
 .trow .tm{font-size:13px;color:#9a9aa3;flex:none}
-.trow .chk{width:28px;height:28px;border:2px solid #cfcfd6;background:#fff;color:#fff;font-size:14px;transition:all .2s}
+.trow .chk{width:28px;height:28px;border:2px solid #cfcfd6;background:var(--card);color:#fff;font-size:14px;transition:all .2s}
 .trow.done .chk{background:var(--mint);border-color:var(--mint)}
 .trow.done .tx1{color:#b5b5bd;text-decoration:line-through}
 .trow .acts{display:flex;gap:6px;flex:none}
-.trow .acts button{font-size:12px;font-weight:800;border-radius:99px;padding:6px 10px;background:#f4efe8}
+.trow .acts button{font-size:12px;font-weight:800;border-radius:99px;padding:6px 10px;background:var(--soft)}
 .trow .acts .del{background:#ffe3e3;color:#a33}
-.addbar{flex:none;margin:6px 0 22px;background:#fff;border-radius:999px;padding:7px 7px 7px 18px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px #2b2b331a}
+.addbar{flex:none;margin:6px 0 22px;background:var(--card);border-radius:999px;padding:7px 7px 7px 18px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px #2b2b331a}
 .addbar input{flex:1;min-width:0;border:none;outline:none;background:none;font-size:15px;font-weight:600}
 .addbar>button{width:42px;height:42px;border-radius:50%;background:var(--pink);color:#fff;font-size:24px;flex:none}
 .addbar .seg{margin:0;flex:none}
-.dchip{position:relative;flex:none;background:#fff;border-radius:999px;padding:5px 11px;font-size:12.5px;color:var(--ink);box-shadow:0 2px 6px #2b2b3314}
+.dchip{position:relative;flex:none;background:var(--card);border-radius:999px;padding:5px 11px;font-size:12.5px;color:var(--ink);box-shadow:0 2px 6px #2b2b3314}
 .dchip input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:none}
 .addhint.mrow{display:flex;align-items:center;gap:8px;padding:8px 6px 0;min-height:36px}
-.addhint .apc{border-radius:999px;padding:4px 10px;margin-left:4px;font-size:12px;font-weight:700;background:#fff;color:var(--muted);box-shadow:0 2px 6px #2b2b3314}
+.addhint .apc{border-radius:999px;padding:4px 10px;margin-left:4px;font-size:12px;font-weight:700;background:var(--card);color:var(--muted);box-shadow:0 2px 6px #2b2b3314}
 .addhint .apc.on{background:var(--mint);color:#fff}
 .addhint{flex:none;font-size:12px;color:var(--muted);padding:8px 14px 0;min-height:30px}
 .fab{position:fixed;right:18px;bottom:calc(82px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:50%;background:var(--pink);color:#fff;font-size:32px;display:grid;place-items:center;box-shadow:0 6px 16px #ff8fb166;z-index:40}
@@ -329,10 +393,10 @@ body.nav-hide #addChoice{display:none}
 .set .srow>div{flex:1;min-width:0}
 .set .srow strong{display:block;font-size:15px}
 .set .srow span.small{display:block;margin-top:2px;line-height:1.4}
-.set .sbtn{flex:none;border-radius:99px;padding:9px 14px;font-size:13px;font-weight:800;background:#f4efe8;white-space:nowrap}
+.set .sbtn{flex:none;border-radius:99px;padding:9px 14px;font-size:13px;font-weight:800;background:var(--soft);white-space:nowrap}
 .set .sbtn.mint{background:var(--mint);color:#fff}.set .sbtn.pink{background:var(--pink);color:#fff}.set .sbtn.red{background:#ffe3e3;color:#a33}
 .sw2{flex:none;width:52px;height:30px;border-radius:99px;background:#d9d6d0;position:relative;transition:background .2s}
-.sw2 i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0003;transition:left .2s}
+.sw2 i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--card);box-shadow:0 1px 3px #0003;transition:left .2s}
 .sw2.on{background:var(--mint)}.sw2.on i{left:25px}
 /* 완료 순간에만 나타나는 투디 */
 .todi-run{position:fixed;height:78px;pointer-events:none;z-index:57;transition:opacity .35s}
@@ -346,7 +410,7 @@ body.nav-hide #addChoice{display:none}
 .panel::before{content:"";position:absolute;inset:-60%;background:repeating-conic-gradient(from 0deg at 50% 50%,rgba(255,255,255,.55) 0deg 2.2deg,rgba(255,255,255,0) 2.2deg 10deg);animation:spin 14s linear infinite}
 .panel .headline{position:absolute;top:18px;left:0;right:0;text-align:center;font-size:44px;font-weight:900;color:var(--yellow);-webkit-text-stroke:2.5px var(--ink);text-shadow:4px 4px 0 var(--ink);transform:rotate(-5deg);animation:wordIn .5s .15s cubic-bezier(.34,1.8,.64,1) both;z-index:2}
 #cutSlot{position:absolute;left:0;right:0;top:70px;bottom:92px}
-.panel .bubble{position:absolute;left:18px;right:18px;bottom:18px;background:#fff;border:3px solid var(--ink);border-radius:18px;padding:10px 14px;font-size:15px;font-weight:700;text-align:center;z-index:2;animation:wordIn .4s .35s cubic-bezier(.34,1.56,.64,1) both}
+.panel .bubble{position:absolute;left:18px;right:18px;bottom:18px;background:var(--card);border:3px solid var(--ink);border-radius:18px;padding:10px 14px;font-size:15px;font-weight:700;text-align:center;z-index:2;animation:wordIn .4s .35s cubic-bezier(.34,1.56,.64,1) both}
 .panel .bubble small{display:block;font-size:12px;font-weight:400;color:var(--muted);margin-top:2px}
 .panel .stepbadge{position:absolute;top:84px;right:14px;z-index:2;background:var(--ink);color:var(--lemon);border-radius:99px;padding:5px 10px;font-size:12px;font-weight:800;animation:wordIn .4s .6s both}
 @keyframes panelIn{0%{transform:scale(.3) rotate(-10deg);opacity:0}100%{transform:scale(1) rotate(-1.5deg);opacity:1}}
@@ -376,7 +440,7 @@ dialog .acts{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
 
 <main class="wrap" id="main"></main>
 <nav class="tabbar2" id="tabbar2"></nav>
-<div id="addChoice"><button data-act="addGo" data-to="plan" style="background:var(--mint)">✓ 할 일 적기</button><button data-act="addGo" data-to="money" style="background:var(--pink)">₩ 지출 적기</button></div>
+<div id="addChoice"><button data-act="addGo" data-to="home" data-t="todo" style="background:var(--mint)">✓ 할 일</button><button data-act="addGo" data-to="home" data-t="out" style="background:var(--pink)">− 지출</button><button data-act="addGo" data-to="home" data-t="in" style="background:var(--inc)">＋ 수입</button></div>
 <button id="navHandle" aria-label="메뉴바 보이기"><i></i></button>
 <div id="drawer"><div class="dim" id="drawerDim"></div><nav class="sheet" id="drawerNav"></nav></div>
 
@@ -585,7 +649,7 @@ function parseMoney(text, typeSel){
 /* ===================== 6. 화면 그리기 ===================== */
 /* TODI 로고 (원형 배지): 통통한 흰 글씨 + 민트 그림자 + 분홍 원 + 민트 고리 */
 function logoSVG(){
-  const PK='#FF8FB1', GR='#3DBE8B', INK='#2B2B33';
+  const PK='#B5728A', GR='#AABAAE', INK='#0F414A';
   const L = {T:'M-22,-30 H22 M0,-30 V30', O:'M0,-30 A20,30 0 1 1 -0.1,-30 Z', D:'M-15,-30 V30 H-5 A21,30 0 0 0 -5,-30 Z', I:'M0,-30 V30'};
   const pos = [['T',-84,6,-10],['O',-30,-8,-3],['D',30,-8,4],['I',84,6,10]];
   const layer = (dx,dy,col,w)=>pos.map(([ch,x,y,r])=>`<path d="${L[ch]}" transform="translate(${150+x+dx} ${150+y+dy}) rotate(${r})" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`).join('');
@@ -597,10 +661,10 @@ function logoSVG(){
     ${layer(7,9,GR,38)}${layer(0,0,INK,38)}${layer(0,0,'#fff',24)}</svg>`;
 }
 const PAGES = [
-  {id:'home',   ic:'⌂',  name:'홈',           sub:'오늘 할 일과 쓸 수 있는 돈', sec:'오늘'},
-  {id:'plan',   ic:'✓',  name:'할 일',        sub:'오늘 할 일 · 주간 일정', sec:'일정'},
+  {id:'home',   ic:'◷',  name:'오늘',         sub:'할 일 · 지출 · 수입 한 줄로', sec:'오늘'},
+  {id:'plan',   ic:'✓',  name:'할 일',        sub:'할 일 기록 · 분석', sec:'일정'},
   {id:'focus',  ic:'⏱', name:'집중 타이머',   sub:'투디와 함께 집중',        sec:'일정'},
-  {id:'money',  ic:'₩',  name:'가계부',       sub:'쓸 수 있는 돈 · 거래 내역', sec:'돈'},
+  {id:'money',  ic:'₩',  name:'금융',         sub:'지출 · 수입 기록 · 분석', sec:'돈'},
   {id:'report', ic:'◔',  name:'어디에 썼을까', sub:'이달 지출 분석',          sec:'돈'},
   {id:'save',   ic:'🐷', name:'저축 · 고정지출', sub:'목표 저축 · 매달 나가는 돈', sec:'돈'},
   {id:'friend', ic:'✿',  name:'투디 친구',     sub:'걸음 · 습관',            sec:'투디'},
@@ -622,7 +686,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.17 17:39';
+const BUILD = '11.17 21:22';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -805,11 +869,12 @@ function render(){
     if(tab !== lastTab){ window.ARRIVE_EPOCH = (window.ARRIVE_EPOCH||0) + 1; lastTab = tab; }
     $('drawerNav').innerHTML = drawerHTML();
     const tb = (id,ic,n)=>`<button data-tab="${id}" class="${tab===id?'on':''}"><i>${ic}</i>${n}</button>`;
-    $('tabbar2').innerHTML = tb('home','⌂','홈') + tb('plan','✓','할 일') + `<button class="plus" data-act="plus" aria-label="적기"><span>+</span></button>` + tb('money','₩','가계부') + `<button data-act="more" class="${['home','plan','money'].includes(tab)?'':'on'}"><i>☰</i>더보기</button>`;
+    $('tabbar2').innerHTML = tb('home','◷','오늘') + tb('plan','✓','할 일') + `<button class="plus" data-act="plus" aria-label="적기"><span>+</span></button>` + tb('money','₩','금융') + `<button data-act="more" class="${['home','plan','money'].includes(tab)?'':'on'}"><i>☰</i>더보기</button>`;
     document.body.classList.remove('add-open','nav-hide');
     $('pageName').textContent = (PAGES.find(x=>x.id===tab)||PAGES[0]).name;
     if(!$('logoTop').firstChild) $('logoTop').innerHTML = logoSVG();
-    document.body.classList.toggle('fit', tab==='home' || tab==='plan' || tab==='money');
+    document.body.classList.toggle('fit', tab==='home' || (tab==='plan' && planView==='list') || (tab==='money' && moneyView==='list'));
+    applyTheme();
     $('stepsPill').textContent = `👣 오늘 ${stepsToday()}걸음`;
     $('main').innerHTML = ({home:homePage, settings:settingsPage, plan:planPage, focus:focusPage, money:moneyPage, report:reportPage, save:savePage, friend:friendPage}[tab] || planPage)();
     updateTimer();
@@ -817,27 +882,116 @@ function render(){
 }
 
 /* ---------- 6-1. 플랜 ---------- */
+/* 낮·밤 색: 자동이면 저녁 7시 ~ 아침 7시는 밤 색 */
+function applyTheme(){
+  try{
+    const m = S.opt.theme || 'auto', h = new Date().getHours();
+    const night = m==='night' || (m==='auto' && (h>=19 || h<7));
+    document.body.classList.toggle('night', night);
+    const mt = document.querySelector('meta[name="theme-color"]'); if(mt) mt.content = night ? '#0F414A' : '#F6F0E5';
+  }catch(e){ console.error('색 바꾸기 오류', e); }
+}
+setInterval(applyTheme, 60000);
+let homeType = 'todo';                                   // 홈 입력칸 종류: todo 할 일 | out 지출 | in 수입
+function nowHM(){ const d = new Date(); return pad(d.getHours())+':'+pad(d.getMinutes()); }
+/* 타임라인 왼쪽 시간: 오전/오후 작게 + 시:분 */
+function tlTime(tm){ if(!tm) return ''; const [h,m] = tm.split(':').map(Number); return `<small>${h<12?'오전':'오후'}</small>${h%12||12}:${pad(m)}`; }
+function tlItem(i){
+  const x = i.o, open = openRow===x.id;
+  if(i.k==='t'){                                         // 할 일 줄: 동그라미가 타임라인 점 역할
+    const pinned = S.priority[x.date]===x.id;
+    return `<div class="trow tli ${x.done?'done':''}" data-row="${x.id}"><span class="tlh num">${tlTime(i.tm)}</span>
+      <button class="chk" data-act="toggle" data-id="${x.id}" aria-label="완료">${x.done?'✓':''}</button>
+      <button class="tx1" data-act="rowmenu" data-id="${x.id}">${pinned?'★ ':''}${esc(x.title)}</button>
+      ${open ? `<span class="acts"><button data-act="pin" data-id="${x.id}">${pinned?'★ 해제':'☆ 꼭'}</button><button class="del" data-act="delTask" data-id="${x.id}">삭제</button></span>` : ''}</div>`;
+  }
+  const isIn = x.type==='in', mc = MCATS[x.cat]||MCATS['기타'];   // 지출·수입 줄
+  return `<div class="trow tli tmo ${isIn?'in':'out'}" data-row="${x.id}"><span class="tlh num">${tlTime(i.tm)}</span>
+    <span class="tdot"></span>
+    <button class="tx1" data-act="rowmenu" data-id="${x.id}">${isIn?'💰':mc.e} ${esc(x.title)}</button>
+    ${open ? `<span class="acts"><button class="del" data-act="delTx" data-id="${x.id}">삭제</button></span>` : `<b class="amt num">${isIn?'+':'−'}${won(x.amount)}</b>`}</div>`;
+}
 function homePage(){
-  const t = today(), m = t.slice(0,7);
-  const list = S.tasks.filter(x=>x.date===t).sort((a,b)=>(S.priority[t]===b.id)-(S.priority[t]===a.id) || (a.time||'99').localeCompare(b.time||'99'));
-  const done = list.filter(x=>x.done).length, left = list.length-done, allDone = list.length && left===0;
-  const {spent, budget, remaining} = monthData(m);
-  const daysLeft = (()=>{ const d = new Date(); return new Date(d.getFullYear(), d.getMonth()+1, 0).getDate() - d.getDate() + 1; })();
-  const daily = remaining!=null && remaining>0 ? Math.floor(remaining/daysLeft) : null;
+  const t = today();
+  planDay = t; moneyDay = t;                             // 홈에서 적으면 오늘로 저장
+  if(homeType!=='todo') mType = homeType;
+  const tasks = S.tasks.filter(x=>x.date===t), txs = S.tx.filter(x=>x.date===t);
+  const done = tasks.filter(x=>x.done).length;
+  const out = txs.filter(x=>x.type==='out').reduce((a,b)=>a+b.amount,0), inc = txs.filter(x=>x.type==='in').reduce((a,b)=>a+b.amount,0);
+  const items = [...tasks.map(o=>({k:'t', tm:o.time||'', o})), ...txs.map(o=>({k:o.type, tm:o.at||'', o}))];
+  const timed = items.filter(i=>i.tm).sort((a,b)=>a.tm.localeCompare(b.tm)), free = items.filter(i=>!i.tm);
+  const now = nowHM(), walk = (typeof TODI_IMG!=='undefined' && TODI_IMG.todi_0) || '';
+  const nowLine = `<div class="tlnow"><span class="tlh">지금</span><i></i><img id="tlWalk" alt="" src="${walk}"></div>`;
+  let body = '', put = false;
+  timed.forEach(i=>{ if(!put && i.tm > now){ body += nowLine; put = true; } body += tlItem(i); });
+  if(!put) body += nowLine;
+  if(free.length) body += `<div class="tlsec">시간 정하지 않은 것</div>` + free.map(tlItem).join('');
+  const T = homeType;
+  const inp = T==='todo'
+    ? `<div class="addhint" id="todoPrev"></div><div class="addbar hbar">${hSeg(T)}<input id="todoIn" placeholder="8시 운동" autocomplete="off"><button data-act="addTodo" aria-label="추가">+</button></div>`
+    : `<div class="addhint" id="moneyPrev"></div><div class="addbar hbar">${hSeg(T)}<input id="moneyIn" placeholder="${T==='out'?'커피 4500':'용돈 5만'}" autocomplete="off"><button data-act="addMoney" aria-label="추가">+</button></div>`;
   return `<div class="screen home">
-  <div class="hd2">
-    <div><div class="overline">${dLabel(t,true)}</div>
-      <h1>${!list.length ? '오늘 할 일을<br>적어 볼까요?' : allDone ? '오늘 할 일을<br><em>전부</em> 해냈어요!' : `오늘 할 일<br><em>${left}개</em> 남았어요`}</h1></div>
-    ${true ? slotDiv('title-home','hello', allDone?'idle':'prep','title-slot','poke',true) : `<div class="hbox" id="todiBox"><span class="btag"></span><img alt="" src="${allDone && TODI_FX.joy ? TODI_FX.joy[TODI_FX.joy.length-1] : ((typeof TODI_IMG !== 'undefined' && TODI_IMG.idle_0) || '')}"></div>`}
+  <div class="hhead"><div class="overline">${dLabel(t,true)}</div></div>
+  <div class="chips3">
+    <button data-tab="plan" class="c1"><small>할 일</small><b class="num">${done} / ${tasks.length}</b></button>
+    <button data-tab="money" class="c2"><small>오늘 지출</small><b class="num">${out?'−'+won(out):'0'}</b></button>
+    <button data-tab="money" class="c3"><small>오늘 수입</small><b class="num">${inc?'+'+won(inc):'0'}</b></button>
   </div>
-  <div class="tiles">
-    <button class="tile" data-tab="plan"><small>오늘 할 일</small><b class="num">${done} <u>/ ${list.length} 완료</u></b><div class="bar"><i style="width:${list.length?done/list.length*100:0}%;background:var(--mint)"></i></div></button>
-    <button class="tile" data-tab="money"><small>${daily!=null?'오늘 쓸 수 있는 돈':'쓸 수 있는 돈'}</small><b class="num">${remaining==null ? '<u>예산을 정해 주세요</u>' : `${remaining<0?'−':''}${won(Math.abs(daily!=null?daily:remaining))}<u>원</u>`}</b><div class="bar"><i style="width:${budget?Math.min(100,spent/budget*100):0}%;background:var(--pink)"></i></div></button>
-  </div>
-  <section class="lcard"><div class="scroll">${list.length ? list.map(x=>simpleRow(x,t)).join('') : '<div class="empty">아래 가운데 ＋ 버튼으로 오늘 할 일을 적어 보세요</div>'}</div></section>
+  <section class="lcard tl"><div class="scroll">${items.length ? body : nowLine + '<div class="empty">아래에서 할 일 · 지출 · 수입을 적어 보세요</div>'}</div></section>
+  ${inp}
   </div>`;
 }
+function hSeg(T){ return `<div class="seg hseg">${[['todo','할 일'],['out','지출'],['in','수입']].map(([k,n])=>`<button class="${T===k?'on':''} k-${k}" data-act="htype" data-t="${k}">${n}</button>`).join('')}</div>`; }
+/* 지금 시각 줄의 투디가 걸어가는 움직임 */
+setInterval(()=>{ try{ const w = document.getElementById('tlWalk'); if(!w || typeof TODI_IMG==='undefined' || !S.opt.motion) return; window._wk = ((window._wk||0)+1)%10; const f = TODI_IMG['todi_'+window._wk]; if(f) w.src = f; }catch(e){} }, 120);
 
+/* ───── 할 일 · 금융 화면 위의 [목록 / 분석] 고르기 ───── */
+let planView = 'list', moneyView = 'list';
+function viewSeg(cur, act, a, b){ return `<div class="seg vseg">${[['list',a],['stat',b]].map(([k,n])=>`<button class="${cur===k?'on':''}" data-act="${act}" data-v="${k}">${n}</button>`).join('')}</div>`; }
+function bars(list, color){ const mx = Math.max(1, ...list.map(x=>x.v)); return `<div class="vbars">${list.map(x=>`<div><i style="height:${Math.round(x.v/mx*100)}%;background:${x.c||color};opacity:${x.on?1:.45}"></i><span>${x.l}</span></div>`).join('')}</div>`; }
+function hbar(n, v, mx, color, tail){ return `<div class="hb"><span class="n">${n}</span><div class="bar"><i style="width:${mx?Math.round(v/mx*100):0}%;background:${color}"></i></div><span class="v num">${tail}</span></div>`; }
+const STAT_COLORS = ['var(--mint)','var(--inc)','var(--pink)','var(--tan2)','var(--muted)'];
+function planStatPage(){
+  const t = today(), d = new Date(t+'T12:00'), wk0 = addDays(t, -((d.getDay()+6)%7));
+  const week = Array.from({length:7},(_,i)=>{ const s = addDays(wk0,i), L = S.tasks.filter(x=>x.date===s); return {s, n:L.length, d:L.filter(x=>x.done).length}; });
+  const wn = week.reduce((a,b)=>a+b.n,0), wd = week.reduce((a,b)=>a+b.d,0), pct = wn ? Math.round(wd/wn*100) : 0;
+  let streak = 0;                                        // 할 일을 전부 끝낸 날이 며칠 이어졌나
+  for(let k = 0; k < 60; k++){ const s = addDays(t,-k), L = S.tasks.filter(x=>x.date===s);
+    if(!L.length || L.some(x=>!x.done)){ if(k===0) continue; break; } streak++; }
+  const m = t.slice(0,7), cnt = {};
+  S.tasks.filter(x=>x.done && x.date.startsWith(m)).forEach(x=>cnt[x.cat]=(cnt[x.cat]||0)+1);
+  const cats = Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,5), cmx = cats.length ? cats[0][1] : 0;
+  const late = S.tasks.filter(x=>!x.done && x.date<t && x.date>=addDays(t,-30)).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,4);
+  const joy = (typeof TODI_FX!=='undefined' && TODI_FX.joy) ? TODI_FX.joy[TODI_FX.joy.length-1] : '';
+  return `<div class="screen scrolly">
+  ${viewSeg('stat','pview','목록','분석')}
+  <section class="sc shero"><div><small>이번 주 완료율</small><b class="num">${pct}%</b><span>${streak ? `🔥 ${streak}일 연속 다 끝냈어요` : `${wd} / ${wn}개 끝냈어요`}</span></div><img alt="" src="${joy}"></section>
+  <section class="sc"><small>요일별 완료</small>${bars(week.map((x,i)=>({v:x.d, l:'월화수목금토일'[i], on:x.s===t})), 'var(--mint)')}</section>
+  <section class="sc"><small>이번 달 종류별로 끝낸 일</small>${cats.length ? cats.map(([c,v],i)=>hbar(`${(CATS[c]||CATS.etc).emoji} ${(CATS[c]||CATS.etc).name}`, v, cmx, STAT_COLORS[i], v+'번')).join('') : '<div class="empty">할 일을 끝내면 여기에 쌓여요</div>'}</section>
+  <section class="sc"><small>지난 날 못 한 일</small>${late.length ? late.map(x=>`<div class="lt"><span>${esc(x.title)}<em>${dLabel(x.date)}</em></span><button data-act="moveToday" data-id="${x.id}">오늘로 옮기기</button></div>`).join('') : '<div class="empty">밀린 일이 없어요 👍</div>'}</section>
+  </div>`;
+}
+function moneyStatPage(){
+  const {rec, spent, income, budget, remaining} = monthData(month);
+  const [y,mm] = month.split('-').map(Number), cur = month===today().slice(0,7);
+  const last = new Date(y, mm, 0).getDate(), upto = cur ? Number(today().slice(8)) : last;
+  const daysLeft = last - upto + 1, daily = cur && remaining>0 ? Math.floor(remaining/daysLeft) : null;
+  const used = budget ? Math.min(100, Math.round((budget-(remaining==null?0:remaining))/budget*100)) : 0;
+  const byDay = Array.from({length:upto},(_,i)=>{ const s = `${month}-${pad(i+1)}`; return {v:rec.filter(x=>x.type==='out' && x.date===s).reduce((a,b)=>a+b.amount,0), l:(i===0||(i+1)%5===0)?String(i+1):'', on:cur && i+1===upto}; });
+  const sums = {}; rec.filter(x=>x.type==='out').forEach(x=>sums[x.cat]=(sums[x.cat]||0)+x.amount);
+  const parts = Object.entries(sums).sort((a,b)=>b[1]-a[1]).slice(0,5), pmx = parts.length ? parts[0][1] : 0;
+  const pm = (()=>{ const d = new Date(y, mm-2, 1); return `${d.getFullYear()}-${pad(d.getMonth()+1)}`; })();
+  const prev = S.tx.filter(x=>x.type==='out' && x.date.startsWith(pm) && Number(x.date.slice(8))<=upto).reduce((a,b)=>a+b.amount,0);
+  return `<div class="screen scrolly">
+  <div class="vrow">${viewSeg('stat','mview','내역','분석')}<span class="mon">${y}년 ${mm}월 <button class="mbtn" data-act="month" data-d="-1">‹</button><button class="mbtn" data-act="month" data-d="1">›</button></span></div>
+  <section class="sc ring"><div class="rg" style="background:conic-gradient(var(--pink) 0 ${used}%, var(--soft) 0)"><div class="num">${budget?used+'%':'—'}</div></div>
+    <div><small>${budget==null?'예산을 정하면 남은 돈이 보여요':'이번 달 남은 예산'}</small><b class="num">${remaining==null?'<button class="sbtn" data-act="budget">예산 정하기</button>':(remaining<0?'−':'')+won(Math.abs(remaining))+'원'}</b>${daily!=null?`<span>하루 ${won(daily)}원씩 쓸 수 있어요</span>`:''}</div></section>
+  <div class="two"><section class="sc c3"><small>수입</small><b class="num">+${won(income)}</b></section><section class="sc c2"><small>지출</small><b class="num">−${won(spent)}</b></section></div>
+  <section class="sc"><small>날짜별 지출</small>${bars(byDay, 'var(--pink)')}</section>
+  <section class="sc"><small>어디에 썼나</small>${parts.length ? parts.map(([c,v],i)=>hbar(`${(MCATS[c]||MCATS['기타']).e} ${c}`, v, pmx, STAT_COLORS[(i+2)%5], won(v))).join('') : '<div class="empty">지출을 적으면 여기에 쌓여요</div>'}</section>
+  ${prev ? `<section class="sc"><small>지난달 같은 날까지와 비교</small><div class="cmp"><span>지난달 <b class="num">${won(prev)}원</b></span><span>이번 달 <b class="num">${won(spent)}원</b></span></div><div class="cmpm ${spent<=prev?'good':''}">${spent<=prev ? `${won(prev-spent)}원 덜 썼어요 👏` : `${won(spent-prev)}원 더 썼어요`}</div></section>` : ''}
+  </div>`;
+}
 function settingsPage(){
   const o = S.opt, m = today().slice(0,7), size = (()=>{ try{ return Math.round(JSON.stringify(S).length/1024*10)/10; }catch(e){ return 0; } })();
   const sw = (k,on)=>`<button class="sw2 ${on?'on':''}" data-act="opt" data-k="${k}" aria-label="켜기/끄기"><i></i></button>`;
@@ -856,6 +1010,8 @@ function settingsPage(){
   </section>
   <section class="card set">
     <h2>화면</h2>
+    <div class="srow col"><div><strong>화면 색</strong><span class="small">자동: 저녁 7시부터 아침 7시까지 밤 색</span></div>
+      <div class="seg lay">${[['auto','자동'],['day','낮'],['night','밤']].map(([k,n])=>`<button class="${(o.theme||'auto')===k?'on':''}" data-act="theme" data-v="${k}">${n}</button>`).join('')}</div></div>
     <div class="srow col"><div><strong>완료할 때 투디 크기</strong><span class="small">줄 펼침: 완료한 줄이 펼쳐지며 그 안에서 움직이고, 하루를 전부 끝내면 가운데에 크게 나와요</span></div>
       <div class="seg lay">${[['row','줄 옆에 작게'],['mix','줄 펼침']].map(([k,n])=>`<button class="${(o.layout||'row')===k?'on':''}" data-act="layout" data-v="${k}">${n}</button>`).join('')}</div></div>
     <div class="srow"><div><strong>메뉴바 자동으로 숨기기</strong><span class="small">목록을 넘기면 아래 메뉴바가 스르륵 내려가요</span></div>${sw('navHide',o.navHide)}</div>
@@ -872,7 +1028,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.17 17:39 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.17 21:22 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
@@ -887,6 +1043,7 @@ function importText(txt){
   save(); tab = 'home'; location.hash = 'home'; render(); toast('백업을 불러왔어요'); return true;
 }
 function planPage(){
+  if(planView==='stat') return planStatPage();
   const list = S.tasks.filter(t=>t.date===planDay).sort((a,b)=>(S.priority[planDay]===b.id)-(S.priority[planDay]===a.id) || (a.time||'99').localeCompare(b.time||'99'));
   const done = list.filter(t=>t.done).length, allDone = list.length && done===list.length;
   const wk0 = (()=>{ const d = new Date(planDay+'T12:00'); return addDays(planDay, -((d.getDay()+6)%7)); })();
@@ -910,7 +1067,7 @@ function planPage(){
   }
   const laySw = `<div class="laysw"><span>완료 동작</span>${[['row','줄 옆에 작게'],['mix','줄 펼침']].map(([k,n])=>`<button class="${layNow===k?'on':''}" data-act="layout" data-v="${k}">${n}</button>`).join('')}</div>`;
   return `<div class="screen">
-  ${laySw}
+  ${viewSeg('list','pview','목록','분석')}
   ${top}
   <div class="wk"><button class="mbtn" data-act="week" data-d="-7">‹</button>
     <div class="week">${Array.from({length:7},(_,i)=>{ const s = addDays(wk0,i), d = new Date(s+'T12:00');
@@ -958,12 +1115,14 @@ function monthData(m){
   return {rec, spent, income, unpaid, budget, remaining: budget==null ? null : budget-spent-unpaid};
 }
 function moneyPage(){
+  if(moneyView==='stat') return moneyStatPage();
   const {rec, spent, income, unpaid, budget, remaining} = monthData(month);
   const [y,mm] = month.split('-').map(Number);
   const cur = month===today().slice(0,7);
   const daysLeft = (()=>{ const d = new Date(); return new Date(d.getFullYear(), d.getMonth()+1, 0).getDate() - d.getDate() + 1; })();
   const daily = cur && remaining>0 ? Math.floor(remaining/daysLeft) : 0;
   return `<div class="screen">
+  ${viewSeg('list','mview','내역','분석')}
   <div class="hd2 s">
     <div><div class="overline">${y}년 ${mm}월 <button class="mbtn" data-act="month" data-d="-1">‹</button><button class="mbtn" data-act="month" data-d="1">›</button></div>
       <h1>${remaining==null ? '예산을 정해 볼까요?' : `<em style="color:${remaining<0?'var(--alert)':'var(--pink)'}">${won(Math.abs(remaining))}원</em> ${remaining<0?'넘었어요':'남았어요'}`}</h1></div>
@@ -1126,7 +1285,13 @@ document.addEventListener('click', e=>{
           const o = S.opt, nm = S.name, base = seed(); base.tasks = []; base.tx = []; base.priority = {}; base.paid = {}; base.budget = {}; base.steps = {}; base.bills = []; base.savings = {goal:null, entries:[]}; base.seen = [];
           S = base; S.opt = o; S.name = nm; window.DECO = S.deco; save(); tab = 'home'; location.hash = 'home'; render(); toast('모든 기록을 지웠어요'); } break;
       case 'plus': document.body.classList.toggle('add-open'); break;
-      case 'addGo': { const to = b.dataset.to, was = tab; tab = to; location.hash = to; if(to==='plan' && was!=='plan') planDay = today(); if(to==='money' && was!=='money'){ moneyDay = today(); month = moneyDay.slice(0,7); } render(); setTimeout(()=>{ try{ $(to==='plan'?'todoIn':'moneyIn').focus(); }catch(e){} }, 80); break; }
+      case 'htype': homeType = b.dataset.t; if(homeType!=='todo') mType = homeType; render(); setTimeout(()=>{ try{ ($('todoIn')||$('moneyIn')).focus(); }catch(e){} }, 30); break;
+      case 'pview': planView = b.dataset.v; render(); break;
+      case 'mview': moneyView = b.dataset.v; render(); break;
+      case 'moveToday': { const x = S.tasks.find(t=>t.id===b.dataset.id); if(x){ x.date = today(); save(); render(); toast(`"${x.title}" 오늘로 옮겼어요`); } break; }
+      case 'theme': S.opt.theme = b.dataset.v; save(); render(); break;
+      case 'addGo': { if(b.dataset.t){ homeType = b.dataset.t; if(homeType!=='todo') mType = homeType; setTimeout(()=>{ try{ ($('todoIn')||$('moneyIn')).focus(); }catch(e){} }, 60); }
+        const to = b.dataset.to, was = tab; tab = to; location.hash = to; if(to==='plan' && was!=='plan') planDay = today(); if(to==='money' && was!=='money'){ moneyDay = today(); month = moneyDay.slice(0,7); } render(); setTimeout(()=>{ try{ $(to==='plan'?'todoIn':'moneyIn').focus(); }catch(e){} }, 80); break; }
       case 'rowmenu': openRow = openRow===b.dataset.id ? null : b.dataset.id; render(); break;
       case 'fab': tab = 'plan'; location.hash = 'plan'; render(); setTimeout(()=>{ try{ $('todoIn').focus(); }catch(e){} }, 60); break;
       case 'toggle': {
@@ -1235,7 +1400,8 @@ function addMoney(){
   const p = parseMoney(v, mType);
   if(!p.amount){ toast('금액을 숫자로 적어주세요'); return; }
   const nid = uid();
-  S.tx.push({id:nid, date:p.date || moneyDay, title:p.title, type:p.type, amount:p.amount, cat:p.type==='in'?'수입':p.cat});
+  const dd = p.date || moneyDay;
+  S.tx.push({id:nid, date:dd, at: dd===today() ? nowHM() : '', title:p.title, type:p.type, amount:p.amount, cat:p.type==='in'?'수입':p.cat});
   month = (p.date || moneyDay).slice(0,7);
   if(p.type==='out'){ const got = addStep('record'); save(); render(); celebrate('tx-'+nid, 'spend', `${won(p.amount)}원`, got); }
   else { save(); render(); celebrate('tx-'+nid, 'save', `+${won(p.amount)}원`); }
