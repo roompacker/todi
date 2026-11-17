@@ -246,6 +246,9 @@ body.fit{padding-bottom:0}
 .nowc .npic{flex:none;position:relative;display:flex;align-items:flex-end;justify-content:flex-end;min-width:96px}
 .nowc .npic img{height:124px}
 .nowc .npic .btag{right:0;top:-4px}
+.hbox{position:relative;width:104px;height:118px;flex:none;margin-bottom:-4px}
+.hbox img{position:absolute;right:0;bottom:0;height:114px}
+.hbox .btag{right:100%;margin-right:-14px;top:2px;background:#DDF5EA}
 .nsub{flex:none;font-size:12px;color:var(--muted);padding:0 8px 4px}
 .hd2{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;padding:4px 4px 6px;flex:none}
 .hd2 .overline{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:4px}
@@ -605,7 +608,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.17 16:22';
+const BUILD = '11.17 16:26';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -648,7 +651,7 @@ function rowCelebrate(id, cat){
     const box = document.getElementById('todiBox');     // 무대나 카드가 화면에 있으면 무조건 그 안에서 재생
     if(box){                                             // A 무대형 · C 한 장 카드: 줄 위가 아니라 무대/카드 안에서 재생
       const img = box.querySelector('img'), tg = box.querySelector('.btag'), my = ++boxRun, p0 = performance.now(), per = 1000/6.5;
-      tg.textContent = celebSay(kind, cat); tg.classList.add('on'); if(kind==='party') img.style.height = '92px';   // 친구가 여럿인 넓은 장면은 조금 작게
+      tg.textContent = celebSay(kind, cat); tg.classList.add('on'); if(kind==='party') img.style.height = box.classList.contains('hbox') ? '78px' : '92px';   // 친구가 여럿인 넓은 장면은 조금 작게
       (function tick(now){
         if(my !== boxRun) return;                        // 그 사이 다른 할 일을 완료했으면 이전 재생은 멈춤
         const k = Math.floor((now-p0)/per);
@@ -718,7 +721,7 @@ function homePage(){
   <div class="hd2">
     <div><div class="overline">${dLabel(t,true)}</div>
       <h1>${!list.length ? '오늘 할 일을<br>적어 볼까요?' : allDone ? '오늘 할 일을<br><em>전부</em> 해냈어요!' : `오늘 할 일<br><em>${left}개</em> 남았어요`}</h1></div>
-    ${slotDiv('title-home','hello', allDone?'idle':'prep','title-slot','poke',true)}
+    ${(S.opt.layout||'row')==='row' ? slotDiv('title-home','hello', allDone?'idle':'prep','title-slot','poke',true) : `<div class="hbox" id="todiBox"><span class="btag"></span><img alt="" src="${allDone && TODI_FX.joy ? TODI_FX.joy[TODI_FX.joy.length-1] : ((typeof TODI_IMG !== 'undefined' && TODI_IMG.idle_0) || '')}"></div>`}
   </div>
   <div class="tiles">
     <button class="tile" data-tab="plan"><small>오늘 할 일</small><b class="num">${done} <u>/ ${list.length} 완료</u></b><div class="bar"><i style="width:${list.length?done/list.length*100:0}%;background:var(--mint)"></i></div></button>
@@ -762,7 +765,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.17 16:22 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.17 16:26 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
