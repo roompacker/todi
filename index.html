@@ -261,10 +261,10 @@ body.fit{padding-bottom:0}
 .tmo.out .tdot{background:var(--pink)}.tmo.in .tdot{background:var(--inc)}
 .tmo .tx1{font-weight:700}
 .tmo .amt{flex:none;font-size:15px;font-weight:900}.tmo.out .amt{color:var(--pink)}.tmo.in .amt{color:var(--inc)}
-.tlnow{display:flex;align-items:center;height:44px;position:relative}
+.tlnow{display:flex;align-items:center;height:62px;position:relative}
 .tlnow .tlh{width:46px;flex:none;text-align:right;font-size:12px;font-weight:900;color:var(--pink);padding-right:2px}
 .tlnow i{flex:1;height:2px;background:var(--pink);margin-left:10px;border-radius:2px}
-.tlnow img{height:44px;margin-left:4px}
+.tlnow img{height:60px;margin-left:4px}
 .tlsec{font-size:11.5px;font-weight:800;color:var(--muted);padding:12px 0 2px 58px}
 .hbar{padding-left:5px}.hbar input{min-width:0}
 .hseg{padding:2px}.hseg button{padding:7px 10px}
@@ -686,7 +686,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.18 09:57';
+const BUILD = '11.18 15:06';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -950,7 +950,8 @@ function homePage(){
   const out = txs.filter(x=>x.type==='out').reduce((a,b)=>a+b.amount,0), inc = txs.filter(x=>x.type==='in').reduce((a,b)=>a+b.amount,0);
   const items = [...tasks.map(o=>({k:'t', tm:o.time||'', o})), ...txs.map(o=>({k:o.type, tm:o.at||'', o}))];
   const timed = items.filter(i=>i.tm).sort((a,b)=>a.tm.localeCompare(b.tm)), free = items.filter(i=>!i.tm);
-  const now = nowHM(), walk = (typeof TODI_IMG!=='undefined' && TODI_IMG.todi_0) || '';
+  const now = nowHM(), walk = (TODI_FX.draw && TODI_FX.draw[0]) || (typeof TODI_IMG!=='undefined' && TODI_IMG.todi_0) || '';
+  fxsLoad('draw');
   const nowLine = `<div class="tlnow"><span class="tlh">지금</span><i></i><img id="tlWalk" alt="" src="${walk}"></div>`;
   let body = '', put = false;
   timed.forEach(i=>{ if(!put && i.tm > now){ body += nowLine; put = true; } body += tlItem(i); });
@@ -973,7 +974,12 @@ function homePage(){
 }
 function hSeg(T){ return `<div class="seg hseg">${[['todo','할 일'],['out','지출'],['in','수입']].map(([k,n])=>`<button class="${T===k?'on':''} k-${k}" data-act="htype" data-t="${k}">${n}</button>`).join('')}</div>`; }
 /* 지금 시각 줄의 투디가 걸어가는 움직임 */
-setInterval(()=>{ try{ const w = document.getElementById('tlWalk'); if(!w || typeof TODI_IMG==='undefined' || !S.opt.motion) return; window._wk = ((window._wk||0)+1)%10; const f = TODI_IMG['todi_'+window._wk]; if(f) w.src = f; }catch(e){} }, 120);
+/* 지금 시각 줄의 투디: 정면에서 땅에 낙서하는 투디 (그림을 아직 못 받았으면 걷는 투디) */
+setInterval(()=>{ try{
+  const w = document.getElementById('tlWalk'); if(!w || !S.opt.motion) return;
+  if(TODI_FX.draw){ window._wk = ((window._wk||0)+1) % TODI_FX.draw.length; w.src = TODI_FX.draw[window._wk]; w.classList.add('drw'); }
+  else if(typeof TODI_IMG!=='undefined'){ window._wk = ((window._wk||0)+1)%10; const f = TODI_IMG['todi_'+window._wk]; if(f) w.src = f; }
+}catch(e){} }, 150);
 
 /* ───── 할 일 · 금융 화면 위의 [목록 / 분석] 고르기 ───── */
 let planView = 'list', moneyView = 'list';
@@ -1058,7 +1064,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.18 09:57 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.18 15:06 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
