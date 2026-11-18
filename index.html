@@ -790,7 +790,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.19 08:02';
+const BUILD = '11.19 08:10';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -1097,7 +1097,11 @@ function render(){
     document.body.classList.toggle('fit', tab==='home' || (tab==='plan' && planView==='list') || (tab==='money' && moneyView==='list'));
     applyTheme();
     $('stepsPill').textContent = `👣 오늘 ${stepsToday()}걸음`;
+    // 같은 화면을 다시 그릴 때(완료 체크 등)는 스크롤 위치를 그대로 지킴 → 맨 위로 튀지 않게
+    const keep = (render._tab === tab) ? [...$('main').querySelectorAll('.scroll')].map(e=>e.scrollTop) : null, winY = window.scrollY;
     $('main').innerHTML = ({home:homePage, settings:settingsPage, plan:planPage, focus:focusPage, money:moneyPage, report:reportPage, save:savePage, friend:friendPage}[tab] || planPage)();
+    if(keep){ $('main').querySelectorAll('.scroll').forEach((e,i)=>{ if(keep[i]) e.scrollTop = keep[i]; }); if(winY) window.scrollTo(0, winY); }
+    render._tab = tab;
     updateTimer();
   }catch(e){ console.error('화면 오류', e); }
 }
@@ -1274,7 +1278,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.19 08:02 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.19 08:10 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
