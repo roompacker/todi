@@ -527,6 +527,12 @@ body.night .pl.g{color:#C9D8CC}body.night .pl.p{color:#F0C2D2}body.night .pl.b{c
 .tlsec2::before{flex:0 0 10px}
 .tlg.free::before{display:none}
 .tlg.free{min-height:40px}
+
+/* 장면 영상(영화관 등): 둥근 액자 */
+.clipbox.scene{border:2.5px solid var(--ink);border-radius:22px;background:#111;box-shadow:0 12px 30px #0f414a40}
+.clipbox.scene video{background:#111}
+/* 시간 줄: 마름모를 시간 옆 세로줄 위(시간 높이)에 붙임 → 위 칸에 걸쳐 떠 보이지 않게 */
+.tlg:not(.now)::before{top:15px!important;left:49px!important;width:9px!important;height:9px!important}
 </style>
 </head>
 <body>
@@ -784,7 +790,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.19 01:08';
+const BUILD = '11.19 08:02';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -846,17 +852,19 @@ function fxlPreload(){
 /* ───── 완료 동작을 '진짜 영상'으로 재생 (fxv/종류.mp4) ─────
    초록 배경을 카드색으로 바꾸고 발밑 그림자를 살린 영상이라, 오려 붙인 느낌 없이 자연스럽게 움직임.
    영상을 못 불러오면(인터넷 끊김 등) 예전 그림 넘기기 방식으로 대신 보여 줌 */
-const FXV = {"bike": [604, 700], "car": [674, 654], "cat": [576, 690], "dj": [778, 702], "doc": [860, 682], "dogw": [696, 684], "draw": [500, 694], "game": [602, 648], "joy": [586, 654], "lion": [582, 676], "oops": [734, 680], "party": [1280, 712], "plant": [966, 710], "sleep": [960, 664], "snow": [876, 958], "space": [480, 666], "suit": [426, 684], "tiger": [580, 674], "wv": [548, 696]};
+const FXV = {"movie": [960, 540], "bike": [604, 700], "car": [674, 654], "cat": [576, 690], "dj": [778, 702], "doc": [860, 682], "dogw": [696, 684], "draw": [500, 694], "game": [602, 648], "joy": [586, 654], "lion": [582, 676], "oops": [734, 680], "party": [1280, 712], "plant": [966, 710], "sleep": [960, 664], "snow": [876, 958], "space": [480, 666], "suit": [426, 684], "tiger": [580, 674], "wv": [548, 696]};
 const FXV_RATE = 2.5;   // 영상 빠르기 (1 = 원래 빠르기)
 /* 투명 영상(WebM, VP9 알파)을 틀 수 있는 폰이면 투명 버전, 아니면 크림색 배경 mp4 */
 const FXV_ALPHA = (()=>{ try{ return !!document.createElement('video').canPlayType('video/webm; codecs="vp09.00.10.08"'); }catch(e){ return false; } })();
 const FXW = {"tiger": [570, 668], "snow": [866, 950], "bike": [594, 692], "wv": [538, 690], "joy": [576, 646], "suit": [418, 676], "dogw": [688, 676], "doc": [850, 674], "cat": [566, 682], "game": [592, 640], "sleep": [952, 660], "lion": [572, 670], "space": [470, 658], "draw": [490, 690], "car": [664, 646], "oops": [724, 672], "dj": [768, 694], "party": [1280, 708], "plant": [956, 708]};   // 투명 영상 크기
+const FXSCENE = {movie:1};                                 // 배경이 있는 장면 영상(초록 배경 아님)
 function playClip(box, kind, onEnd, fallback){
   try{
     if(!FXV[kind] || !/^https?:/.test(location.protocol)) return fallback();
     const v = document.createElement('video');
     v.muted = true; v.defaultMuted = true; v.playsInline = true; v.setAttribute('playsinline',''); v.setAttribute('muted',''); v.preload = 'auto';
     const alpha = FXV_ALPHA && FXW[kind]; v.className = 'clip' + (alpha ? ' alpha' : '');
+    if(FXSCENE[kind]){ box.classList.add('scene'); v.style.objectFit = 'cover'; }   // 배경까지 있는 장면 영상은 둥근 액자처럼
     v.src = 'fxv/'+kind+(alpha ? '.webm?v=6' : '.mp4?v=2');
     if(alpha) box.classList.add('alpha');
     let ok = false, fin = false;
@@ -936,6 +944,7 @@ function bigCelebrate(kind, cat, row, FR){
       return;
     }
     if(bigEl){ bigEl.remove(); bigEl = null; }
+    if(!FXL[kind]) kind = 'wv';                          // 그림 버전이 없는 영상은 곰돌이 그림으로
     const m = FXL[kind], sheet = fxlLoad(kind);
     const ov = document.createElement('div'); ov.className = 'bigov'; bigEl = ov;
     const asp = m ? m.w/m.h : 0.75;
@@ -995,6 +1004,7 @@ function celebKind(T, cat, allDone){
   else if(/음악|노래|디제이|DJ|dj|플레이리스트|콘서트|공연|클럽|댄스|춤|악기|기타 연습|피아노|드럼|작곡|믹싱/.test(title)) kind = 'dj';   // 헤드폰 쓴 디제이 투디
   else if(/물\s?주기|화분|식물|꽃|텃밭|정원|가드닝|분갈이|화초|모종|씨앗|나무 심기/.test(title)) kind = 'plant';   // 초록 후드 투디가 화분에 물 주면 꽃이 핌
   else if(/생일|생파|파티|축하|기념일|케이크|돌잔치/.test(title)) kind = 'party';   // 친구들이 다 모여 생일 케이크 파티
+  else if(/영화|극장|시네마|CGV|cgv|메가박스|롯데시네마|넷플릭스|넷플|드라마|팝콘|영화관|무비/.test(title)) kind = 'movie';   // 영화관에서 팝콘 먹는 분홍 투디와 너구리 투디
   else if(/병원|진료|검진|치과|약국|주사|접종|한의원|내과|안과|이비인후과|정형외과|피부과/.test(title)) kind = 'doc';   // 사자 의사 선생님이 곰돌이 투디를 진찰
   else if(/학원|학교|등교|하교|등원|하원|수업|과외|자전거|라이딩/.test(title)) kind = 'bike';   // 학원 가방 멘 너구리 투디가 자전거 타기
   else if(/고양이|냥이|집사|캣|츄르|모래 갈/.test(title)) kind = 'cat';                     // 고양이 후드 투디
@@ -1264,7 +1274,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.19 01:08 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.19 08:02 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
