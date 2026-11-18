@@ -242,6 +242,11 @@ body.fit{padding-bottom:0}
 .clipbox{height:132px;border-radius:16px;overflow:hidden;background:#FFFCF7;flex:none;box-shadow:0 2px 8px #0f414a14}
 .clipbox video{width:100%;height:100%;object-fit:contain;display:block;background:#FFFCF7}
 .clipbox.big{border-radius:26px;box-shadow:0 10px 30px #0f414a2e}
+/* 투명 영상: 카드 없이 투디만 떠 있음 */
+.clipbox.alpha{background:transparent;box-shadow:none;border-radius:0;overflow:visible}
+.clipbox.alpha video{background:transparent}
+.tstrip.vid .clipbox.alpha{height:140px}
+.clipbox video{image-rendering:auto;transform:translateZ(0);backface-visibility:hidden}
 .tstrip img{height:104px;flex:none}
 .tstrip .stag{align-self:center;background:var(--card);color:var(--ink);font-weight:800;font-size:13px;padding:5px 11px;border-radius:999px;white-space:nowrap;opacity:0;transform:scale(.6);transition:opacity .2s .15s,transform .2s .15s}
 .tstrip .stag.on{opacity:1;transform:scale(1)}
@@ -725,7 +730,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.18 19:55';
+const BUILD = '11.18 20:55';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -781,12 +786,17 @@ function fxlPreload(){
    영상을 못 불러오면(인터넷 끊김 등) 예전 그림 넘기기 방식으로 대신 보여 줌 */
 const FXV = {"wv": [378, 480], "joy": [430, 480], "suit": [299, 480], "dogw": [488, 480], "bike": [414, 480], "doc": [605, 480], "cat": [401, 480], "game": [446, 480], "sleep": [694, 480], "lion": [413, 480], "tiger": [413, 480], "space": [346, 480], "snow": [457, 480], "draw": [346, 480], "car": [495, 480], "oops": [518, 480], "dj": [532, 480], "party": [863, 480], "plant": [653, 480]};
 const FXV_RATE = 2.5;   // 영상 빠르기 (1 = 원래 빠르기)
+/* 투명 영상(WebM, VP9 알파)을 틀 수 있는 폰이면 투명 버전, 아니면 크림색 배경 mp4 */
+const FXV_ALPHA = (()=>{ try{ return !!document.createElement('video').canPlayType('video/webm; codecs="vp09.00.10.08"'); }catch(e){ return false; } })();
+const FXW = {"tiger": [570, 668], "snow": [660, 700], "bike": [594, 692], "wv": [538, 690], "joy": [576, 646], "suit": [418, 676], "dogw": [688, 676], "doc": [850, 674], "cat": [566, 682], "game": [592, 640], "sleep": [952, 660], "lion": [572, 670], "space": [470, 658], "draw": [490, 690], "car": [664, 646], "oops": [724, 672], "dj": [768, 694], "party": [1280, 708], "plant": [956, 708]};   // 투명 영상 크기
 function playClip(box, kind, onEnd, fallback){
   try{
     if(!FXV[kind] || !/^https?:/.test(location.protocol)) return fallback();
     const v = document.createElement('video');
     v.muted = true; v.defaultMuted = true; v.playsInline = true; v.setAttribute('playsinline',''); v.setAttribute('muted',''); v.preload = 'auto';
-    v.className = 'clip'; v.src = 'fxv/'+kind+'.mp4?v=1';
+    const alpha = FXV_ALPHA && FXW[kind]; v.className = 'clip' + (alpha ? ' alpha' : '');
+    v.src = 'fxv/'+kind+(alpha ? '.webm?v=1' : '.mp4?v=1');
+    if(alpha) box.classList.add('alpha');
     let ok = false, fin = false;
     const done = ()=>{ if(fin) return; fin = true; setTimeout(()=>onEnd && onEnd(), 900); };   // 마지막 장면에서 잠깐 멈춤
     const fail = ()=>{ if(ok || fin) return; fin = true; try{ v.remove(); }catch(e){} fallback(); };
@@ -805,7 +815,8 @@ function stripCelebrate(kind, cat, row, FR){
     if(FXV[kind] && /^https?:/.test(location.protocol)){
       document.querySelectorAll('.tstrip').forEach(x=>x.remove());
       const st = document.createElement('div'); st.className = 'tstrip vid';
-      st.innerHTML = `<span class="stag">${celebSay(kind, cat)}</span><div class="clipbox" style="aspect-ratio:${FXV[kind][0]}/${FXV[kind][1]}"></div>`;
+      const R = (FXV_ALPHA && FXW[kind]) || FXV[kind];
+      st.innerHTML = `<span class="stag">${celebSay(kind, cat)}</span><div class="clipbox" style="aspect-ratio:${R[0]}/${R[1]}"></div>`;
       (row.closest('.tlg') || row).after(st); row.classList.add('opened');
       const tg = st.querySelector('.stag');
       requestAnimationFrame(()=>{ st.classList.add('on'); tg.classList.add('on'); });
@@ -846,7 +857,7 @@ function bigCelebrate(kind, cat, row, FR){
     if(FXV[kind] && /^https?:/.test(location.protocol) && !bigCelebrate._sprite){
       if(bigEl){ bigEl.remove(); bigEl = null; }
       const ov = document.createElement('div'); ov.className = 'bigov'; bigEl = ov;
-      const [vw, vh] = FXV[kind]; let H = Math.min(240, Math.round(window.innerHeight*0.3)), W = Math.round(H*vw/vh);
+      const [vw, vh] = (FXV_ALPHA && FXW[kind]) || FXV[kind]; let H = Math.min(240, Math.round(window.innerHeight*0.3)), W = Math.round(H*vw/vh);
       if(W > window.innerWidth - 40){ W = window.innerWidth - 40; H = Math.round(W*vh/vw); }
       ov.innerHTML = `<div class="bigin"><div class="bigtag">${celebSay(kind, cat)}</div><div class="clipbox big" style="width:${W}px;height:${H}px"></div></div>`;
       document.body.appendChild(ov);
@@ -1184,7 +1195,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.18 19:55 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.18 20:55 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
