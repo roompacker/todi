@@ -121,8 +121,49 @@ img.t{display:block}
 .C .bars div{flex:1;text-align:center;font-size:9px;font-weight:800}.C .bars i{display:block;border:2px solid #111;background:#F6F4F0}.C .bars i.on{background:#C5F02C}
 .C .hb{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;padding:3px 0}.C .hb span{width:56px}
 .C .hb .bar{flex:1;height:10px;border:2px solid #111;border-radius:3px;overflow:hidden}.C .hb .bar i{display:block;height:100%;background:#111}
+
+/* ───────── D · 롤리 믹스 + 포스터 뼈대 ───────── */
+.D .ph{background:#F6F0E5;color:#0F414A}
+.D .tp{flex:none;margin:10px 10px 8px;background:#FFFCF7;border:2px solid #0F414A;border-radius:18px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.D .tp h1{font-size:22px;font-weight:900;letter-spacing:-.05em;line-height:1.08}
+.D .tp small{display:block;font-size:10.5px;font-weight:800;color:#6E7E7A;margin-bottom:3px}
+.D .pills{flex:none;display:flex;gap:5px;margin:0 10px 8px;flex-wrap:wrap}
+.D .pill{border:2px solid #0F414A;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900;background:#FFFCF7;white-space:nowrap}
+.D .pill.g{background:#E1EAE3;color:#3f6646;border-color:#6F8F7C}.D .pill.p{background:#F3E2E8;color:#8a4a62;border-color:#B5728A}.D .pill.b{background:#DCEAEC;color:#2E6E78;border-color:#2E6E78}.D .pill.t{background:#EFE1CF}
+.D .grid{background:#FFFCF7;border:2px solid #0F414A;border-radius:18px;overflow:hidden;position:relative}
+.D .gr{display:grid;grid-template-columns:50px 1.5fr 1fr 1fr;border-bottom:1.5px solid #0F414A33;min-height:44px;position:relative}
+.D .gr:last-child{border-bottom:none}
+.D .gr>*{border-left:1.5px solid #0F414A33;padding:5px;display:flex;align-items:center;font-size:11.5px;font-weight:800;min-width:0}
+.D .gr>*:first-child{border-left:none;flex-direction:column;justify-content:center;font-size:9px;line-height:1.1;color:#6E7E7A}
+.D .gr>*:first-child b{font-size:15px;font-weight:900;color:#0F414A}
+.D .gr.h{border-bottom:2px solid #0F414A}
+.D .gr.h>*{font-size:10.5px;font-weight:900;justify-content:center;min-height:30px}
+.D .gr.h .t{background:#E1EAE3;color:#3f6646}.D .gr.h .o{background:#F3E2E8;color:#8a4a62}.D .gr.h .i{background:#DCEAEC;color:#2E6E78}
+.D .ck{width:15px;height:15px;border:2px solid #6F8F7C;border-radius:50%;flex:none;margin-right:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff}
+.D .d .ck{background:#6F8F7C}.D .d .ck::after{content:'✓'}.D .d span{text-decoration:line-through;color:#9aa8a4}
+.D .mo{border-radius:10px;padding:4px 6px;white-space:nowrap;font-size:11px}
+.D .mo.o{background:#F3E2E8;color:#B5728A}.D .mo.i{background:#DCEAEC;color:#2E6E78}
+.D .gr>.sp{padding:0;border:none}
+.D .sp{position:absolute;width:11px;height:11px;transform:translate(-50%,-50%) rotate(45deg);border-radius:2px;z-index:2;border:1.5px solid #0F414A}
+.D .gr .now{grid-column:1/-1;flex-direction:row!important;justify-content:flex-start!important;gap:6px;padding:0 8px;background:#EFE1CF;font-size:10.5px!important;font-weight:900;color:#B5728A!important;border-left:none!important}
+.D .now i{flex:1;height:2px;background:#B5728A;border-radius:2px}
+.D .inp{flex:none;margin:8px 10px 10px;display:flex;gap:5px;align-items:center}
+.D .inp .f{flex:1;background:#FFFCF7;border:2px solid #0F414A;border-radius:999px;padding:4px 4px 4px 4px;font-size:11px;color:#6E7E7A;font-weight:700;display:flex;align-items:center;gap:6px}
+.D .inp .f em{font-style:normal;background:#6F8F7C;color:#fff;border-radius:999px;padding:4px 9px;font-weight:900}
+.D .inp b{width:38px;height:38px;border-radius:50%;background:#B5728A;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px}
+.D .nav{flex:none;height:50px;background:#FFFCF7;border-top:2px solid #0F414A;display:flex;justify-content:space-around;align-items:center;font-size:10px;font-weight:900;color:#6E7E7A}
+.D .nav .on{background:#0F414A;color:#F6F0E5;border-radius:999px;padding:4px 11px}
+.D .card{background:#FFFCF7;border:2px solid #0F414A;border-radius:16px;padding:10px 12px;margin-bottom:8px}
+.D .sec{display:flex;align-items:baseline;gap:7px;margin:4px 2px 5px}
+.D .sec b{font-size:22px;font-weight:900;line-height:.9}.D .sec span{font-size:11px;font-weight:900;color:#6E7E7A}
+.D .lb{font-size:10.5px;font-weight:900;color:#6E7E7A}
+.D .bars{display:flex;align-items:flex-end;gap:5px;height:62px;margin-top:6px}
+.D .bars div{flex:1;text-align:center;font-size:9px;font-weight:800;color:#6E7E7A}.D .bars i{display:block;border-radius:6px 6px 2px 2px;background:#6F8F7C;opacity:.45}.D .bars i.on{opacity:1}
+.D .hb{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;padding:3px 0}.D .hb span{width:56px}
+.D .hb .bar{flex:1;height:10px;border-radius:99px;overflow:hidden;background:#EFE7DA}.D .hb .bar i{display:block;height:100%;border-radius:99px}
+.D .stars{display:flex;gap:2px;margin-top:5px}.D .stars i{width:14px;height:8px;border-radius:2px;background:#B5728A}.D .stars i.e{background:#EFE7DA}
 </style></head><body>
-<div id="pick"><button data-v="A" class="on">A 레트로 게임</button><button data-v="B">B 포스터</button><button data-v="C">C 미니멀</button></div>
+<div id="pick"><button data-v="D" class="on">D 추천</button><button data-v="A">A 레트로</button><button data-v="B">B 포스터</button><button data-v="C">C 미니멀</button></div>
 <div id="out"></div>
 <script>
 /* 보기용 시안: 같은 내용(오늘 / 할 일 분석 / 금융 분석)을 세 가지 디자인으로 */
@@ -240,13 +281,56 @@ function C(){
     </div>${nav(3,NAV)}</div></div>
   </div>`;
 }
+
+/* D · 롤리 믹스 색 + B 뼈대 + C 번호 + A 재미 요소 */
+function D(){
+  const stc=['#E1EAE3','#F3E2E8','#DCEAEC','#EFE1CF'];
+  let si=0;
+  const rows = T.map(r=>{
+    if(r[0]==='NOW') return `<div class="gr" style="min-height:44px"><div class="now">지금<i></i><img class="t" src="${P.walk}" style="height:40px"></div></div>`;
+    const [tm,k,n,d]=r, [h,mm]=tm.split(':'), ap=+h<12?'오전':'오후';
+    const st=`<i class="sp" style="left:50px;top:0;background:${stc[si++%4]}"></i>`;
+    const c = k==='t'?`<div class="${d?'d':''}"><i class="ck"></i><span>${n}</span></div><div></div><div></div>`:k==='o'?`<div></div><div><span class="mo o">${n}</span></div><div></div>`:`<div></div><div></div><div><span class="mo i">${n}</span></div>`;
+    return `<div class="gr"><div>${ap}<b>${(+h%12||12)}:${mm}</b></div>${c}${st}</div>`;
+  }).join('');
+  const prog=(n,m)=>`<div class="stars">${Array.from({length:m},(_,i)=>`<i class="${i<n?'':'e'}"></i>`).join('')}</div>`;
+  const NAV=['오늘','할 일','＋','금융','더보기'];
+  return `<div class="vh"><h2>D · 롤리 믹스 + 포스터 뼈대 (추천)</h2><p>색은 지금 쓰는 롤리 믹스 그대로, 뼈대는 B 포스터(큰 시간 글씨·위쪽 알약·칸 만나는 곳 반짝이), 분석은 C의 01·02·03 번호, 재미는 A의 진행 칸·연속 기록. 검정 대신 미드나잇 블루 선이라 투디와 부드럽게 어울려요.</p></div>
+  <div class="sw">← 옆으로 넘겨 보세요 →</div><div class="row">
+  <div class="shot"><div class="cap">오늘<small>세 줄 타임라인</small></div><div class="ph">
+    <div class="tp"><div><small>11월 19일 목요일</small><h1>오늘의<br>할 일 · 돈</h1>${prog(2,4)}</div><img class="t" src="${P.wave}" style="height:66px;margin:-4px 0"></div>
+    <div class="pills"><span class="pill g">할 일 2 / 4</span><span class="pill p">지출 −3.7만</span><span class="pill b">수입 +5만</span></div>
+    <div class="bd"><div class="grid"><div class="gr h"><div></div><div class="t">할 일</div><div class="o">지출</div><div class="i">수입</div></div>${rows}</div></div>
+    <div class="inp"><span class="f"><em>할 일</em>8시 운동</span><b>+</b></div>${nav(0,NAV)}</div></div>
+  <div class="shot"><div class="cap">할 일 분석</div><div class="ph">
+    <div class="tp"><div><small>이번 주</small><h1>돌아보기</h1></div><img class="t" src="${P.joy}" style="height:62px;margin:-4px 0"></div>
+    <div class="pills"><span class="pill g">완료 82%</span><span class="pill t">🔥 5일 연속</span></div>
+    <div class="bd">
+      <div class="sec"><b>01</b><span>요일별 완료</span></div>
+      <div class="card"><div class="bars">${WEEK.map((h,i)=>`<div><i class="${i==6?'on':''}" style="height:${h*.5}px"></i>${'월화수목금토일'[i]}</div>`).join('')}</div></div>
+      <div class="sec"><b>02</b><span>많이 한 일</span></div>
+      <div class="card">${CATS.map(([n,v],i)=>`<div class="hb"><span>${n}</span><div class="bar"><i style="width:${v*10}%;background:${['#6F8F7C','#2E6E78','#B5728A','#D8BA98'][i]}"></i></div></div>`).join('')}</div>
+      <div class="sec"><b>03</b><span>지난 날 못 한 일</span></div>
+      <div class="card" style="display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:800">🧹 청소 <span class="pill g" style="font-size:10px">오늘로 옮기기</span></div>
+    </div>${nav(1,NAV)}</div></div>
+  <div class="shot"><div class="cap">금융 분석</div><div class="ph">
+    <div class="tp"><div><small>11월</small><h1>돈 이야기</h1></div><img class="t" src="${P.dog}" style="height:62px;margin:-4px 0"></div>
+    <div class="pills"><span class="pill b">수입 +125만</span><span class="pill p">지출 −50.8만</span></div>
+    <div class="bd">
+      <div class="sec"><b>01</b><span>남은 예산</span></div>
+      <div class="card" style="background:#EFE1CF"><div style="font-size:26px;font-weight:900;letter-spacing:-.04em">312,000원</div><div class="lb">하루 3만 1천 원씩 쓸 수 있어요</div>${prog(6,10)}</div>
+      <div class="sec"><b>02</b><span>어디에 썼나</span></div>
+      <div class="card">${SP.map(([n,v],i)=>`<div class="hb"><span>${n}</span><div class="bar"><i style="width:${v}%;background:${['#B5728A','#2E6E78','#D8BA98','#6F8F7C'][i]}"></i></div></div>`).join('')}</div>
+    </div>${nav(3,NAV)}</div></div>
+  </div>`;
+}
 function show(v){
   try{
-    document.getElementById('out').innerHTML = `<section class="ver on ${v}">${({A,B,C})[v]()}</section>`;
+    document.getElementById('out').innerHTML = `<section class="ver on ${v}">${({A,B,C,D})[v]()}</section>`;
     document.querySelectorAll('#pick button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
     window.scrollTo(0,0);
   }catch(e){ console.error('시안 그리기 오류', e); }
 }
 document.getElementById('pick').addEventListener('click', e=>{ const b = e.target.closest('button'); if(b) show(b.dataset.v); });
-show('A');
+show('D');
 </script></body></html>
