@@ -730,7 +730,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.18 20:55';
+const BUILD = '11.18 21:28';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -770,10 +770,18 @@ function fxlLoad(kind){
 }
 /* 오늘 남은 할 일에 필요한 그림을 미리 받아 둠 → 완료하는 순간 바로 나오게 */
 let preT = 0;
+fxlPreload._v = {};
 function fxlPreload(){
   clearTimeout(preT);
   preT = setTimeout(()=>{ try{
-    if((S.opt.layout||'row')!=='mix' || !S.opt.motion) return;
+    if(!S.opt.motion) return;
+    // 오늘 남은 할 일의 투디 영상을 미리 받아 둠 → 누르자마자 바로 재생 (빈 칸이 보이던 0.5초 없앰)
+    try{ if(typeof FXV!=='undefined' && /^https?:/.test(location.protocol)){
+      const ks = new Set(S.tasks.filter(t=>!t.done && t.date===today()).map(t=>celebKind(t, t.cat, false)));
+      ks.forEach(k=>{ if(!FXV[k] || fxlPreload._v[k]) return; const v = document.createElement('video'); v.muted = true; v.preload = 'auto';
+        v.src = 'fxv/'+k+((FXV_ALPHA && FXW[k]) ? '.webm?v=3' : '.mp4?v=1'); v.load(); fxlPreload._v[k] = v; });
+    } }catch(e){ console.error('영상 미리 받기 오류', e); }
+    if((S.opt.layout||'row')!=='mix') return;
     [today(), planDay].forEach(d=>{
       const left = S.tasks.filter(t=>!t.done && t.date===d);
       if(left.length){ left.forEach(t=>fxlLoad(celebKind(t, t.cat, true))); fxlLoad('joy'); }
@@ -795,12 +803,12 @@ function playClip(box, kind, onEnd, fallback){
     const v = document.createElement('video');
     v.muted = true; v.defaultMuted = true; v.playsInline = true; v.setAttribute('playsinline',''); v.setAttribute('muted',''); v.preload = 'auto';
     const alpha = FXV_ALPHA && FXW[kind]; v.className = 'clip' + (alpha ? ' alpha' : '');
-    v.src = 'fxv/'+kind+(alpha ? '.webm?v=1' : '.mp4?v=1');
+    v.src = 'fxv/'+kind+(alpha ? '.webm?v=3' : '.mp4?v=1');
     if(alpha) box.classList.add('alpha');
     let ok = false, fin = false;
     const done = ()=>{ if(fin) return; fin = true; setTimeout(()=>onEnd && onEnd(), 900); };   // 마지막 장면에서 잠깐 멈춤
     const fail = ()=>{ if(ok || fin) return; fin = true; try{ v.remove(); }catch(e){} fallback(); };
-    const t = setTimeout(fail, 3000);                     // 3초 안에 못 받으면 그림 넘기기로
+    const t = setTimeout(fail, 7000);                     // 7초 안에 못 받으면 그림 넘기기로
     v.addEventListener('canplay', ()=>{ if(ok || fin) return; ok = true; clearTimeout(t); v.playbackRate = FXV_RATE;
       const p = v.play(); if(p && p.catch) p.catch(()=>{ clearTimeout(t); ok = false; fail(); }); }, {once:true});
     v.addEventListener('ended', done);
@@ -903,7 +911,7 @@ function bigCelebrate(kind, cat, row, FR){
         cv = pic.querySelector('canvas'); cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
         g = cv.getContext('2d'); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
       }
-      else pic.innerHTML = `<img alt="" src="${FR[0]}" style="width:100%;height:100%;object-fit:contain">`;
+      else { const lim = Math.min(H, 200/(window.devicePixelRatio||1)*1.6); pic.innerHTML = `<img alt="" src="${FR[0]}" style="width:100%;height:${lim}px;object-fit:contain;margin-top:${H-lim}px">`; }
       const im = pic.querySelector('img');
       requestAnimationFrame(()=>ov.classList.add('on'));
       (function tick(now){
@@ -1195,7 +1203,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.18 20:55 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.18 21:28 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
