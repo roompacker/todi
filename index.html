@@ -784,7 +784,7 @@ function fxlPreload(){
     if((S.opt.layout||'row')!=='mix') return;
     [today(), planDay].forEach(d=>{
       const left = S.tasks.filter(t=>!t.done && t.date===d);
-      if(left.length){ left.forEach(t=>fxlLoad(celebKind(t, t.cat, true))); fxlLoad('joy'); }
+      if(left.length && !(typeof FXV!=='undefined' && FXV_ALPHA)){ left.forEach(t=>fxlLoad(celebKind(t, t.cat, true))); fxlLoad('joy'); }   // 영상이 되는 폰은 큰 그림을 받지 않음 (영상 먼저 받게)
     });
   }catch(e){ console.error('미리 받기 오류', e); } }, 400);
 }
