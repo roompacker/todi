@@ -520,6 +520,13 @@ body.night .pl.g{color:#C9D8CC}body.night .pl.p{color:#F0C2D2}body.night .pl.b{c
 .lt button{border:2px solid var(--mint)}
 .trow .chk{border-color:var(--mint)}
 .hd2 h1{font-size:25px}
+
+/* 시간 정하지 않은 것: 칸 전체 폭 구분 줄, 반짝이 없음 */
+.tlsec2{display:flex;align-items:center;gap:8px;padding:14px 2px 4px;font-size:11.5px;font-weight:900;color:var(--muted)}
+.tlsec2::before,.tlsec2::after{content:'';flex:1;height:1.5px;background:var(--line)}
+.tlsec2::before{flex:0 0 10px}
+.tlg.free::before{display:none}
+.tlg.free{min-height:40px}
 </style>
 </head>
 <body>
@@ -777,7 +784,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.19 01:03';
+const BUILD = '11.19 01:08';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -1020,8 +1027,7 @@ function rowCelebrate(id, cat){
     const FR = (typeof TODI_FX !== 'undefined' && TODI_FX[kind]) || (hasV ? TODI_FX.wv : []); if(!FR.length) return;   // 영상이 있으면 그림 넘기기는 대신용(곰돌이)
     if((S.opt.layout||'row')==='mix'){
       const rowEl = document.querySelector(`[data-row="${id}"]`);
-      if(allDone){ bigCelebrate(kind, cat, rowEl, FR); return; }   // 하루 전부 끝 → 가운데에 크게
-      stripCelebrate(kind, cat, rowEl, FR); return;                  // 평소 → 그 줄이 펼쳐지며 그 안에서
+      bigCelebrate(kind, cat, rowEl, FR); return;                    // 완료할 때마다 가운데에 크게 (영상 전체가 보이게)
     }
     const box = document.getElementById('todiBox');     // 무대나 카드가 화면에 있으면 무조건 그 안에서 재생
     if(box){                                             // A 무대형 · C 한 장 카드: 줄 위가 아니라 무대/카드 안에서 재생
@@ -1141,7 +1147,12 @@ function homePage(){
   let body = '', put = false;
   times.forEach(tm=>{ if(!put && tm > now){ body += nowLine; put = true; } body += laneRow(tm, groups[tm]); });
   if(!put) body += nowLine;
-  if(free.length) body += `<div class="tlsec">시간 정하지 않은 것</div>` + laneRow('', free);
+  if(free.length){
+    body += `<div class="tlsec2"><span>시간 정하지 않은 것</span></div>`;
+    const fT = free.filter(i=>i.k==='t'), fO = free.filter(i=>i.k==='out'), fI = free.filter(i=>i.k==='in');
+    for(let n = 0; n < Math.max(fT.length, fO.length, fI.length); n++)       // 할 일·지출·수입을 한 줄씩 나란히
+      body += laneRow('', [fT[n], fO[n], fI[n]].filter(Boolean)).replace('class="tlg"', 'class="tlg free"');
+  }
   const T = homeType;
   const inp = T==='todo'
     ? `<div class="addhint" id="todoPrev"></div><div class="addbar hbar">${hSeg(T)}<input id="todoIn" placeholder="8시 운동" autocomplete="off"><button data-act="addTodo" aria-label="추가">+</button></div>`
@@ -1253,7 +1264,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.19 01:03 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.19 01:08 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
