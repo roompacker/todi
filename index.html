@@ -261,6 +261,40 @@ body.fit{padding-bottom:0}
 .tmo.out .tdot{background:var(--pink)}.tmo.in .tdot{background:var(--inc)}
 .tmo .tx1{font-weight:700}
 .tmo .amt{flex:none;font-size:15px;font-weight:900}.tmo.out .amt{color:var(--pink)}.tmo.in .amt{color:var(--inc)}
+.tl3{display:flex;flex-direction:column}
+.tlhead,.tlg{display:grid;grid-template-columns:44px minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr);gap:0 4px}
+.tlhead{flex:none;padding:8px 8px 6px 4px;border-bottom:1px solid var(--line)}
+.tlhead button{border-radius:12px;padding:6px 8px;text-align:left;min-width:0}
+.tlhead small{display:block;font-size:10.5px;font-weight:700;opacity:.85}
+.tlhead b{display:block;font-size:15px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tlhead .k1{background:var(--mint2);color:var(--mint)}.tlhead .k2{background:var(--pink2);color:var(--pink)}.tlhead .k3{background:var(--inc2);color:var(--inc)}
+.tl3 .scroll{padding:2px 8px 6px 4px;position:relative}
+.tlg>.c1,.tlg>.c2,.tlg>.c3{border-left:1px solid var(--line);padding-left:4px;align-self:stretch}
+.tlg{align-items:start;padding:5px 0;border-bottom:1px dashed var(--line);min-height:44px}
+.tlg .tlh{text-align:right;font-size:11.5px;font-weight:700;color:var(--muted);line-height:1.1;padding-top:6px}
+.tlg .tlh small{display:block;font-size:9px;font-weight:600}
+.tlg>div{min-width:0;display:flex;flex-direction:column;gap:4px}
+.lt1{border-radius:12px}
+.lt1r{display:flex;align-items:center;gap:7px;min-height:34px}
+.lt1 .chk{width:24px;height:24px;flex:none;font-size:13px}
+.lt1 .tx1{flex:1;min-width:0;text-align:left;font-size:14px;font-weight:700;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:keep-all}
+.lt1.done .tx1{color:var(--muted);text-decoration:line-through}
+.lt1 .acts{display:flex;gap:6px;padding:2px 0 4px 31px}
+.lt1.opened{background:var(--mint2)}
+.lm{border-radius:12px;min-height:34px}
+.lm>button:first-child{width:100%;height:100%;min-height:34px;display:flex;align-items:center;gap:2px;padding:0 6px;border-radius:12px;font-size:13.5px}
+.lm.out>button:first-child{background:var(--pink2);color:var(--pink)}.lm.in>button:first-child{background:var(--inc2);color:var(--inc)}
+.lm b{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lm.open>button:first-child{flex-direction:column;align-items:flex-start;gap:0;padding:5px 7px}
+.lm .nm{font-size:11.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.lm .am{font-size:12px;font-weight:900}
+.lm .del{margin-top:3px;font-size:11px;font-weight:800;color:var(--alert);padding:3px 0;width:100%}
+.tlg.now{display:flex;align-items:center;border:none;min-height:62px;padding:0}
+.tlg.now .tlh{width:44px;flex:none;padding:0 5px 0 0;color:var(--pink);font-weight:900}
+.tlg.now i{flex:1;height:2px;background:var(--pink);border-radius:2px}
+.tlg.now img{height:60px;margin-left:2px}
+.tl3 .tlsec{padding:12px 0 2px 48px}
+.tl3 .tstrip{margin:0 0 4px 49px;border-radius:14px}
 .tlnow{display:flex;align-items:center;height:62px;position:relative}
 .tlnow .tlh{width:46px;flex:none;text-align:right;font-size:12px;font-weight:900;color:var(--pink);padding-right:2px}
 .tlnow i{flex:1;height:2px;background:var(--pink);margin-left:10px;border-radius:2px}
@@ -686,7 +720,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.18 15:06';
+const BUILD = '11.18 15:10';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -743,7 +777,7 @@ function stripCelebrate(kind, cat, row, FR){
     document.querySelectorAll('.tstrip').forEach(x=>x.remove());
     const st = document.createElement('div'); st.className = 'tstrip';
     st.innerHTML = `<span class="stag">${celebSay(kind, cat)}</span><img alt="" src="${FR[0]}">`;
-    row.after(st); row.classList.add('opened');
+    (row.closest('.tlg') || row).after(st); row.classList.add('opened');
     const img = st.querySelector('img'), tg = st.querySelector('.stag');
     requestAnimationFrame(()=>{ st.classList.add('on'); tg.classList.add('on'); });
     setTimeout(()=>{ try{ st.scrollIntoView({block:'nearest', behavior:'smooth'}); }catch(e){} }, 320);
@@ -926,20 +960,29 @@ let homeType = 'todo';                                   // 홈 입력칸 종류
 function nowHM(){ const d = new Date(); return pad(d.getHours())+':'+pad(d.getMinutes()); }
 /* 타임라인 왼쪽 시간: 오전/오후 작게 + 시:분 */
 function tlTime(tm){ if(!tm) return ''; const [h,m] = tm.split(':').map(Number); return `<small>${h<12?'오전':'오후'}</small>${h%12||12}:${pad(m)}`; }
-function tlItem(i){
-  const x = i.o, open = openRow===x.id;
-  if(i.k==='t'){                                         // 할 일 줄: 동그라미가 타임라인 점 역할
-    const pinned = S.priority[x.date]===x.id;
-    return `<div class="trow tli ${x.done?'done':''}" data-row="${x.id}"><span class="tlh num">${tlTime(i.tm)}</span>
-      <button class="chk" data-act="toggle" data-id="${x.id}" aria-label="완료">${x.done?'✓':''}</button>
-      <button class="tx1" data-act="rowmenu" data-id="${x.id}">${pinned?'★ ':''}${esc(x.title)}</button>
-      ${open ? `<span class="acts"><button data-act="pin" data-id="${x.id}">${pinned?'★ 해제':'☆ 꼭'}</button><button class="del" data-act="delTask" data-id="${x.id}">삭제</button></span>` : ''}</div>`;
-  }
-  const isIn = x.type==='in', mc = MCATS[x.cat]||MCATS['기타'];   // 지출·수입 줄
-  return `<div class="trow tli tmo ${isIn?'in':'out'}" data-row="${x.id}"><span class="tlh num">${tlTime(i.tm)}</span>
-    <span class="tdot"></span>
-    <button class="tx1" data-act="rowmenu" data-id="${x.id}">${isIn?'💰':mc.e} ${esc(x.title)}</button>
-    ${open ? `<span class="acts"><button class="del" data-act="delTx" data-id="${x.id}">삭제</button></span>` : `<b class="amt num">${isIn?'+':'−'}${won(x.amount)}</b>`}</div>`;
+/* 돈을 짧게: 50000 → 5만, 12000 → 1.2만, 4500 → 4,500 */
+function shortWon(n){ return n>=10000 ? (Math.round(n/1000)/10)+'만' : won(n); }
+/* 할 일 칸 */
+function laneTask(x){
+  const open = openRow===x.id, pinned = S.priority[x.date]===x.id;
+  return `<div class="lt1 ${x.done?'done':''}" data-row="${x.id}">
+    <div class="lt1r"><button class="chk" data-act="toggle" data-id="${x.id}" aria-label="완료">${x.done?'✓':''}</button>
+    <button class="tx1" data-act="rowmenu" data-id="${x.id}">${pinned?'★ ':''}${esc(x.title)}</button></div>
+    ${open ? `<span class="acts"><button data-act="pin" data-id="${x.id}">${pinned?'★ 해제':'☆ 꼭'}</button><button class="del" data-act="delTask" data-id="${x.id}">삭제</button></span>` : ''}</div>`;
+}
+/* 지출·수입 칸: 아이콘 + 짧은 금액, 누르면 이름과 삭제 */
+function laneMoney(x){
+  const isIn = x.type==='in', mc = MCATS[x.cat]||MCATS['기타'], open = openRow===x.id;
+  return `<div class="lm ${isIn?'in':'out'} ${open?'open':''}" data-row="${x.id}"><button data-act="rowmenu" data-id="${x.id}">
+    ${open ? `<span class="nm">${esc(x.title)}</span><span class="am num">${isIn?'+':'−'}${won(x.amount)}</span>` : `<span>${isIn?'💰':mc.e}</span><b class="num">${shortWon(x.amount)}</b>`}</button>
+    ${open ? `<button class="del" data-act="delTx" data-id="${x.id}">삭제</button>` : ''}</div>`;
+}
+/* 한 줄 = 같은 시각의 할 일 · 지출 · 수입 */
+function laneRow(tm, list){
+  const T = list.filter(i=>i.k==='t').map(i=>laneTask(i.o)).join(''),
+        O = list.filter(i=>i.k==='out').map(i=>laneMoney(i.o)).join(''),
+        I = list.filter(i=>i.k==='in').map(i=>laneMoney(i.o)).join('');
+  return `<div class="tlg"><span class="tlh num">${tlTime(tm)}</span><div class="c1">${T}</div><div class="c2">${O}</div><div class="c3">${I}</div></div>`;
 }
 function homePage(){
   const t = today();
@@ -949,26 +992,28 @@ function homePage(){
   const done = tasks.filter(x=>x.done).length;
   const out = txs.filter(x=>x.type==='out').reduce((a,b)=>a+b.amount,0), inc = txs.filter(x=>x.type==='in').reduce((a,b)=>a+b.amount,0);
   const items = [...tasks.map(o=>({k:'t', tm:o.time||'', o})), ...txs.map(o=>({k:o.type, tm:o.at||'', o}))];
-  const timed = items.filter(i=>i.tm).sort((a,b)=>a.tm.localeCompare(b.tm)), free = items.filter(i=>!i.tm);
-  const now = nowHM(), walk = (TODI_FX.draw && TODI_FX.draw[0]) || (typeof TODI_IMG!=='undefined' && TODI_IMG.todi_0) || '';
+  const groups = {}; items.filter(i=>i.tm).forEach(i=>(groups[i.tm] = groups[i.tm] || []).push(i));
+  const times = Object.keys(groups).sort(), free = items.filter(i=>!i.tm);
   fxsLoad('draw');
-  const nowLine = `<div class="tlnow"><span class="tlh">지금</span><i></i><img id="tlWalk" alt="" src="${walk}"></div>`;
+  const now = nowHM(), walk = (TODI_FX.draw && TODI_FX.draw[0]) || (typeof TODI_IMG!=='undefined' && TODI_IMG.todi_0) || '';
+  const nowLine = `<div class="tlg now"><span class="tlh">지금</span><i></i><img id="tlWalk" alt="" src="${walk}"></div>`;
   let body = '', put = false;
-  timed.forEach(i=>{ if(!put && i.tm > now){ body += nowLine; put = true; } body += tlItem(i); });
+  times.forEach(tm=>{ if(!put && tm > now){ body += nowLine; put = true; } body += laneRow(tm, groups[tm]); });
   if(!put) body += nowLine;
-  if(free.length) body += `<div class="tlsec">시간 정하지 않은 것</div>` + free.map(tlItem).join('');
+  if(free.length) body += `<div class="tlsec">시간 정하지 않은 것</div>` + laneRow('', free);
   const T = homeType;
   const inp = T==='todo'
     ? `<div class="addhint" id="todoPrev"></div><div class="addbar hbar">${hSeg(T)}<input id="todoIn" placeholder="8시 운동" autocomplete="off"><button data-act="addTodo" aria-label="추가">+</button></div>`
     : `<div class="addhint" id="moneyPrev"></div><div class="addbar hbar">${hSeg(T)}<input id="moneyIn" placeholder="${T==='out'?'커피 4500':'용돈 5만'}" autocomplete="off"><button data-act="addMoney" aria-label="추가">+</button></div>`;
   return `<div class="screen home">
   <div class="hhead"><div class="overline">${dLabel(t,true)}</div></div>
-  <div class="chips3">
-    <button data-tab="plan" class="c1"><small>할 일</small><b class="num">${done} / ${tasks.length}</b></button>
-    <button data-tab="money" class="c2"><small>오늘 지출</small><b class="num">${out?'−'+won(out):'0'}</b></button>
-    <button data-tab="money" class="c3"><small>오늘 수입</small><b class="num">${inc?'+'+won(inc):'0'}</b></button>
-  </div>
-  <section class="lcard tl"><div class="scroll">${items.length ? body : nowLine + '<div class="empty">아래에서 할 일 · 지출 · 수입을 적어 보세요</div>'}</div></section>
+  <section class="lcard tl3">
+    <div class="tlhead"><span></span>
+      <button data-tab="plan" class="k1"><small>할 일</small><b class="num">${done} / ${tasks.length}</b></button>
+      <button data-tab="money" class="k2"><small>지출</small><b class="num">${out?'−'+shortWon(out):'0'}</b></button>
+      <button data-tab="money" class="k3"><small>수입</small><b class="num">${inc?'+'+shortWon(inc):'0'}</b></button></div>
+    <div class="scroll">${items.length ? body : nowLine + '<div class="empty">아래에서 할 일 · 지출 · 수입을 적어 보세요</div>'}</div>
+  </section>
   ${inp}
   </div>`;
 }
@@ -1064,7 +1109,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.18 15:06 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.18 15:10 판 · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
