@@ -473,6 +473,53 @@ dialog h3{font-size:20px;letter-spacing:-.06em;margin-bottom:12px}
 dialog label{display:grid;gap:5px;font-size:13px;font-weight:650;margin-bottom:10px}
 dialog input{min-height:46px;border:1px solid #20221e38;border-radius:11px;padding:8px 10px;background:var(--white);font-size:16px}
 dialog .acts{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+
+/* ════════ D 디자인: 롤리 믹스 색 + 포스터 뼈대 ════════ */
+.stag,.bigtag,.todi-tag,.btag{display:none!important}           /* 캐릭터 말풍선 없음 */
+.dtop{flex:none;background:var(--card);border:2px solid var(--ink);border-radius:18px;padding:9px 12px 9px 14px;display:flex;align-items:center;justify-content:space-between;margin:2px 0 8px;overflow:hidden}
+.dtop small{display:block;font-size:11.5px;font-weight:800;color:var(--muted);margin-bottom:2px}
+.dtop h1{font-size:21px;font-weight:900;letter-spacing:-.05em;line-height:1.12}
+.dtop img{height:74px;margin:-6px -2px -8px 0;flex:none}
+.dprog{display:flex;gap:3px;margin-top:6px}.dprog i{width:16px;height:8px;border-radius:3px;background:var(--soft)}.dprog i.on{background:var(--pink)}
+.dpills{flex:none;display:flex;gap:6px;margin-bottom:8px}
+.pl{border:2px solid;border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:900;white-space:nowrap;display:flex;gap:4px;align-items:center;min-width:0}
+.pl b{font-weight:900}
+.pl.g{background:var(--mint2);color:var(--mint);border-color:var(--mint)}.pl.p{background:var(--pink2);color:var(--pink);border-color:var(--pink)}.pl.b{background:var(--inc2);color:var(--inc);border-color:var(--inc)}
+body.night .pl.g{color:#C9D8CC}body.night .pl.p{color:#F0C2D2}body.night .pl.b{color:#E8D3B6}
+.lcard{border:2px solid var(--ink);border-radius:18px;box-shadow:none}
+.tl3 .tlhead{padding:0 8px 0 4px;border-bottom:2px solid var(--ink)}
+.tl3 .tlhead>span{font-size:12px;font-weight:900;text-align:center;padding:8px 0;border-left:1.5px solid var(--line)}
+.tl3 .tlhead>span:first-child{border:none}
+.tl3 .tlhead .k1{background:var(--mint2);color:var(--mint)}.tl3 .tlhead .k2{background:var(--pink2);color:var(--pink)}.tl3 .tlhead .k3{background:var(--inc2);color:var(--inc)}
+.tlhead,.tlg{grid-template-columns:50px minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr)!important}
+.tlg{border-bottom:1.5px solid var(--line)!important;position:relative}
+.tlg .tlh{font-size:15px!important;font-weight:900!important;color:var(--ink)!important;text-align:center!important;padding-top:4px!important}
+.tlg .tlh small{font-size:9.5px!important;color:var(--muted);font-weight:700!important}
+.tlg:not(.now)::before{content:'';position:absolute;left:52px;top:-6px;width:10px;height:10px;transform:rotate(45deg);border-radius:2px;border:1.5px solid var(--ink);background:var(--mint2);z-index:2}
+.tlg:nth-of-type(4n+2)::before{background:var(--pink2)}.tlg:nth-of-type(4n+3)::before{background:var(--inc2)}.tlg:nth-of-type(4n)::before{background:var(--tan)}
+.tlg>.c1,.tlg>.c2,.tlg>.c3{border-left:1.5px solid var(--line)!important}
+.lm>button:first-child{border-radius:10px!important}
+.lt1 .chk{border:2px solid var(--mint)!important;background:var(--card)!important}
+.lt1.done .chk{background:var(--mint)!important;color:#fff}
+.tlg.now{background:var(--tan);margin:0 -8px 0 -4px;padding:0 8px 0 4px!important}
+.tlg.now .tlh{font-size:12px!important;color:var(--pink)!important}
+.addbar{border:2px solid var(--ink);box-shadow:none}
+.addbar>button:last-child,.addbar button[data-act=addTodo],.addbar button[data-act=addMoney]{background:var(--pink)}
+.seg{border:2px solid var(--ink)}
+.seg button.on{background:var(--ink);color:var(--canvas)}
+.tabbar2{border-top:2px solid var(--ink)}
+.tabbar2 button.on{color:var(--ink)}
+.tabbar2 button.on i{background:var(--ink);color:var(--canvas);border-radius:999px;padding:3px 14px;font-size:17px}
+/* 분석 화면: 카드 테두리 + 01·02·03 번호 */
+.sc{border:2px solid var(--ink);border-radius:16px;box-shadow:none}
+.screen.scrolly{counter-reset:sec}
+.sc:not(.shero):not(.ring):not(.c2):not(.c3)>small{counter-increment:sec;display:flex;align-items:baseline;gap:7px;font-size:12px;font-weight:900;color:var(--muted)}
+.sc:not(.shero):not(.ring):not(.c2):not(.c3)>small::before{content:counter(sec,decimal-leading-zero);font-size:22px;font-weight:900;color:var(--ink);line-height:.9}
+.sc.shero{background:var(--tan)}
+.sc.c2{border-color:var(--pink)}.sc.c3{border-color:var(--inc)}
+.lt button{border:2px solid var(--mint)}
+.trow .chk{border-color:var(--mint)}
+.hd2 h1{font-size:25px}
 </style>
 </head>
 <body>
@@ -730,7 +777,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.19 00:42';
+const BUILD = '11.19 01:03';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -1100,12 +1147,15 @@ function homePage(){
     ? `<div class="addhint" id="todoPrev"></div><div class="addbar hbar">${hSeg(T)}<input id="todoIn" placeholder="8시 운동" autocomplete="off"><button data-act="addTodo" aria-label="추가">+</button></div>`
     : `<div class="addhint" id="moneyPrev"></div><div class="addbar hbar">${hSeg(T)}<input id="moneyIn" placeholder="${T==='out'?'커피 4500':'용돈 5만'}" autocomplete="off"><button data-act="addMoney" aria-label="추가">+</button></div>`;
   return `<div class="screen home">
-  <div class="hhead"><div class="overline">${dLabel(t,true)}</div></div>
+  <div class="dtop"><div><small>${dLabel(t,true)}</small><h1>오늘의<br>할 일 · 돈</h1>
+    <div class="dprog">${Array.from({length:Math.min(10,tasks.length)},(_,i)=>`<i class="${i<Math.round(done/Math.max(1,tasks.length)*Math.min(10,tasks.length))?'on':''}"></i>`).join('')}</div></div>
+    <img alt="" src="${(TODI_FX.wv && TODI_FX.wv[0]) || (typeof TODI_IMG!=='undefined' && TODI_IMG.idle_0) || ''}"></div>
+  <div class="dpills">
+    <button data-tab="plan" class="pl g">할 일 <b class="num">${done} / ${tasks.length}</b></button>
+    <button data-tab="money" class="pl p">지출 <b class="num">${out?'−'+shortWon(out):'0'}</b></button>
+    <button data-tab="money" class="pl b">수입 <b class="num">${inc?'+'+shortWon(inc):'0'}</b></button></div>
   <section class="lcard tl3">
-    <div class="tlhead"><span></span>
-      <button data-tab="plan" class="k1"><small>할 일</small><b class="num">${done} / ${tasks.length}</b></button>
-      <button data-tab="money" class="k2"><small>지출</small><b class="num">${out?'−'+shortWon(out):'0'}</b></button>
-      <button data-tab="money" class="k3"><small>수입</small><b class="num">${inc?'+'+shortWon(inc):'0'}</b></button></div>
+    <div class="tlhead"><span></span><span class="k1">할 일</span><span class="k2">지출</span><span class="k3">수입</span></div>
     <div class="scroll">${items.length ? body : nowLine + '<div class="empty">아래에서 할 일 · 지출 · 수입을 적어 보세요</div>'}</div>
   </section>
   ${inp}
@@ -1203,7 +1253,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.19 00:42 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.19 01:03 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
@@ -1405,7 +1455,7 @@ function celebrate(slotId, cat, msg, stepGot){
   const el = document.querySelector(`[data-slot="${slotId}"]`);
   const row = el && el.closest('.task,.tx'); if(row){ row.classList.remove('flash'); void row.offsetWidth; row.classList.add('flash'); }
   const c = CATS[cat]||CATS.etc;
-  toast(`${c.emoji} ${c.head} ${msg||''}${stepGot?' · 👣 +1걸음':''}`);
+  toast(`${c.head} ${msg||''}${stepGot?' · +1걸음':''}`.replace(/\s+/g,' ').trim());
 }
 function closeCut(){ $('cut').classList.remove('on'); document.body.classList.remove('cuton'); clearTimeout(cutTimer); if(window.Engine) Engine.stopCut(); render(); }
 $('cut').addEventListener('click', closeCut);
@@ -1481,7 +1531,7 @@ document.addEventListener('click', e=>{
           openRow = null; render(); rowCelebrate(T.id, T.cat);
           const dayList = S.tasks.filter(x=>x.date===T.date), allDone = dayList.every(x=>x.done);
           if(allDone) celebrate(tab==='home' ? 'title-home' : 'title-plan', T.cat, '· 오늘 할 일 끝!', got);
-          else { try{ if(S.opt.vibrate && navigator.vibrate) navigator.vibrate(30); }catch(e){} if(got) toast('👣 +1걸음'); }
+          else { try{ if(S.opt.vibrate && navigator.vibrate) navigator.vibrate(30); }catch(e){} if(got) toast('+1걸음'); }
           if(S.priority[T.date]===T.id && window.Engine) Engine.celebrate('hero-'+T.id, T.cat);
         } else render();
         break;
