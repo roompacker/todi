@@ -793,7 +793,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.20 18:32';
+const BUILD = '11.20 18:43';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -806,7 +806,7 @@ const BUILD = '11.20 18:32';
   }catch(e){ console.error('새 버전 확인 오류', e); }
 })();
 /* 가운데 크게: 큰 그림은 따로 둔 파일(fx/종류.webp)을 필요할 때만 불러옴 */
-const FXL = {"wv": {"n": 30, "cols": 6, "w": 488, "h": 640, "sw": 229, "sh": 300, "sn": 30}, "joy": {"n": 30, "cols": 6, "w": 529, "h": 601, "sw": 264, "sh": 300, "sn": 30}, "suit": {"n": 30, "cols": 6, "w": 370, "h": 628, "sw": 177, "sh": 300, "sn": 30}, "dogw": {"n": 30, "cols": 6, "w": 643, "h": 631, "sw": 306, "sh": 300, "sn": 30}, "bike": {"n": 30, "cols": 6, "w": 541, "h": 640, "sw": 254, "sh": 300, "sn": 30}, "doc": {"n": 24, "cols": 6, "w": 801, "h": 629, "sw": 382, "sh": 300, "sn": 24}, "party": {"n": 22, "cols": 6, "w": 600, "h": 330, "sw": 545, "sh": 300, "sn": 22}, "cat": {"n": 30, "cols": 6, "w": 519, "h": 637, "sw": 244, "sh": 300, "sn": 30}, "game": {"n": 30, "cols": 6, "w": 543, "h": 595, "sw": 274, "sh": 300, "sn": 30}, "sleep": {"n": 30, "cols": 6, "w": 904, "h": 619, "sw": 438, "sh": 300, "sn": 30}, "lion": {"n": 30, "cols": 6, "w": 525, "h": 623, "sw": 253, "sh": 300, "sn": 30}, "tiger": {"n": 30, "cols": 6, "w": 521, "h": 620, "sw": 252, "sh": 300, "sn": 30}, "space": {"n": 30, "cols": 6, "w": 423, "h": 613, "sw": 207, "sh": 300, "sn": 30}, "snow": {"n": 30, "cols": 6, "w": 585, "h": 640, "sw": 274, "sh": 300, "sn": 30}, "draw": {"n": 30, "cols": 6, "w": 442, "h": 640, "sw": 207, "sh": 300, "sn": 30}, "car": {"n": 30, "cols": 6, "w": 617, "h": 601, "sw": 308, "sh": 300, "sn": 30}, "oops": {"n": 30, "cols": 6, "w": 663, "h": 623, "sw": 319, "sh": 300, "sn": 30}, "dj": {"n": 29, "cols": 6, "w": 709, "h": 640, "sw": 332, "sh": 300, "sn": 29}, "plant": {"n": 23, "cols": 6, "w": 684, "h": 639, "sw": 321, "sh": 300, "sn": 23}};
+const FXL = {"wv": {"n": 30, "cols": 6, "w": 488, "h": 640, "sw": 229, "sh": 300, "sn": 30}, "joy": {"n": 30, "cols": 6, "w": 529, "h": 601, "sw": 264, "sh": 300, "sn": 30}, "suit": {"n": 30, "cols": 6, "w": 370, "h": 628, "sw": 177, "sh": 300, "sn": 30}, "bike": {"n": 30, "cols": 6, "w": 541, "h": 640, "sw": 254, "sh": 300, "sn": 30}, "doc": {"n": 24, "cols": 6, "w": 801, "h": 629, "sw": 382, "sh": 300, "sn": 24}, "party": {"n": 22, "cols": 6, "w": 600, "h": 330, "sw": 545, "sh": 300, "sn": 22}, "cat": {"n": 30, "cols": 6, "w": 519, "h": 637, "sw": 244, "sh": 300, "sn": 30}, "game": {"n": 30, "cols": 6, "w": 543, "h": 595, "sw": 274, "sh": 300, "sn": 30}, "sleep": {"n": 30, "cols": 6, "w": 904, "h": 619, "sw": 438, "sh": 300, "sn": 30}, "lion": {"n": 30, "cols": 6, "w": 525, "h": 623, "sw": 253, "sh": 300, "sn": 30}, "tiger": {"n": 30, "cols": 6, "w": 521, "h": 620, "sw": 252, "sh": 300, "sn": 30}, "space": {"n": 30, "cols": 6, "w": 423, "h": 613, "sw": 207, "sh": 300, "sn": 30}, "snow": {"n": 30, "cols": 6, "w": 585, "h": 640, "sw": 274, "sh": 300, "sn": 30}, "draw": {"n": 30, "cols": 6, "w": 442, "h": 640, "sw": 207, "sh": 300, "sn": 30}, "car": {"n": 30, "cols": 6, "w": 617, "h": 601, "sw": 308, "sh": 300, "sn": 30}, "oops": {"n": 30, "cols": 6, "w": 663, "h": 623, "sw": 319, "sh": 300, "sn": 30}, "dj": {"n": 29, "cols": 6, "w": 709, "h": 640, "sw": 332, "sh": 300, "sn": 29}, "plant": {"n": 23, "cols": 6, "w": 684, "h": 639, "sw": 321, "sh": 300, "sn": 23}};
 const fxlImg = {};
 /* 완료 동작 작은 그림: 앱에는 곰돌이(wv)·하루 끝(joy)만 넣고, 나머지는 fx/s_종류.webp 를 받아서 잘라 씀 → 앱이 가벼워짐 */
 const fxsBusy = {};
@@ -855,11 +855,11 @@ function fxlPreload(){
 /* ───── 완료 동작을 '진짜 영상'으로 재생 (fxv/종류.mp4) ─────
    초록 배경을 카드색으로 바꾸고 발밑 그림자를 살린 영상이라, 오려 붙인 느낌 없이 자연스럽게 움직임.
    영상을 못 불러오면(인터넷 끊김 등) 예전 그림 넘기기 방식으로 대신 보여 줌 */
-const FXV = {"park": [960, 540], "cook": [498, 650], "drive": [960, 540], "dance": [1088, 618], "read": [478, 648], "movie": [960, 540], "bike": [604, 700], "car": [674, 654], "cat": [576, 690], "dj": [778, 702], "doc": [860, 682], "dogw": [696, 686], "draw": [496, 694], "game": [602, 648], "joy": [586, 654], "lion": [582, 676], "oops": [734, 680], "party": [1280, 712], "plant": [966, 710], "sleep": [960, 664], "snow": [876, 958], "space": [480, 666], "suit": [426, 684], "tiger": [580, 674], "wv": [548, 696]};
+const FXV = {"park": [960, 540], "cook": [498, 650], "drive": [960, 540], "dance": [1088, 618], "read": [478, 648], "movie": [960, 540], "bike": [604, 700], "car": [674, 654], "cat": [576, 690], "dj": [778, 702], "doc": [860, 682], "draw": [496, 694], "game": [602, 648], "joy": [586, 654], "lion": [582, 676], "oops": [734, 680], "party": [1280, 712], "plant": [966, 710], "sleep": [960, 664], "snow": [876, 958], "space": [480, 666], "suit": [426, 684], "tiger": [580, 674], "wv": [548, 696]};
 const FXV_RATE = 2.5;   // 영상 빠르기 (1 = 원래 빠르기)
 /* 투명 영상(WebM, VP9 알파)을 틀 수 있는 폰이면 투명 버전, 아니면 크림색 배경 mp4 */
 const FXV_ALPHA = (()=>{ try{ return !!document.createElement('video').canPlayType('video/webm; codecs="vp09.00.10.08"'); }catch(e){ return false; } })();
-const FXW = {"cook": [488, 644], "dance": [1080, 610], "read": [468, 640], "tiger": [570, 668], "snow": [866, 950], "bike": [594, 692], "wv": [538, 690], "joy": [576, 646], "suit": [418, 676], "dogw": [686, 676], "doc": [850, 674], "cat": [566, 682], "game": [592, 640], "sleep": [952, 660], "lion": [572, 670], "space": [470, 658], "draw": [488, 690], "car": [664, 646], "oops": [724, 672], "dj": [768, 694], "party": [1280, 708], "plant": [956, 708]};   // 투명 영상 크기
+const FXW = {"cook": [488, 644], "dance": [1080, 610], "read": [468, 640], "tiger": [570, 668], "snow": [866, 950], "bike": [594, 692], "wv": [538, 690], "joy": [576, 646], "suit": [418, 676], "doc": [850, 674], "cat": [566, 682], "game": [592, 640], "sleep": [952, 660], "lion": [572, 670], "space": [470, 658], "draw": [488, 690], "car": [664, 646], "oops": [724, 672], "dj": [768, 694], "party": [1280, 708], "plant": [956, 708]};   // 투명 영상 크기
 const FXSCENE = {movie:1, drive:1, park:1};                                 // 배경이 있는 장면 영상(초록 배경 아님)
 function playClip(box, kind, onEnd, fallback){
   try{
@@ -1002,8 +1002,8 @@ function celebKind(T, cat, allDone){
   const title = (T && T.title) || '';
   // 어떤 투디가 나올지: 강아지 산책 → 모자 투디와 강아지 / 출근·회의 → 정장 투디 / 학원·학교·자전거 → 자전거 탄 너구리 투디 / 오늘 할 일 전부 끝 → 활짝 웃는 투디 / 그 외 → 곰돌이 투디
   let kind = 'wv';
-  if(/산책|공원|걷기|피크닉/.test(title)) kind = 'park';            // 꽃 핀 공원 길을 강아지와 걷는 장면(액자 영상)
-  else if(cat === 'dog') kind = 'dogw';
+  if(/산책|공원|걷기|피크닉|강아지|댕댕|반려견|멍멍/.test(title)) kind = 'park';            // 꽃 핀 공원 길을 강아지와 걷는 장면(액자 영상)
+  else if(cat === 'dog') kind = 'park';                              // 강아지 일은 모두 공원 산책 장면 (예전 모자 투디 영상은 삭제)
   else if(cat === 'cook' || /요리|반찬|베이킹|밥하기|밥 하기|도시락|쿠킹|레시피|볶음|집밥|저녁 준비|아침 준비|점심 준비/.test(title)) kind = 'cook';   // 프라이팬으로 채소 볶는 곰돌이 투디
   else if(/출근|퇴근|회의|미팅|업무|회사|보고서|출장|면접/.test(title)) kind = 'suit';
   else if(/음악|노래|디제이|DJ|dj|플레이리스트|콘서트|공연|클럽|악기|기타 연습|피아노|드럼|작곡|믹싱/.test(title)) kind = 'dj';   // 헤드폰 쓴 디제이 투디
@@ -1286,7 +1286,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.20 18:32 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.20 18:43 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
