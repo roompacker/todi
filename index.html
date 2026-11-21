@@ -15,18 +15,19 @@
 /* ===================== 1. 투디 색상·기본 ===================== */
 :root{
   /* 롤리 믹스 (낮): 바탕 Chalk · 할 일 Brook Green · 지출 Thulian Pink · 수입·글씨 Midnight blue · 강조 Tan */
-  --canvas:#F6F0E5; --paper:#FFFCF7; --card:#FFFCF7; --ink:#0F414A; --muted:#6E7E7A; --line:#0f414a1f; --soft:#EFE7DA;
-  --pink:#B5728A; --mint:#6F8F7C; --inc:#2E6E78; --pink2:#F3E2E8; --mint2:#E1EAE3; --inc2:#DCEAEC; --tan:#EFE1CF; --tan2:#D8BA98;
+  --canvas:oklch(95.7% 0.016 83); --paper:oklch(99.2% 0.007 81); --card:oklch(99.2% 0.007 81); --ink:oklch(34.7% 0.053 212); --muted:oklch(57.9% 0.020 179); --line:#0f414a1f; --soft:oklch(93.1% 0.019 80);
+  --pink:oklch(63.0% 0.090 357); --mint:oklch(62.0% 0.046 159); --inc:oklch(50.1% 0.066 209); --pink2:oklch(92.8% 0.020 354); --mint2:oklch(92.8% 0.013 153); --inc2:oklch(92.7% 0.015 207); --tan:oklch(91.6% 0.029 74); --tan2:oklch(80.6% 0.057 70);
   --veil:rgba(246,240,229,.45); --onacc:#fff;
-  --lemon:#F3E2E8; --sage:#E1EAE3; --blue:#DCEAEC; --beige:#EFE1CF; --lav:#F3E2E8; --white:#FFFCF7; --alert:#9b3349; --yellow:#D8BA98;
+  --lemon:oklch(92.8% 0.020 354); --sage:oklch(92.8% 0.013 153); --blue:oklch(92.7% 0.015 207); --beige:oklch(91.6% 0.029 74); --lav:oklch(92.8% 0.020 354); --white:oklch(99.2% 0.007 81); --alert:oklch(47.9% 0.139 11); --yellow:oklch(80.6% 0.057 70);
   --r:24px;
+  /* 4px 격자 간격 토큰 */ --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s6:24px; --s8:32px; --s12:48px;
   
 }
 
 /* 롤리 믹스 (밤): 바탕 Midnight blue */
-body.night{--canvas:#0F414A; --paper:#175059; --card:#175059; --ink:#F4EDE0; --muted:#A3B3A9; --line:#f4ede024; --soft:#1E5A62;
-  --pink:#C98AA1; --mint:#8FA897; --inc:#D8BA98; --pink2:#4B4150; --mint2:#255A5F; --inc2:#3E5550; --tan:#1F5A62; --tan2:#D8BA98;
-  --veil:rgba(15,65,74,.5); --lemon:#4B4150; --sage:#255A5F; --blue:#3E5550; --beige:#1F5A62; --lav:#4B4150; --white:#175059; --alert:#F0A3B5; --yellow:#D8BA98}
+body.night{--canvas:oklch(34.7% 0.053 212); --paper:oklch(39.9% 0.059 210); --card:oklch(39.9% 0.059 210); --ink:oklch(94.8% 0.019 83); --muted:oklch(75.1% 0.023 158); --line:#f4ede024; --soft:oklch(43.3% 0.062 208);
+  --pink:oklch(70.3% 0.082 356); --mint:oklch(70.7% 0.037 156); --inc:oklch(80.6% 0.057 70); --pink2:oklch(39.1% 0.028 314); --mint2:oklch(43.4% 0.056 204); --inc2:oklch(42.9% 0.029 180); --tan:oklch(43.3% 0.061 208); --tan2:oklch(80.6% 0.057 70);
+  --veil:rgba(15,65,74,.5); --lemon:oklch(39.1% 0.028 314); --sage:oklch(43.4% 0.056 204); --blue:oklch(42.9% 0.029 180); --beige:oklch(43.3% 0.061 208); --lav:oklch(39.1% 0.028 314); --white:oklch(39.9% 0.059 210); --alert:oklch(79.5% 0.094 4); --yellow:oklch(80.6% 0.057 70)}
 body.night input{color:var(--ink)}
 body.night input::placeholder{color:var(--muted)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -580,6 +581,33 @@ body.night .pl.g{color:#C9D8CC}body.night .pl.p{color:#F0C2D2}body.night .pl.b{c
 .seg.sp>button{position:relative;z-index:1;background:transparent!important;transition:color .25s ease-out}
 .seg .segpill{position:absolute;left:0;z-index:0;border-radius:99px;pointer-events:none;
   transition:transform .45s cubic-bezier(.34,1.56,.64,1),width .45s cubic-bezier(.34,1.56,.64,1),background-color .3s ease-out}
+
+/* ===== 06 내 친구 테마: 옷 색(색상각) 하나로 바탕 5단계 자동 생성 (낮에만) ===== */
+body[data-fr=todi]:not(.night){--canvas:oklch(96.2% 0.016 240);--soft:oklch(93% 0.021 240);--tan:oklch(91% 0.032 240);--beige:oklch(91% 0.032 240);--paper:oklch(99.3% 0.005 240);--card:oklch(99.3% 0.005 240);--white:oklch(99.3% 0.005 240)}
+body[data-fr=nodi]:not(.night){--canvas:oklch(96.2% 0.023 95);--soft:oklch(93% 0.030 95);--tan:oklch(91% 0.045 95);--beige:oklch(91% 0.045 95);--paper:oklch(99.3% 0.007 95);--card:oklch(99.3% 0.007 95);--white:oklch(99.3% 0.007 95)}
+body[data-fr=cheki]:not(.night){--canvas:oklch(96.2% 0.020 30);--soft:oklch(93% 0.027 30);--tan:oklch(91% 0.041 30);--beige:oklch(91% 0.041 30);--paper:oklch(99.3% 0.007 30);--card:oklch(99.3% 0.007 30);--white:oklch(99.3% 0.007 30)}
+body[data-fr=almi]:not(.night){--canvas:oklch(96.2% 0.018 300);--soft:oklch(93% 0.024 300);--tan:oklch(91% 0.036 300);--beige:oklch(91% 0.036 300);--paper:oklch(99.3% 0.006 300);--card:oklch(99.3% 0.006 300);--white:oklch(99.3% 0.006 300)}
+body[data-fr=sparki]:not(.night){--canvas:oklch(96.2% 0.018 170);--soft:oklch(93% 0.024 170);--tan:oklch(91% 0.036 170);--beige:oklch(91% 0.036 170);--paper:oklch(99.3% 0.006 170);--card:oklch(99.3% 0.006 170);--white:oklch(99.3% 0.006 170)}
+body[data-fr]:not(.night) .phday small{color:var(--ink)}
+.frpick{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2);width:100%}
+.frpick button{display:flex;align-items:center;gap:var(--s2);border:2px solid var(--ink);border-radius:999px;padding:var(--s1) var(--s3) var(--s1) var(--s1);font-size:13px;font-weight:800;background:var(--card);min-height:40px}
+.frpick button img,.frpick .rm{width:28px;height:28px;border-radius:50%;object-fit:cover;flex:none}
+.frpick .rm{background:conic-gradient(var(--mint) 0 33%,var(--pink) 0 66%,var(--inc) 0)}
+.frpick button.on{background:var(--ink);color:var(--canvas)}
+a.sbtn{text-decoration:none;display:inline-flex;align-items:center}
+/* ===== 07 부품 치수 통일 (4px 격자) ===== */
+section.card,.lcard{border-radius:24px}
+section.card.set{padding:var(--s4)}
+.sbtn{min-height:40px;padding:0 var(--s4);border-radius:999px}
+.seg{padding:var(--s1)!important}
+.seg button{padding:var(--s2) var(--s4)}
+.hseg button{padding:var(--s2) var(--s3)}
+.addbar{border-radius:999px;min-height:56px}
+.trow{min-height:56px;gap:var(--s3)}
+.trow .chk{width:28px;height:28px}
+.ph3 button{padding:var(--s2) var(--s1)}
+.phbar{margin-top:var(--s4)}
+.ph3{margin:var(--s3) 0 var(--s4)}
 </style>
 </head>
 <body>
@@ -837,7 +865,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.21 17:43';
+const BUILD = '11.21 17:48';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -942,27 +970,48 @@ function motion04(){
   });
 }
 const LOOP_V = {};
+let LOOP_TURN = 'dtodiSlot';                             // 지금 움직일 차례인 영상 (하나가 움직이면 다른 하나는 쉼)
+function loopNext(id){
+  try{
+    const ids = Object.keys(LOOP_V).filter(k=>LOOP_V[k].isConnected);
+    if(!ids.length) return;
+    const nx = ids.length > 1 ? ids[(ids.indexOf(id)+1) % ids.length] : ids[0];
+    LOOP_TURN = nx;
+    ids.forEach(k=>{ if(k!==nx) LOOP_V[k].pause(); });
+    if(document.hidden) return;
+    const v = LOOP_V[nx]; v.currentTime = 0; const p = v.play(); if(p && p.catch) p.catch(()=>{});
+  }catch(e){ console.log('loopNext', e); }
+}
 function mountLoop(slotId, src){
   try{
     const slot = document.getElementById(slotId);
-    if(!slot || !FXV_ALPHA || !/^https?:/.test(location.protocol)) return;   // 투명 영상이 안 되는 폰은 그림 그대로
+    if(!slot || !FXV_ALPHA || !/^https?:/.test(location.protocol) || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;   // 투명 영상이 안 되거나 움직임 줄이기면 그림 그대로
     let v = LOOP_V[slotId];
     if(!v){
       v = LOOP_V[slotId] = document.createElement('video');
-      v.className = 'loopv'; v.muted = true; v.loop = true; v.playsInline = true; v.autoplay = true;
+      v.className = 'loopv'; v.muted = true; v.loop = false; v.playsInline = true; v.preload = 'auto';
       v.setAttribute('playsinline',''); v.setAttribute('muted','');
       v.src = src;
-      v.addEventListener('playing', ()=>{ try{ document.querySelectorAll('#'+slotId+' img').forEach(i=>i.style.display='none'); }catch(e){} });
+      const show = ()=>{ try{ document.querySelectorAll('#'+slotId+' img').forEach(i=>i.style.display='none'); }catch(e){} };
+      v.addEventListener('loadeddata', show);
+      v.addEventListener('ended', ()=>loopNext(slotId));   // 한 번 끝나면 다른 친구 차례
     }
     slot.appendChild(v);
     if(v.readyState >= 2){ const im = slot.querySelector('img'); if(im) im.style.display = 'none'; }
-    const p = v.play(); if(p && p.catch) p.catch(()=>{});
+    if(LOOP_TURN === slotId && !document.hidden){ const p = v.play(); if(p && p.catch) p.catch(()=>{}); }
   }catch(e){ console.log('mountLoop', e); }
 }
-// 오늘 화면: 제목 카드 = 인사하는 투디, "지금" 줄 = 메모하며 ?→! 떠올리는 노디 (화면을 다시 그려도 이어서 재생)
+document.addEventListener('visibilitychange', ()=>{                 // 앱을 안 보고 있으면 영상 멈춤 (배터리 아끼기)
+  try{
+    if(document.hidden) Object.values(LOOP_V).forEach(v=>v.pause());
+    else { const v = LOOP_V[LOOP_TURN]; if(v && v.isConnected){ const p = v.play(); if(p && p.catch) p.catch(()=>{}); } }
+  }catch(e){}
+});
+// 오늘 화면: 제목 = 인사하는 투디, "지금" 줄 = 메모하며 ?→! 떠올리는 노디 (번갈아 한 번씩)
 function mountHello(){
   mountLoop('dtodiSlot', 'fxv/hello.webm?v=1');
   mountLoop('tlWalkSlot', 'fxv/nodi.webm?v=1');
+  if(!LOOP_V[LOOP_TURN] || !LOOP_V[LOOP_TURN].isConnected) loopNext(LOOP_TURN);
 }
 const FXSCENE = {perfect:1, movie:1, drive:1, park:1, study:1, cola:1, soccer:1};                                 // 배경이 있는 장면 영상(초록 배경 아님)
 function playClip(box, kind, onEnd, fallback){
@@ -1145,7 +1194,7 @@ function celebSay(kind, cat){
 /* 할 일을 완료한 순간: 투디가 그 줄로 달려와서 → 정면으로 서고 → 스르륵 사라짐 */
 function rowCelebrate(id, cat){
   try{
-    if(!S.opt.motion) return;
+    if(!S.opt.motion || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;             // 폰에서 '애니메이션 줄이기'를 켰으면 영상 없이
     const T = S.tasks.find(x=>x.id===id) || {}, title = T.title || '';
     const dayL = S.tasks.filter(x=>x.date===T.date), allDone = dayL.every(x=>x.done);
     const kind = celebKind(T, cat, (allDone && dayL.length >= 2) ? 'perfect' : allDone);
@@ -1153,7 +1202,9 @@ function rowCelebrate(id, cat){
     const FR = (typeof TODI_FX !== 'undefined' && TODI_FX[kind]) || (hasV ? TODI_FX.wv : []); if(!FR.length) return;   // 영상이 있으면 그림 넘기기는 대신용(곰돌이)
     if((S.opt.layout||'row')==='mix'){
       const rowEl = document.querySelector(`[data-row="${id}"]`);
-      bigCelebrate(kind, cat, rowEl, FR); return;                    // 완료할 때마다 가운데에 크게 (영상 전체가 보이게)
+      const nDone = dayL.filter(x=>x.done).length;
+      if(allDone || nDone <= 2){ bigCelebrate(kind, cat, rowEl, FR); return; }   // 하루 첫·두 번째 완료와 전부 완료는 가운데에 크게
+      stripCelebrate(kind, cat, rowEl, FR); return;                              // 3번째부터는 그 줄이 펼쳐지며 작게 (매번 6초 기다리지 않게)
     }
     const box = document.getElementById('todiBox');     // 무대나 카드가 화면에 있으면 무조건 그 안에서 재생
     if(box){                                             // A 무대형 · C 한 장 카드: 줄 위가 아니라 무대/카드 안에서 재생
@@ -1231,6 +1282,7 @@ function applyTheme(){
     const m = S.opt.theme || 'auto', h = new Date().getHours();
     const night = m==='night' || (m==='auto' && (h>=19 || h<7));
     document.body.classList.toggle('night', night);
+    document.body.dataset.fr = S.opt.friend || '';        // 내 친구 테마 (낮 색에만 적용)
     const mt = document.querySelector('meta[name="theme-color"]'); if(mt) mt.content = night ? '#0F414A' : '#F6F0E5';
   }catch(e){ console.error('색 바꾸기 오류', e); }
 }
@@ -1382,8 +1434,11 @@ function settingsPage(){
     <h2>화면</h2>
     <div class="srow col"><div><strong>화면 색</strong><span class="small">자동: 저녁 7시부터 아침 7시까지 밤 색</span></div>
       <div class="seg lay">${[['auto','자동'],['day','낮'],['night','밤']].map(([k,n])=>`<button class="${(o.theme||'auto')===k?'on':''}" data-act="theme" data-v="${k}">${n}</button>`).join('')}</div></div>
-    <div class="srow col"><div><strong>완료할 때 투디 크기</strong><span class="small">줄 펼침: 완료한 줄이 펼쳐지며 그 안에서 움직이고, 하루를 전부 끝내면 가운데에 크게 나와요</span></div>
+    <div class="srow col"><div><strong>완료할 때 투디 크기</strong><span class="small">줄 펼침: 하루 첫·두 번째 완료와 전부 끝냈을 때는 가운데에 크게, 세 번째부터는 그 줄이 펼쳐지며 작게 나와요</span></div>
       <div class="seg lay">${[['row','줄 옆에 작게'],['mix','줄 펼침']].map(([k,n])=>`<button class="${(o.layout||'row')===k?'on':''}" data-act="layout" data-v="${k}">${n}</button>`).join('')}</div></div>
+    <div class="srow col"><div><strong>내 친구 테마</strong><span class="small">고른 친구의 옷 색으로 낮 화면 바탕이 바뀌어요 (밤에는 밤 색)</span></div>
+      <div class="frpick">${[['','기본',''],['todi','투디','todi'],['nodi','노디','nodi'],['cheki','체키','cheki'],['almi','알미','almi'],['sparki','스파키','sparki']].map(([k,n,im])=>`<button class="${(o.friend||'')===k?'on':''}" data-act="friend" data-v="${k}">${im?`<img alt="" src="fr/${im}.webp">`:'<i class="rm"></i>'}<span>${n}</span></button>`).join('')}</div></div>
+    <div class="srow"><div><strong>투디 브랜드 보드</strong><span class="small">로고 · 친구들 · 색 · 글꼴 · 말투를 한 장에</span></div><a class="sbtn" href="brand.html">보기</a></div>
     <div class="srow"><div><strong>메뉴바 자동으로 숨기기</strong><span class="small">목록을 넘기면 아래 메뉴바가 스르륵 내려가요</span></div>${sw('navHide',o.navHide)}</div>
     <div class="srow"><div><strong>완료할 때 투디 나오기</strong><span class="small">할 일을 체크하면 투디가 달려와요</span></div>${sw('motion',o.motion)}</div>
     <div class="srow"><div><strong>진동</strong><span class="small">완료할 때 짧게 진동해요</span></div>${sw('vibrate',o.vibrate)}</div>
@@ -1398,7 +1453,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.21 17:43 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.21 17:48 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
@@ -1660,6 +1715,7 @@ document.addEventListener('click', e=>{
       case 'mview': moneyView = b.dataset.v; render(); break;
       case 'moveToday': { const x = S.tasks.find(t=>t.id===b.dataset.id); if(x){ x.date = today(); save(); render(); toast(`"${x.title}" 오늘로 옮겼어요`); } break; }
       case 'theme': S.opt.theme = b.dataset.v; save(); render(); break;
+      case 'friend': S.opt.friend = b.dataset.v; save(); applyTheme(); render(); break;
       case 'addGo': { if(b.dataset.t){ homeType = b.dataset.t; if(homeType!=='todo') mType = homeType; setTimeout(()=>{ try{ ($('todoIn')||$('moneyIn')).focus(); }catch(e){} }, 60); }
         const to = b.dataset.to, was = tab; tab = to; location.hash = to; if(to==='plan' && was!=='plan') planDay = today(); if(to==='money' && was!=='money'){ moneyDay = today(); month = moneyDay.slice(0,7); } render(); setTimeout(()=>{ try{ $(to==='plan'?'todoIn':'moneyIn').focus(); }catch(e){} }, 80); break; }
       case 'rowmenu': openRow = openRow===b.dataset.id ? null : b.dataset.id; render(); break;

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>투디 브랜드 보드</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+/* ===== 디자인 토큰 (02. impeccable: OKLCH 색 + 4px 격자) ===== */
+:root{
+  --u:4px;
+  --canvas:oklch(95.6% .016 80);   /* #F6F0E5 */
+  --card:oklch(99% .008 80);       /* #FFFCF7 */
+  --ink:oklch(35% .055 210);       /* #0F414A */
+  --ink2:oklch(52% .03 210);
+  --line:oklch(88% .02 80);
+  --mint:oklch(62% .045 155);      /* 할 일 */
+  --pink:oklch(60% .08 355);       /* 지출 */
+  --inc:oklch(50% .06 210);        /* 수입 */
+  --tan:oklch(91% .03 75);
+  --sky:oklch(91% .025 240);
+  --nodi:oklch(92% .07 95);
+  --cheki:oklch(74% .11 25);
+  --almi:oklch(80% .06 300);
+  --sparki:oklch(86% .05 170);
+  --r:calc(var(--u)*5);
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--canvas)}
+body{font-family:Pretendard,'Noto Sans KR',sans-serif;color:var(--ink);max-width:760px;margin:0 auto;padding:calc(var(--u)*5) calc(var(--u)*4) calc(var(--u)*20);line-height:1.6;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(oklch(80% .02 80 / .25) 1px,transparent 1px);background-size:6px 6px}
+.mono{font-family:'IBM Plex Mono','SF Mono',ui-monospace,monospace}
+
+/* 표지 */
+.cover{border:2.5px solid var(--ink);border-radius:calc(var(--u)*6);background:var(--card);padding:calc(var(--u)*6) calc(var(--u)*5);position:relative;overflow:hidden}
+.cover .k{font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--pink)}
+.cover h1{font-size:clamp(34px,9vw,52px);line-height:1.08;letter-spacing:-.03em;margin:calc(var(--u)*2) 0 calc(var(--u)*3);font-weight:900}
+.cover p{color:var(--ink2);font-size:15px;max-width:30em}
+.cover .fam{display:grid;grid-template-columns:repeat(5,1fr);gap:calc(var(--u)*2);margin-top:calc(var(--u)*5)}
+.cover .fam img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:calc(var(--u)*4);border:2px solid var(--ink)}
+.meta{display:flex;flex-wrap:wrap;gap:calc(var(--u)*2);margin-top:calc(var(--u)*4)}
+.meta span{font-size:12px;font-weight:800;border:2px solid var(--ink);border-radius:99px;padding:2px 12px;background:var(--canvas)}
+
+/* 목차 (사진 속 번호 카드 모양) */
+.toc{margin:calc(var(--u)*8) 0;display:grid;gap:calc(var(--u)*2)}
+.toc a{display:grid;grid-template-columns:64px 1fr;border:2px solid var(--ink);background:var(--card);text-decoration:none;color:inherit;
+  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px))}
+.toc b{font:900 22px/1 'IBM Plex Mono',ui-monospace,monospace;display:flex;align-items:center;justify-content:center;border-right:2px solid var(--ink)}
+.toc div{padding:calc(var(--u)*2) calc(var(--u)*3)}
+.toc strong{display:block;font:800 15px/1.3 'IBM Plex Mono',ui-monospace,monospace}
+.toc small{font-size:13px;color:var(--ink2)}
+
+/* 섹션 */
+section.sk{margin-top:calc(var(--u)*14)}
+.sh{display:flex;align-items:baseline;gap:calc(var(--u)*3);border-bottom:2.5px solid var(--ink);padding-bottom:calc(var(--u)*2)}
+.sh .n{font:900 44px/1 'IBM Plex Mono',ui-monospace,monospace;color:var(--pink)}
+.sh h2{font:800 20px/1.2 'IBM Plex Mono',ui-monospace,monospace}
+.sh h2 small{display:block;font:600 13px Pretendard,sans-serif;color:var(--ink2);margin-top:2px}
+.why{margin:calc(var(--u)*4) 0;font-size:15px}
+.why b{background:linear-gradient(transparent 60%,var(--tan) 0)}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*3);margin:calc(var(--u)*4) 0}
+.ba>div{border:2px solid var(--line);border-radius:var(--r);padding:calc(var(--u)*3);background:var(--card);font-size:13.5px}
+.ba>div.to{border-color:var(--ink)}
+.ba h4{font-size:11px;letter-spacing:.12em;color:var(--ink2);margin-bottom:6px}
+.ba .to h4{color:var(--pink)}
+.ba ul{padding-left:16px}
+@media(max-width:520px){.ba{grid-template-columns:1fr}}
+
+/* 휴대폰 틀 */
+.stage{display:flex;justify-content:center;gap:calc(var(--u)*4);flex-wrap:wrap;margin:calc(var(--u)*5) 0}
+.phone{width:300px;border:2.5px solid var(--ink);border-radius:36px;background:var(--canvas);padding:12px;position:relative;box-shadow:0 18px 40px oklch(35% .05 210 / .14)}
+.phone .scr{border-radius:26px;overflow:hidden;background:var(--canvas);min-height:520px;position:relative}
+.cap{text-align:center;font-size:12px;font-weight:800;color:var(--ink2);margin-top:8px}
+
+/* 01 과감한 레이아웃 */
+.p1 .top{padding:18px 18px 0;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:800;color:var(--ink2)}
+.p1 .hero{display:grid;grid-template-columns:1fr 112px;align-items:end;padding:6px 18px 0;position:relative}
+.p1 .day{font:900 108px/.82 'IBM Plex Mono',monospace;letter-spacing:-.06em}
+.p1 .day small{display:block;font:800 14px Pretendard;letter-spacing:0;margin:8px 0 0 4px;color:var(--pink)}
+.p1 .hero video,.p1 .hero img{width:112px;height:150px;object-fit:contain}
+.p1 .bar{margin:14px 18px 0;height:14px;border:2px solid var(--ink);border-radius:99px;overflow:hidden;display:flex}
+.p1 .bar i{background:var(--mint)}.p1 .bar i+i{background:var(--pink)}
+.p1 .big3{display:grid;grid-template-columns:repeat(3,1fr);margin:14px 18px;border:2px solid var(--ink);border-radius:16px;background:var(--card)}
+.p1 .big3 div{padding:10px 8px;text-align:center;font-size:11px;font-weight:800;color:var(--ink2)}
+.p1 .big3 div+div{border-left:2px solid var(--ink)}
+.p1 .big3 b{display:block;font:900 20px 'IBM Plex Mono',monospace;color:var(--ink)}
+.p1 .list{margin:0 18px;display:grid;gap:8px}
+.row{display:flex;align-items:center;gap:10px;background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:10px 12px;font-size:14px;font-weight:700}
+.row .t{font:700 11px 'IBM Plex Mono',monospace;color:var(--ink2);width:38px}
+.row .ck{width:24px;height:24px;border-radius:50%;border:2px solid var(--mint);flex:none}
+.row.done .ck{background:var(--mint)}.row.done span:not(.t){text-decoration:line-through;color:var(--ink2)}
+.row .m{margin-left:auto;font:800 12px 'IBM Plex Mono',monospace;color:var(--pink)}
+
+/* 02 토큰 */
+.sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:calc(var(--u)*2);margin:calc(var(--u)*4) 0}
+.sw div{border:2px solid var(--ink);border-radius:14px;overflow:hidden;background:var(--card);font-size:11px}
+.sw i{display:block;height:56px}
+.sw p{padding:6px 8px;line-height:1.35}.sw p b{font-size:12px}
+.grid4{display:flex;align-items:flex-end;gap:8px;margin:calc(var(--u)*3) 0;flex-wrap:wrap}
+.grid4 div{background:var(--pink);opacity:.85;border-radius:3px;position:relative}
+.grid4 span{display:block;font:700 10px 'IBM Plex Mono',monospace;text-align:center;margin-top:4px}
+
+/* 03 고급 모션: 체크 */
+.p3 .scr{padding:22px 18px;display:grid;gap:10px;align-content:start}
+.ckd{display:flex;align-items:center;gap:12px;background:var(--card);border:2px solid var(--ink);border-radius:16px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;user-select:none;position:relative;overflow:hidden;transition:transform .5s var(--ease-out)}
+.ckd svg{width:28px;height:28px;flex:none}
+.ckd .ring{fill:none;stroke:var(--mint);stroke-width:2.5;stroke-dasharray:76;stroke-dashoffset:0}
+.ckd .fill{fill:var(--mint);transform-origin:14px 14px;transform:scale(0);transition:transform .45s var(--ease-spring)}
+.ckd .tick{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:20;stroke-dashoffset:20;transition:stroke-dashoffset .35s .18s var(--ease-out)}
+.ckd .tx{position:relative}
+.ckd .tx::after{content:'';position:absolute;left:0;top:52%;height:2px;width:0;background:var(--ink2);transition:width .4s .25s var(--ease-out)}
+.ckd.on .fill{transform:scale(1)}.ckd.on .tick{stroke-dashoffset:0}.ckd.on .tx{color:var(--ink2);transition:color .3s .3s}.ckd.on .tx::after{width:100%}
+.ckd.on{transform:scale(.985)}
+.ckd .glow{position:absolute;inset:0;background:radial-gradient(circle at 26px 50%,oklch(62% .045 155 / .25),transparent 60%);opacity:0}
+.ckd.on .glow{animation:glow .9s var(--ease-out)}
+@keyframes glow{0%{opacity:1}100%{opacity:0}}
+.hint{font-size:12px;color:var(--ink2);text-align:center}
+
+/* 04 숫자 굴리기 + 곡선 */
+.p4 .scr{padding:22px 18px}
+.money{border:2px solid var(--ink);border-radius:18px;background:var(--card);padding:16px}
+.money small{font-size:12px;font-weight:800;color:var(--ink2)}
+.money b{display:block;font:900 34px 'IBM Plex Mono',monospace;letter-spacing:-.03em;color:var(--pink);font-variant-numeric:tabular-nums}
+.btn{display:inline-block;margin-top:12px;border:2px solid var(--ink);border-radius:99px;padding:6px 14px;font-weight:800;font-size:13px;background:var(--tan);cursor:pointer;color:var(--ink)}
+.tabs{display:flex;border:2px solid var(--ink);border-radius:99px;margin-top:18px;position:relative;background:var(--card)}
+.tabs button{flex:1;border:0;background:none;padding:8px 0;font:800 13px Pretendard;color:var(--ink2);position:relative;z-index:1;cursor:pointer}
+.tabs button.on{color:#fff}
+.tabs .pill{position:absolute;top:3px;bottom:3px;left:3px;width:calc(33.33% - 4px);border-radius:99px;background:var(--ink);transition:transform .45s var(--ease-spring)}
+.curves{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.curves div{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:8px;font-size:10.5px;text-align:center}
+.curves svg{width:100%;height:56px}
+
+/* 05 모션 검수 표 */
+table.aud{width:100%;border-collapse:collapse;margin:calc(var(--u)*4) 0;font-size:13px;background:var(--card);border:2px solid var(--ink)}
+.aud th,.aud td{border:1.5px solid var(--line);padding:8px 8px;text-align:left;vertical-align:top}
+.aud th{background:var(--tan);font-size:12px}
+.ok{color:var(--mint);font-weight:900}.no{color:var(--pink);font-weight:900}.mid{color:oklch(62% .1 70);font-weight:900}
+
+/* 06 테마 공장 */
+.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.chips button{display:flex;align-items:center;gap:6px;border:2px solid var(--ink);border-radius:99px;padding:4px 12px 4px 4px;background:var(--card);font:800 13px Pretendard;color:var(--ink);cursor:pointer}
+.chips button img{width:26px;height:26px;border-radius:50%;object-fit:cover}
+.chips button.on{background:var(--ink);color:#fff}
+.p6 .scr{min-height:420px;transition:background .5s var(--ease-out)}
+.p6 .hd{margin:16px;border:2px solid var(--ink);border-radius:20px;background:var(--th1);padding:16px;display:flex;justify-content:space-between;align-items:center;transition:background .5s}
+.p6 .hd b{font-size:22px;line-height:1.15;display:block}
+.p6 .hd small{font-size:12px;font-weight:700;opacity:.75}
+.p6 .hd img{width:84px;height:84px;object-fit:cover;border-radius:16px;border:2px solid var(--ink)}
+.p6 .chipline{display:flex;gap:6px;margin:0 16px}
+.p6 .chipline span{flex:1;text-align:center;border:2px solid var(--ink);border-radius:99px;padding:6px 0;font-size:12px;font-weight:800;background:var(--th2);transition:background .5s}
+.p6 .row{margin:10px 16px 0}
+.p6 .row .ck{border-color:var(--th3)}.p6 .row.done .ck{background:var(--th3)}
+.scale{display:flex;margin:0 16px 0;margin-top:16px;border:2px solid var(--ink);border-radius:12px;overflow:hidden}
+.scale i{flex:1;height:26px;transition:background .5s}
+
+/* 07 컴포넌트 명세 */
+.comp{display:grid;gap:calc(var(--u)*3);margin:calc(var(--u)*4) 0}
+.comp>div{border:2px dashed var(--ink2);border-radius:var(--r);padding:calc(var(--u)*4);background:var(--card);position:relative}
+.comp .lab{position:absolute;top:-11px;left:14px;background:var(--canvas);padding:0 8px;font:800 11px 'IBM Plex Mono',monospace}
+.spec{font:600 11px/1.6 'IBM Plex Mono',monospace;color:var(--ink2);margin-top:10px}
+.measure{position:relative;display:inline-block}
+.measure::after{content:attr(data-h);position:absolute;right:-46px;top:50%;transform:translateY(-50%);font:700 10px 'IBM Plex Mono',monospace;color:var(--pink)}
+.pillx{display:inline-flex;align-items:center;height:40px;padding:0 16px;border:2px solid var(--mint);border-radius:99px;font-weight:800;color:var(--mint);background:oklch(62% .045 155 / .08)}
+
+/* 08 실제 브라우저 검사 */
+.shot{display:grid;grid-template-columns:200px 1fr;gap:calc(var(--u)*4);align-items:start;margin:calc(var(--u)*4) 0}
+.shot img{width:100%;border:2px solid var(--ink);border-radius:20px}
+.checks{display:grid;gap:8px;font-size:13.5px}
+.checks div{border:2px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--card)}
+.checks b{font-family:'IBM Plex Mono',monospace;font-size:12px;margin-right:6px}
+@media(max-width:520px){.shot{grid-template-columns:1fr}.shot img{max-width:220px;margin:0 auto}}
+
+/* 09 브랜드 보드 */
+.board{border:2.5px solid var(--ink);border-radius:calc(var(--u)*6);background:var(--card);padding:calc(var(--u)*5);margin:calc(var(--u)*4) 0;display:grid;gap:calc(var(--u)*5)}
+.logo{display:flex;align-items:center;gap:14px}
+.logo .mk{width:64px;height:64px;border-radius:50%;background:var(--pink);border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font:900 20px/1 'IBM Plex Mono',monospace;color:#fff;letter-spacing:-.05em;box-shadow:inset 0 0 0 5px var(--card)}
+.logo b{font-size:30px;font-weight:900;letter-spacing:-.03em}
+.logo small{display:block;font-size:13px;color:var(--ink2);font-weight:600}
+.fam5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.fam5 div{text-align:center;font-size:11px;font-weight:700;color:var(--ink2);line-height:1.3}
+.fam5 img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;border:2px solid var(--ink);margin-bottom:4px}
+.fam5 b{display:block;color:var(--ink);font-size:13px}
+.voice{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px}
+.voice div{border:2px solid var(--line);border-radius:12px;padding:10px}
+.voice .y b{color:var(--mint)}.voice .n b{color:var(--pink)}
+.type{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+.type .a{font:900 40px Pretendard;letter-spacing:-.03em}
+.type .b{font:800 32px 'IBM Plex Mono',monospace}
+.type small{font-size:11px;color:var(--ink2);display:block}
+
+/* 10 개발 전달 명세 */
+pre{background:var(--ink);color:oklch(95% .01 80);border-radius:var(--r);padding:calc(var(--u)*4);font:12px/1.65 'IBM Plex Mono',monospace;overflow:auto;margin:calc(var(--u)*4) 0}
+pre .c{color:oklch(75% .05 155)}pre .s{color:oklch(82% .08 25)}
+
+/* 마무리 */
+.plan{margin-top:calc(var(--u)*14);border:2.5px solid var(--ink);border-radius:calc(var(--u)*6);background:var(--card);padding:calc(var(--u)*5)}
+.plan h2{font-size:22px;font-weight:900;margin-bottom:12px}
+.step{display:grid;grid-template-columns:44px 1fr;gap:10px;padding:10px 0;border-top:1.5px solid var(--line);font-size:14px}
+.step b{font:900 18px 'IBM Plex Mono',monospace;color:var(--pink)}
+.step strong{display:block}
+.team{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;font-size:13px}
+.team div{border:2px solid var(--line);border-radius:12px;padding:10px;background:var(--canvas)}
+@media(max-width:520px){.team{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="cover" style="margin-bottom:16px"><div class="k">TODI · BRAND BOARD</div><h1 style="font-size:40px">투디<br>브랜드 보드</h1>
+<p>인스타 · 앱 · 제미 프롬프트 어디에 쓰든 같은 투디로 보이게 하는 한 장이에요.</p>
+<div class="meta"><a href="./" style="text-decoration:none;color:inherit"><span>← 투디로 돌아가기</span></a></div></header>
+<div class="board">
+    <div class="logo"><div class="mk">TODI</div><div><b>투디</b><small>할 일과 돈을, 하루 한 장에</small></div></div>
+    <div class="fam5">
+      <div><img src="fr/todi.webp" alt=""><b>투디</b>대표 · 길잡이</div>
+      <div><img src="fr/nodi.webp" alt=""><b>노디</b>메모 · 아이디어</div>
+      <div><img src="fr/cheki.webp" alt=""><b>체키</b>완료 체크</div>
+      <div><img src="fr/almi.webp" alt=""><b>알미</b>알림 · 루틴</div>
+      <div><img src="fr/sparki.webp" alt=""><b>스파키</b>목표 · 보너스</div>
+    </div>
+    <div class="sw" style="margin:0;grid-template-columns:repeat(5,1fr)">
+      <div><i style="background:var(--sky)"></i><p><b>하늘</b></p></div>
+      <div><i style="background:var(--nodi)"></i><p><b>연노랑</b></p></div>
+      <div><i style="background:var(--cheki)"></i><p><b>코랄</b></p></div>
+      <div><i style="background:var(--almi)"></i><p><b>라벤더</b></p></div>
+      <div><i style="background:var(--sparki)"></i><p><b>민트</b></p></div>
+    </div>
+    <div class="type"><div><span class="a">오늘 할 일</span><small>Pretendard 900 · 제목</small></div><div><span class="b">21 · 2/3</span><small>Plex Mono 800 · 숫자</small></div></div>
+    <div class="voice"><div class="y"><b>이렇게 말해요</b><br>"뚝딱! 오늘 할 일 끝!"<br>"오늘 3걸음 걸었어요"</div><div class="n"><b>이렇게는 안 해요</b><br>"목표 미달성"<br>"지출 초과 경고!!"</div></div>
+  </div>
+
+<div class="board" style="margin-top:0">
+  <div><b style="font-size:15px">친구들이 맡은 자리</b>
+  <div class="voice" style="margin-top:8px;grid-template-columns:1fr">
+    <div>🐻 <b>투디</b> — 오늘 화면 맨 위에서 인사 · 할 일 완료 영상 대부분</div>
+    <div>🐰 <b>노디</b> — 오늘 화면 "지금" 줄에서 메모하며 아이디어 떠올리기</div>
+    <div>✅ <b>체키</b> — 할 일 완료 체크 (영상 준비 중)</div>
+    <div>⏰ <b>알미</b> — 시간 알림 · 루틴 (영상 준비 중)</div>
+    <div>⭐ <b>스파키</b> — 오늘 할 일 전부 끝냈을 때 "PERFECT!"</div>
+  </div></div>
+  <div><b style="font-size:15px">제미에게 보낼 공통 몸 설명</b>
+<pre style="white-space:pre-wrap;margin-top:8px">하얗고 매끈한 무광 도자기 얼굴, 가로가 조금 넓은 동그란 얼굴
+눈: 작고 동그란 까만 점 2개, 넓게 떨어져 있음 (하얀 반짝이 테두리 없음)
+볼: 눈 아래 바깥쪽 연한 분홍 볼터치 · 입: 작게 웃는 곡선 · 코·눈썹 없음
+손: 손가락 없는 하얀 벙어리장갑 · 다리: 짧고 곧은 하얀 원통
+머리(후드 포함)가 키의 절반 · 얼굴을 동그랗게 감싸는 폭신한 털 후드
+배경: 평평한 초록 #00B140 · 1080p · 카메라 고정</pre></div>
+</div>
+</body>
+</html>
