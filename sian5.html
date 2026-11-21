@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>투디 리디자인 제안서 · 10가지 관점</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+/* ===== 디자인 토큰 (02. impeccable: OKLCH 색 + 4px 격자) ===== */
+:root{
+  --u:4px;
+  --canvas:oklch(95.6% .016 80);   /* #F6F0E5 */
+  --card:oklch(99% .008 80);       /* #FFFCF7 */
+  --ink:oklch(35% .055 210);       /* #0F414A */
+  --ink2:oklch(52% .03 210);
+  --line:oklch(88% .02 80);
+  --mint:oklch(62% .045 155);      /* 할 일 */
+  --pink:oklch(60% .08 355);       /* 지출 */
+  --inc:oklch(50% .06 210);        /* 수입 */
+  --tan:oklch(91% .03 75);
+  --sky:oklch(91% .025 240);
+  --nodi:oklch(92% .07 95);
+  --cheki:oklch(74% .11 25);
+  --almi:oklch(80% .06 300);
+  --sparki:oklch(86% .05 170);
+  --r:calc(var(--u)*5);
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--canvas)}
+body{font-family:Pretendard,'Noto Sans KR',sans-serif;color:var(--ink);max-width:760px;margin:0 auto;padding:calc(var(--u)*5) calc(var(--u)*4) calc(var(--u)*20);line-height:1.6;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(oklch(80% .02 80 / .25) 1px,transparent 1px);background-size:6px 6px}
+.mono{font-family:'IBM Plex Mono','SF Mono',ui-monospace,monospace}
+
+/* 표지 */
+.cover{border:2.5px solid var(--ink);border-radius:calc(var(--u)*6);background:var(--card);padding:calc(var(--u)*6) calc(var(--u)*5);position:relative;overflow:hidden}
+.cover .k{font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--pink)}
+.cover h1{font-size:clamp(34px,9vw,52px);line-height:1.08;letter-spacing:-.03em;margin:calc(var(--u)*2) 0 calc(var(--u)*3);font-weight:900}
+.cover p{color:var(--ink2);font-size:15px;max-width:30em}
+.cover .fam{display:grid;grid-template-columns:repeat(5,1fr);gap:calc(var(--u)*2);margin-top:calc(var(--u)*5)}
+.cover .fam img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:calc(var(--u)*4);border:2px solid var(--ink)}
+.meta{display:flex;flex-wrap:wrap;gap:calc(var(--u)*2);margin-top:calc(var(--u)*4)}
+.meta span{font-size:12px;font-weight:800;border:2px solid var(--ink);border-radius:99px;padding:2px 12px;background:var(--canvas)}
+
+/* 목차 (사진 속 번호 카드 모양) */
+.toc{margin:calc(var(--u)*8) 0;display:grid;gap:calc(var(--u)*2)}
+.toc a{display:grid;grid-template-columns:64px 1fr;border:2px solid var(--ink);background:var(--card);text-decoration:none;color:inherit;
+  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px))}
+.toc b{font:900 22px/1 'IBM Plex Mono',ui-monospace,monospace;display:flex;align-items:center;justify-content:center;border-right:2px solid var(--ink)}
+.toc div{padding:calc(var(--u)*2) calc(var(--u)*3)}
+.toc strong{display:block;font:800 15px/1.3 'IBM Plex Mono',ui-monospace,monospace}
+.toc small{font-size:13px;color:var(--ink2)}
+
+/* 섹션 */
+section.sk{margin-top:calc(var(--u)*14)}
+.sh{display:flex;align-items:baseline;gap:calc(var(--u)*3);border-bottom:2.5px solid var(--ink);padding-bottom:calc(var(--u)*2)}
+.sh .n{font:900 44px/1 'IBM Plex Mono',ui-monospace,monospace;color:var(--pink)}
+.sh h2{font:800 20px/1.2 'IBM Plex Mono',ui-monospace,monospace}
+.sh h2 small{display:block;font:600 13px Pretendard,sans-serif;color:var(--ink2);margin-top:2px}
+.why{margin:calc(var(--u)*4) 0;font-size:15px}
+.why b{background:linear-gradient(transparent 60%,var(--tan) 0)}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--u)*3);margin:calc(var(--u)*4) 0}
+.ba>div{border:2px solid var(--line);border-radius:var(--r);padding:calc(var(--u)*3);background:var(--card);font-size:13.5px}
+.ba>div.to{border-color:var(--ink)}
+.ba h4{font-size:11px;letter-spacing:.12em;color:var(--ink2);margin-bottom:6px}
+.ba .to h4{color:var(--pink)}
+.ba ul{padding-left:16px}
+@media(max-width:520px){.ba{grid-template-columns:1fr}}
+
+/* 휴대폰 틀 */
+.stage{display:flex;justify-content:center;gap:calc(var(--u)*4);flex-wrap:wrap;margin:calc(var(--u)*5) 0}
+.phone{width:300px;border:2.5px solid var(--ink);border-radius:36px;background:var(--canvas);padding:12px;position:relative;box-shadow:0 18px 40px oklch(35% .05 210 / .14)}
+.phone .scr{border-radius:26px;overflow:hidden;background:var(--canvas);min-height:520px;position:relative}
+.cap{text-align:center;font-size:12px;font-weight:800;color:var(--ink2);margin-top:8px}
+
+/* 01 과감한 레이아웃 */
+.p1 .top{padding:18px 18px 0;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:800;color:var(--ink2)}
+.p1 .hero{display:grid;grid-template-columns:1fr 112px;align-items:end;padding:6px 18px 0;position:relative}
+.p1 .day{font:900 108px/.82 'IBM Plex Mono',monospace;letter-spacing:-.06em}
+.p1 .day small{display:block;font:800 14px Pretendard;letter-spacing:0;margin:8px 0 0 4px;color:var(--pink)}
+.p1 .hero video,.p1 .hero img{width:112px;height:150px;object-fit:contain}
+.p1 .bar{margin:14px 18px 0;height:14px;border:2px solid var(--ink);border-radius:99px;overflow:hidden;display:flex}
+.p1 .bar i{background:var(--mint)}.p1 .bar i+i{background:var(--pink)}
+.p1 .big3{display:grid;grid-template-columns:repeat(3,1fr);margin:14px 18px;border:2px solid var(--ink);border-radius:16px;background:var(--card)}
+.p1 .big3 div{padding:10px 8px;text-align:center;font-size:11px;font-weight:800;color:var(--ink2)}
+.p1 .big3 div+div{border-left:2px solid var(--ink)}
+.p1 .big3 b{display:block;font:900 20px 'IBM Plex Mono',monospace;color:var(--ink)}
+.p1 .list{margin:0 18px;display:grid;gap:8px}
+.row{display:flex;align-items:center;gap:10px;background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:10px 12px;font-size:14px;font-weight:700}
+.row .t{font:700 11px 'IBM Plex Mono',monospace;color:var(--ink2);width:38px}
+.row .ck{width:24px;height:24px;border-radius:50%;border:2px solid var(--mint);flex:none}
+.row.done .ck{background:var(--mint)}.row.done span:not(.t){text-decoration:line-through;color:var(--ink2)}
+.row .m{margin-left:auto;font:800 12px 'IBM Plex Mono',monospace;color:var(--pink)}
+
+/* 02 토큰 */
+.sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:calc(var(--u)*2);margin:calc(var(--u)*4) 0}
+.sw div{border:2px solid var(--ink);border-radius:14px;overflow:hidden;background:var(--card);font-size:11px}
+.sw i{display:block;height:56px}
+.sw p{padding:6px 8px;line-height:1.35}.sw p b{font-size:12px}
+.grid4{display:flex;align-items:flex-end;gap:8px;margin:calc(var(--u)*3) 0;flex-wrap:wrap}
+.grid4 div{background:var(--pink);opacity:.85;border-radius:3px;position:relative}
+.grid4 span{display:block;font:700 10px 'IBM Plex Mono',monospace;text-align:center;margin-top:4px}
+
+/* 03 고급 모션: 체크 */
+.p3 .scr{padding:22px 18px;display:grid;gap:10px;align-content:start}
+.ckd{display:flex;align-items:center;gap:12px;background:var(--card);border:2px solid var(--ink);border-radius:16px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;user-select:none;position:relative;overflow:hidden;transition:transform .5s var(--ease-out)}
+.ckd svg{width:28px;height:28px;flex:none}
+.ckd .ring{fill:none;stroke:var(--mint);stroke-width:2.5;stroke-dasharray:76;stroke-dashoffset:0}
+.ckd .fill{fill:var(--mint);transform-origin:14px 14px;transform:scale(0);transition:transform .45s var(--ease-spring)}
+.ckd .tick{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:20;stroke-dashoffset:20;transition:stroke-dashoffset .35s .18s var(--ease-out)}
+.ckd .tx{position:relative}
+.ckd .tx::after{content:'';position:absolute;left:0;top:52%;height:2px;width:0;background:var(--ink2);transition:width .4s .25s var(--ease-out)}
+.ckd.on .fill{transform:scale(1)}.ckd.on .tick{stroke-dashoffset:0}.ckd.on .tx{color:var(--ink2);transition:color .3s .3s}.ckd.on .tx::after{width:100%}
+.ckd.on{transform:scale(.985)}
+.ckd .glow{position:absolute;inset:0;background:radial-gradient(circle at 26px 50%,oklch(62% .045 155 / .25),transparent 60%);opacity:0}
+.ckd.on .glow{animation:glow .9s var(--ease-out)}
+@keyframes glow{0%{opacity:1}100%{opacity:0}}
+.hint{font-size:12px;color:var(--ink2);text-align:center}
+
+/* 04 숫자 굴리기 + 곡선 */
+.p4 .scr{padding:22px 18px}
+.money{border:2px solid var(--ink);border-radius:18px;background:var(--card);padding:16px}
+.money small{font-size:12px;font-weight:800;color:var(--ink2)}
+.money b{display:block;font:900 34px 'IBM Plex Mono',monospace;letter-spacing:-.03em;color:var(--pink);font-variant-numeric:tabular-nums}
+.btn{display:inline-block;margin-top:12px;border:2px solid var(--ink);border-radius:99px;padding:6px 14px;font-weight:800;font-size:13px;background:var(--tan);cursor:pointer;color:var(--ink)}
+.tabs{display:flex;border:2px solid var(--ink);border-radius:99px;margin-top:18px;position:relative;background:var(--card)}
+.tabs button{flex:1;border:0;background:none;padding:8px 0;font:800 13px Pretendard;color:var(--ink2);position:relative;z-index:1;cursor:pointer}
+.tabs button.on{color:#fff}
+.tabs .pill{position:absolute;top:3px;bottom:3px;left:3px;width:calc(33.33% - 4px);border-radius:99px;background:var(--ink);transition:transform .45s var(--ease-spring)}
+.curves{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.curves div{border:2px solid var(--line);border-radius:12px;background:var(--card);padding:8px;font-size:10.5px;text-align:center}
+.curves svg{width:100%;height:56px}
+
+/* 05 모션 검수 표 */
+table.aud{width:100%;border-collapse:collapse;margin:calc(var(--u)*4) 0;font-size:13px;background:var(--card);border:2px solid var(--ink)}
+.aud th,.aud td{border:1.5px solid var(--line);padding:8px 8px;text-align:left;vertical-align:top}
+.aud th{background:var(--tan);font-size:12px}
+.ok{color:var(--mint);font-weight:900}.no{color:var(--pink);font-weight:900}.mid{color:oklch(62% .1 70);font-weight:900}
+
+/* 06 테마 공장 */
+.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.chips button{display:flex;align-items:center;gap:6px;border:2px solid var(--ink);border-radius:99px;padding:4px 12px 4px 4px;background:var(--card);font:800 13px Pretendard;color:var(--ink);cursor:pointer}
+.chips button img{width:26px;height:26px;border-radius:50%;object-fit:cover}
+.chips button.on{background:var(--ink);color:#fff}
+.p6 .scr{min-height:420px;transition:background .5s var(--ease-out)}
+.p6 .hd{margin:16px;border:2px solid var(--ink);border-radius:20px;background:var(--th1);padding:16px;display:flex;justify-content:space-between;align-items:center;transition:background .5s}
+.p6 .hd b{font-size:22px;line-height:1.15;display:block}
+.p6 .hd small{font-size:12px;font-weight:700;opacity:.75}
+.p6 .hd img{width:84px;height:84px;object-fit:cover;border-radius:16px;border:2px solid var(--ink)}
+.p6 .chipline{display:flex;gap:6px;margin:0 16px}
+.p6 .chipline span{flex:1;text-align:center;border:2px solid var(--ink);border-radius:99px;padding:6px 0;font-size:12px;font-weight:800;background:var(--th2);transition:background .5s}
+.p6 .row{margin:10px 16px 0}
+.p6 .row .ck{border-color:var(--th3)}.p6 .row.done .ck{background:var(--th3)}
+.scale{display:flex;margin:0 16px 0;margin-top:16px;border:2px solid var(--ink);border-radius:12px;overflow:hidden}
+.scale i{flex:1;height:26px;transition:background .5s}
+
+/* 07 컴포넌트 명세 */
+.comp{display:grid;gap:calc(var(--u)*3);margin:calc(var(--u)*4) 0}
+.comp>div{border:2px dashed var(--ink2);border-radius:var(--r);padding:calc(var(--u)*4);background:var(--card);position:relative}
+.comp .lab{position:absolute;top:-11px;left:14px;background:var(--canvas);padding:0 8px;font:800 11px 'IBM Plex Mono',monospace}
+.spec{font:600 11px/1.6 'IBM Plex Mono',monospace;color:var(--ink2);margin-top:10px}
+.measure{position:relative;display:inline-block}
+.measure::after{content:attr(data-h);position:absolute;right:-46px;top:50%;transform:translateY(-50%);font:700 10px 'IBM Plex Mono',monospace;color:var(--pink)}
+.pillx{display:inline-flex;align-items:center;height:40px;padding:0 16px;border:2px solid var(--mint);border-radius:99px;font-weight:800;color:var(--mint);background:oklch(62% .045 155 / .08)}
+
+/* 08 실제 브라우저 검사 */
+.shot{display:grid;grid-template-columns:200px 1fr;gap:calc(var(--u)*4);align-items:start;margin:calc(var(--u)*4) 0}
+.shot img{width:100%;border:2px solid var(--ink);border-radius:20px}
+.checks{display:grid;gap:8px;font-size:13.5px}
+.checks div{border:2px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--card)}
+.checks b{font-family:'IBM Plex Mono',monospace;font-size:12px;margin-right:6px}
+@media(max-width:520px){.shot{grid-template-columns:1fr}.shot img{max-width:220px;margin:0 auto}}
+
+/* 09 브랜드 보드 */
+.board{border:2.5px solid var(--ink);border-radius:calc(var(--u)*6);background:var(--card);padding:calc(var(--u)*5);margin:calc(var(--u)*4) 0;display:grid;gap:calc(var(--u)*5)}
+.logo{display:flex;align-items:center;gap:14px}
+.logo .mk{width:64px;height:64px;border-radius:50%;background:var(--pink);border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font:900 20px/1 'IBM Plex Mono',monospace;color:#fff;letter-spacing:-.05em;box-shadow:inset 0 0 0 5px var(--card)}
+.logo b{font-size:30px;font-weight:900;letter-spacing:-.03em}
+.logo small{display:block;font-size:13px;color:var(--ink2);font-weight:600}
+.fam5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.fam5 div{text-align:center;font-size:11px;font-weight:700;color:var(--ink2);line-height:1.3}
+.fam5 img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;border:2px solid var(--ink);margin-bottom:4px}
+.fam5 b{display:block;color:var(--ink);font-size:13px}
+.voice{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px}
+.voice div{border:2px solid var(--line);border-radius:12px;padding:10px}
+.voice .y b{color:var(--mint)}.voice .n b{color:var(--pink)}
+.type{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+.type .a{font:900 40px Pretendard;letter-spacing:-.03em}
+.type .b{font:800 32px 'IBM Plex Mono',monospace}
+.type small{font-size:11px;color:var(--ink2);display:block}
+
+/* 10 개발 전달 명세 */
+pre{background:var(--ink);color:oklch(95% .01 80);border-radius:var(--r);padding:calc(var(--u)*4);font:12px/1.65 'IBM Plex Mono',monospace;overflow:auto;margin:calc(var(--u)*4) 0}
+pre .c{color:oklch(75% .05 155)}pre .s{color:oklch(82% .08 25)}
+
+/* 마무리 */
+.plan{margin-top:calc(var(--u)*14);border:2.5px solid var(--ink);border-radius:calc(var(--u)*6);background:var(--card);padding:calc(var(--u)*5)}
+.plan h2{font-size:22px;font-weight:900;margin-bottom:12px}
+.step{display:grid;grid-template-columns:44px 1fr;gap:10px;padding:10px 0;border-top:1.5px solid var(--line);font-size:14px}
+.step b{font:900 18px 'IBM Plex Mono',monospace;color:var(--pink)}
+.step strong{display:block}
+.team{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;font-size:13px}
+.team div{border:2px solid var(--line);border-radius:12px;padding:10px;background:var(--canvas)}
+@media(max-width:520px){.team{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="k">TODI · REDESIGN PROPOSAL</div>
+  <h1>투디,<br>10가지 눈으로<br>다시 보기</h1>
+  <p>지금 투디(오늘 홈 · 할 일 · 금융, 롤리 믹스 색, 투명 영상 캐릭터)를 그대로 두고, 디자인 프롬프트 10개를 하나씩 적용했을 때 어떻게 바뀌는지 보여드리는 시안이에요. 화면 속 버튼은 직접 눌러볼 수 있어요.</p>
+  <div class="fam"><img src="sian5/todi.webp" alt="투디"><img src="sian5/nodi.webp" alt="노디"><img src="sian5/cheki.webp" alt="체키"><img src="sian5/almi.webp" alt="알미"><img src="sian5/sparki.webp" alt="스파키"></div>
+  <div class="meta"><span>롤리 믹스 색 유지</span><span>투디 패밀리 5</span><span>모바일 390px 기준</span></div>
+</header>
+
+<nav class="toc">
+  <a href="#s1"><b>01.</b><div><strong>frontend-design</strong><small>과감한 레이아웃 · 오늘 홈을 포스터처럼</small></div></a>
+  <a href="#s2"><b>02.</b><div><strong>impeccable</strong><small>OKLCH 색 · 4px 격자로 정리</small></div></a>
+  <a href="#s3"><b>03.</b><div><strong>taste-skill</strong><small>완료 체크를 고급스럽게</small></div></a>
+  <a href="#s4"><b>04.</b><div><strong>animate</strong><small>숫자·탭 전환의 움직임 곡선</small></div></a>
+  <a href="#s5"><b>05.</b><div><strong>design-motion</strong><small>지금 움직임 3가지 관점 검수</small></div></a>
+  <a href="#s6"><b>06.</b><div><strong>theme-factory</strong><small>캐릭터별 테마 자동 생성</small></div></a>
+  <a href="#s7"><b>07.</b><div><strong>figma-implement</strong><small>부품 치수 그대로 구현</small></div></a>
+  <a href="#s8"><b>08.</b><div><strong>playwright-mcp</strong><small>실제 화면 찍어서 검사</small></div></a>
+  <a href="#s9"><b>09.</b><div><strong>brandkit</strong><small>한 장짜리 브랜드 보드</small></div></a>
+  <a href="#s10"><b>10.</b><div><strong>designer-skills</strong><small>개발 전달 명세</small></div></a>
+</nav>
+
+<!-- 01 -->
+<section class="sk" id="s1">
+  <div class="sh"><span class="n">01</span><h2>frontend-design<small>과감한 레이아웃 설계</small></h2></div>
+  <p class="why">지금 오늘 홈은 카드가 비슷한 크기로 줄지어 있어서 <b>무엇이 제일 중요한지</b> 한눈에 안 들어와요. 날짜 숫자를 포스터처럼 아주 크게, 진행 막대와 숫자 3칸으로 <b>"오늘 얼마나 했나"</b>가 먼저 보이게 바꿔요.</p>
+  <div class="stage">
+    <div><div class="phone p1"><div class="scr">
+      <div class="top"><span>TODI</span><span>👣 오늘 3걸음</span></div>
+      <div class="hero">
+        <div class="day">21<small>11월 · 토요일</small></div>
+        <video src="fxv/hello.webm" autoplay muted loop playsinline></video>
+      </div>
+      <div class="bar"><i style="flex:2"></i><i style="flex:1"></i><span style="flex:1"></span></div>
+      <div class="big3"><div><b>2/3</b>할 일</div><div><b>1.7만</b>지출</div><div><b>0</b>수입</div></div>
+      <div class="list">
+        <div class="row done"><span class="t">08:00</span><i class="ck"></i><span>운동</span></div>
+        <div class="row done"><span class="t">12:30</span><i class="ck"></i><span>점심</span><em class="m">−12,000</em></div>
+        <div class="row"><span class="t">19:00</span><i class="ck"></i><span>영어 공부</span></div>
+      </div>
+    </div></div><div class="cap">제안: 포스터형 오늘 홈</div></div>
+  </div>
+  <div class="ba"><div><h4>지금</h4><ul><li>"오늘의 할 일 · 돈" 글자 카드</li><li>할 일/지출/수입 알약 3개</li><li>3줄 타임라인 표</li></ul></div>
+  <div class="to"><h4>바뀌면</h4><ul><li>날짜 숫자 108px로 크게</li><li>할 일·지출 비율 진행 막대 한 줄</li><li>숫자 3칸 → 표는 아래로</li></ul></div></div>
+</section>
+
+<!-- 02 -->
+<section class="sk" id="s2">
+  <div class="sh"><span class="n">02</span><h2>impeccable<small>OKLCH 색상 · 4px 격자 엄수</small></h2></div>
+  <p class="why">롤리 믹스 색을 <b>OKLCH</b>라는 방식으로 다시 적어요. 밝기 숫자가 같으면 눈에도 같은 밝기로 보여서, 밤 모드나 새 캐릭터 색을 만들 때 <b>숫자 하나만 바꾸면</b> 어울리는 색이 나와요. 여백·크기는 전부 4의 배수로 맞춰요.</p>
+  <div class="sw">
+    <div><i style="background:var(--canvas)"></i><p><b>바탕</b><br>oklch(95.6% .016 80)</p></div>
+    <div><i style="background:var(--card)"></i><p><b>카드</b><br>oklch(99% .008 80)</p></div>
+    <div><i style="background:var(--ink)"></i><p><b>잉크</b><br>oklch(35% .055 210)</p></div>
+    <div><i style="background:var(--mint)"></i><p><b>할 일</b><br>oklch(62% .045 155)</p></div>
+    <div><i style="background:var(--pink)"></i><p><b>지출</b><br>oklch(60% .08 355)</p></div>
+    <div><i style="background:var(--inc)"></i><p><b>수입</b><br>oklch(50% .06 210)</p></div>
+  </div>
+  <div class="grid4">
+    <div><div style="width:4px;height:4px"></div><span>4</span></div>
+    <div><div style="width:8px;height:8px"></div><span>8</span></div>
+    <div><div style="width:12px;height:12px"></div><span>12</span></div>
+    <div><div style="width:16px;height:16px"></div><span>16</span></div>
+    <div><div style="width:24px;height:24px"></div><span>24</span></div>
+    <div><div style="width:32px;height:32px"></div><span>32</span></div>
+    <div><div style="width:48px;height:48px"></div><span>48</span></div>
+  </div>
+  <div class="ba"><div><h4>지금</h4><ul><li>여백 14·15·18·22px 등 섞여 있음</li><li>색은 HEX 값을 하나씩 손으로 지정</li></ul></div>
+  <div class="to"><h4>바뀌면</h4><ul><li>여백 4·8·12·16·24·32·48만 사용</li><li>색 9개를 OKLCH 토큰으로, 밤 모드는 밝기만 반대로</li></ul></div></div>
+</section>
+
+<!-- 03 -->
+<section class="sk" id="s3">
+  <div class="sh"><span class="n">03</span><h2>taste-skill<small>감각적인 고급 모션</small></h2></div>
+  <p class="why">할 일 완료는 투디에서 <b>가장 자주 하는 동작</b>이에요. 영상이 나오기 전 0.6초를 고급스럽게 만들어요. 동그라미가 통통 차오르고 → 체크가 그려지고 → 글자에 줄이 스르륵 그어져요. <b>아래 줄을 눌러 보세요.</b></p>
+  <div class="stage"><div><div class="phone p3"><div class="scr">
+    <div class="ckd"><span class="glow"></span><svg viewBox="0 0 28 28"><circle class="ring" cx="14" cy="14" r="12"/><circle class="fill" cx="14" cy="14" r="12"/><path class="tick" d="M8.5 14.5l3.6 3.6 7.4-7.6"/></svg><span class="tx">책 읽기</span></div>
+    <div class="ckd"><span class="glow"></span><svg viewBox="0 0 28 28"><circle class="ring" cx="14" cy="14" r="12"/><circle class="fill" cx="14" cy="14" r="12"/><path class="tick" d="M8.5 14.5l3.6 3.6 7.4-7.6"/></svg><span class="tx">강아지 산책</span></div>
+    <div class="ckd"><span class="glow"></span><svg viewBox="0 0 28 28"><circle class="ring" cx="14" cy="14" r="12"/><circle class="fill" cx="14" cy="14" r="12"/><path class="tick" d="M8.5 14.5l3.6 3.6 7.4-7.6"/></svg><span class="tx">요리하기</span></div>
+    <p class="hint">눌러서 완료 / 다시 눌러 취소</p>
+  </div></div><div class="cap">제안: 3단계 완료 체크</div></div></div>
+  <div class="ba"><div><h4>지금</h4><ul><li>동그라미가 바로 채워짐</li><li>곧바로 영상이 덮음</li></ul></div>
+  <div class="to"><h4>바뀌면</h4><ul><li>차오름 0.45초 → 체크 0.35초 → 줄 긋기 0.4초</li><li>체크가 끝난 뒤 영상 등장 (내가 한 일이 먼저 보임)</li></ul></div></div>
+</section>
+
+<!-- 04 -->
+<section class="sk" id="s4">
+  <div class="sh"><span class="n">04</span><h2>animate<small>미세 전환의 움직임 곡선</small></h2></div>
+  <p class="why">금액은 바로 바뀌는 대신 <b>숫자가 굴러가며</b> 바뀌고, [할 일·지출·수입] 고르기는 선택 표시가 <b>미끄러지듯</b> 옮겨가요. 모든 움직임은 아래 곡선 3개만 써서 앱 전체가 같은 느낌으로 움직여요.</p>
+  <div class="stage"><div><div class="phone p4"><div class="scr">
+    <div class="money"><small>오늘 지출</small><b id="cnt">17,000원</b><span class="btn" id="addm">+ 커피 4,500원</span></div>
+    <div class="tabs" id="tabs"><span class="pill"></span><button class="on">할 일</button><button>지출</button><button>수입</button></div>
+    <div class="curves">
+      <div><svg viewBox="0 0 100 60"><path d="M5 55 C27 3 41 5 95 5" fill="none" stroke="currentColor" stroke-width="3"/></svg>나타남<br><b>ease-out</b><br>0.3초</div>
+      <div><svg viewBox="0 0 100 60"><path d="M5 55 C39 -30 69 5 95 5" fill="none" stroke="currentColor" stroke-width="3"/></svg>통통<br><b>spring</b><br>0.45초</div>
+      <div><svg viewBox="0 0 100 60"><path d="M5 5 C40 5 60 55 95 55" fill="none" stroke="currentColor" stroke-width="3"/></svg>사라짐<br><b>ease-in</b><br>0.2초</div>
+    </div>
+  </div></div><div class="cap">제안: 숫자 굴리기 · 미끄러지는 탭</div></div></div>
+</section>
+
+<!-- 05 -->
+<section class="sk" id="s5">
+  <div class="sh"><span class="n">05</span><h2>design-motion<small>세 가지 관점의 모션 검수</small></h2></div>
+  <p class="why">지금 투디에 있는 움직임을 <b>쓰기 편한가 · 투디다운가 · 폰이 버거운가</b> 세 가지로 점검했어요.</p>
+  <table class="aud">
+    <tr><th>움직임</th><th>쓰기 편함</th><th>투디다움</th><th>폰 부담</th><th>제안</th></tr>
+    <tr><td>할 일 완료 영상 (가운데 크게)</td><td class="mid">△ 매번 6초</td><td class="ok">◎</td><td class="mid">△</td><td>같은 날 3번째부터는 줄 옆 작게, 하루 첫 완료·전부 완료만 크게</td></tr>
+    <tr><td>제목 카드 인사 투디 (반복)</td><td class="ok">○</td><td class="ok">◎</td><td class="mid">△</td><td>화면에 안 보일 때·배터리 절약 모드면 멈춤</td></tr>
+    <tr><td>"지금" 줄 노디 (반복)</td><td class="ok">○</td><td class="ok">◎</td><td class="mid">△</td><td>영상 2개 동시 재생 → 하나만 움직이고 하나는 쉬게</td></tr>
+    <tr><td>할 일 화면 달려오는 투디</td><td class="ok">○</td><td class="no">✕ 예전 모습</td><td class="ok">○</td><td>새 투디 영상으로 교체 또는 제거</td></tr>
+    <tr><td>움직임 줄이기 설정</td><td class="no">✕ 없음</td><td>-</td><td>-</td><td>폰의 "애니메이션 줄이기"를 켠 사람은 영상 대신 사진</td></tr>
+  </table>
+</section>
+
+<!-- 06 -->
+<section class="sk" id="s6">
+  <div class="sh"><span class="n">06</span><h2>theme-factory<small>색상 스케일 자동 생성</small></h2></div>
+  <p class="why">캐릭터 하나를 고르면 그 옷 색에서 <b>배경·칩·체크 색 5단계</b>가 자동으로 만들어져요. 사용자가 "내 투디"를 골라 앱 색을 바꿀 수 있어요. <b>아래 친구를 눌러 보세요.</b></p>
+  <div class="stage"><div><div class="phone p6" id="p6"><div class="scr" id="p6s">
+    <div class="hd"><div><small id="thn">투디 테마</small><b>오늘의<br>할 일 · 돈</b></div><img id="thimg" src="sian5/todi.webp" alt=""></div>
+    <div class="chipline"><span>할 일 1/2</span><span>지출 0</span><span>수입 0</span></div>
+    <div class="row done"><i class="ck"></i><span>운동</span></div>
+    <div class="row"><i class="ck"></i><span>메모 정리</span></div>
+    <div class="scale" id="scale"><i></i><i></i><i></i><i></i><i></i></div>
+  </div></div>
+  <div class="chips" id="chips">
+    <button class="on" data-h="240" data-c=".045" data-n="투디" data-i="todi"><img src="sian5/todi.webp" alt="">투디</button>
+    <button data-h="95" data-c=".08" data-n="노디" data-i="nodi"><img src="sian5/nodi.webp" alt="">노디</button>
+    <button data-h="25" data-c=".09" data-n="체키" data-i="cheki"><img src="sian5/cheki.webp" alt="">체키</button>
+    <button data-h="300" data-c=".06" data-n="알미" data-i="almi"><img src="sian5/almi.webp" alt="">알미</button>
+    <button data-h="170" data-c=".055" data-n="스파키" data-i="sparki"><img src="sian5/sparki.webp" alt="">스파키</button>
+  </div></div></div>
+</section>
+
+<!-- 07 -->
+<section class="sk" id="s7">
+  <div class="sh"><span class="n">07</span><h2>figma-implement<small>디자인을 그대로 구현</small></h2></div>
+  <p class="why">자주 쓰는 부품 3개의 <b>치수를 정해 두고</b> 모든 화면에서 똑같이 써요. 지금은 화면마다 높이·둥글기가 조금씩 달라요. (피그마가 연결되어 있어서, 원하면 이 부품을 피그마 파일로도 만들어 드릴 수 있어요.)</p>
+  <div class="comp">
+    <div><span class="lab">Chip / 요약 칩</span><span class="measure" data-h="40px"><span class="pillx">할 일 2/3</span></span>
+      <div class="spec">height 40 · padding 0 16 · radius 999 · border 2 · font 15/800</div></div>
+    <div><span class="lab">Row / 할 일 줄</span><div class="row done" style="max-width:320px"><span class="t">08:00</span><i class="ck"></i><span>운동</span></div>
+      <div class="spec">min-height 48 · padding 12 · radius 16 · gap 12 · check 24 · time 11/700 mono</div></div>
+    <div><span class="lab">Card / 제목 카드</span><div style="border:2px solid var(--ink);border-radius:24px;padding:16px;display:flex;justify-content:space-between;align-items:center;max-width:320px;background:var(--canvas)"><b style="font-size:20px;line-height:1.2">오늘의<br>할 일 · 돈</b><img src="sian5/todi.webp" style="width:72px;height:72px;border-radius:16px;object-fit:cover" alt=""></div>
+      <div class="spec">padding 16 · radius 24 · border 2 · title 20/900 · 캐릭터 영역 96×124</div></div>
+  </div>
+</section>
+
+<!-- 08 -->
+<section class="sk" id="s8">
+  <div class="sh"><span class="n">08</span><h2>playwright-mcp<small>실제 브라우저 · 스크린샷 피드백</small></h2></div>
+  <p class="why">이건 <b>이미 클로가 하고 있는 방식</b>이에요. 고칠 때마다 실제 크롬을 폰 크기(390×844)로 띄워 누르고 찍어서 확인해요. 앞으로는 아래 검사 목록을 <b>매번 자동으로</b> 돌려요.</p>
+  <div class="shot"><img src="sian5/now_home.webp" alt="실제 앱 화면 스크린샷"><div class="checks">
+    <div><b>01</b>할 일 6개 완료 → 키워드마다 맞는 영상이 나오는지</div>
+    <div><b>02</b>완료 후 목록이 맨 위로 튀지 않는지 (스크롤 위치)</div>
+    <div><b>03</b>마름모·동그라미·금액 글자가 겹치거나 잘리지 않는지</div>
+    <div><b>04</b>낮 / 밤 모드 둘 다 글자가 잘 보이는지</div>
+    <div><b>05</b>오류 메시지 0개, 문법 검사 통과</div>
+    <div><b>06</b>새 판 시각(설정 맨 아래)이 올라갔는지</div>
+  </div></div>
+</section>
+
+<!-- 09 -->
+<section class="sk" id="s9">
+  <div class="sh"><span class="n">09</span><h2>brandkit<small>한 번에 만드는 브랜드 보드</small></h2></div>
+  <p class="why">인스타·앱스토어·제미 프롬프트 어디에 쓰든 <b>같은 투디</b>로 보이게 하는 한 장이에요.</p>
+  <div class="board">
+    <div class="logo"><div class="mk">TODI</div><div><b>투디</b><small>할 일과 돈을, 하루 한 장에</small></div></div>
+    <div class="fam5">
+      <div><img src="sian5/todi.webp" alt=""><b>투디</b>대표 · 길잡이</div>
+      <div><img src="sian5/nodi.webp" alt=""><b>노디</b>메모 · 아이디어</div>
+      <div><img src="sian5/cheki.webp" alt=""><b>체키</b>완료 체크</div>
+      <div><img src="sian5/almi.webp" alt=""><b>알미</b>알림 · 루틴</div>
+      <div><img src="sian5/sparki.webp" alt=""><b>스파키</b>목표 · 보너스</div>
+    </div>
+    <div class="sw" style="margin:0;grid-template-columns:repeat(5,1fr)">
+      <div><i style="background:var(--sky)"></i><p><b>하늘</b></p></div>
+      <div><i style="background:var(--nodi)"></i><p><b>연노랑</b></p></div>
+      <div><i style="background:var(--cheki)"></i><p><b>코랄</b></p></div>
+      <div><i style="background:var(--almi)"></i><p><b>라벤더</b></p></div>
+      <div><i style="background:var(--sparki)"></i><p><b>민트</b></p></div>
+    </div>
+    <div class="type"><div><span class="a">오늘 할 일</span><small>Pretendard 900 · 제목</small></div><div><span class="b">21 · 2/3</span><small>Plex Mono 800 · 숫자</small></div></div>
+    <div class="voice"><div class="y"><b>이렇게 말해요</b><br>"뚝딱! 오늘 할 일 끝!"<br>"오늘 3걸음 걸었어요"</div><div class="n"><b>이렇게는 안 해요</b><br>"목표 미달성"<br>"지출 초과 경고!!"</div></div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="sk" id="s10">
+  <div class="sh"><span class="n">10</span><h2>designer-skills<small>전문적인 개발 전달 명세</small></h2></div>
+  <p class="why">위에서 정한 것들을 <b>코드에 그대로 옮길 수 있는 한 장</b>으로 정리해요. 다음 작업 때 클로가 이 표를 보고 만들기 때문에 화면마다 어긋나지 않아요.</p>
+<pre><span class="c">/* 투디 디자인 토큰 v1 */</span>
+color.canvas   = <span class="s">oklch(95.6% .016 80)</span>
+color.ink      = <span class="s">oklch(35% .055 210)</span>
+color.todo     = <span class="s">oklch(62% .045 155)</span>
+color.out      = <span class="s">oklch(60% .08 355)</span>
+color.in       = <span class="s">oklch(50% .06 210)</span>
+space          = 4 · 8 · 12 · 16 · 24 · 32 · 48
+radius         = chip 999 · row 16 · card 24 · sheet 32
+motion.enter   = 300ms cubic-bezier(.22,1,.36,1)
+motion.pop     = 450ms cubic-bezier(.34,1.56,.64,1)
+motion.exit    = 200ms ease-in
+
+<span class="c">/* 상태 */</span>
+Row: 기본 → 누름(scale .985) → 완료(채움+체크+줄긋기) → 취소(되돌림)
+영상: 하루 첫 완료 = 크게 · 그 외 = 줄 옆 작게 · 전부 완료 = 스파키 PERFECT
+접근성: 글자 대비 4.5:1 이상 · 누르는 곳 44px 이상 · 움직임 줄이기 지원</pre>
+</section>
+
+<section class="plan">
+  <h2>🧭 팀 추천 적용 순서</h2>
+  <div class="step"><b>1</b><div><strong>02 토큰 + 07 부품 정리</strong>눈에 크게 안 띄지만 뒤의 모든 작업이 쉬워져요. 화면이 반듯해져요.</div></div>
+  <div class="step"><b>2</b><div><strong>03 완료 체크 + 05 영상 줄이기</strong>매일 가장 많이 누르는 곳이라 체감이 제일 커요.</div></div>
+  <div class="step"><b>3</b><div><strong>01 포스터형 오늘 홈</strong>첫인상이 확 바뀌어요. 할일차곡과 가장 다르게 보이는 부분이에요.</div></div>
+  <div class="step"><b>4</b><div><strong>06 캐릭터 테마 + 09 브랜드 보드</strong>투디 패밀리 영상이 모이면 "내 친구 고르기"로 확장해요.</div></div>
+  <div class="team">
+    <div><b>🧭 PM·기획</b><br>1→2 순서로 하면 하루 이틀 안에 끝나요.</div>
+    <div><b>📱 모바일 UI</b><br>01은 표 타임라인을 아래로 내리는 큰 변화라 먼저 시안 확인 필요.</div>
+    <div><b>🗂 DB·권한·사진</b><br>모두 보이는 모양만 바뀌어요. 저장된 기록은 그대로.</div>
+    <div><b>🧪 테스트·배포</b><br>08 검사 목록을 매번 돌리고 판 시각으로 확인.</div>
+  </div>
+</section>
+
+<script>
+/* 03 완료 체크 */
+document.querySelectorAll('.ckd').forEach(el=>el.addEventListener('click',()=>{ el.classList.toggle('on'); }));
+
+/* 04 숫자 굴리기 */
+(function(){
+  try{
+    let val = 17000; const el = document.getElementById('cnt');
+    document.getElementById('addm').addEventListener('click',()=>{
+      const from = val, to = val + 4500, t0 = performance.now(), d = 700;
+      val = to;
+      const step = (t)=>{ const p = Math.min(1,(t-t0)/d), e = 1-Math.pow(1-p,3);
+        el.textContent = Math.round(from+(to-from)*e).toLocaleString('ko-KR')+'원'; if(p<1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    });
+    const tabs = document.getElementById('tabs'), pill = tabs.querySelector('.pill');
+    tabs.querySelectorAll('button').forEach((b,i)=>b.addEventListener('click',()=>{
+      tabs.querySelectorAll('button').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+      pill.style.transform = `translateX(${i*100}%)`;
+      pill.style.background = ['var(--ink)','var(--pink)','var(--inc)'][i];
+    }));
+  }catch(e){ console.log(e); }
+})();
+
+/* 06 테마 공장: 색 하나(색상각 h)에서 5단계 자동 생성 */
+(function(){
+  try{
+    const p = document.getElementById('p6'), s = document.getElementById('p6s'), sc = document.getElementById('scale').children;
+    function apply(btn){
+      const h = btn.dataset.h, c = btn.dataset.c, L = [97,92,84,70,52];
+      const col = L.map((l,i)=>`oklch(${l}% ${(c*(0.35+i*0.2)).toFixed(3)} ${h})`);
+      s.style.background = col[0];
+      p.style.setProperty('--th1', col[1]); p.style.setProperty('--th2', col[2]); p.style.setProperty('--th3', col[4]);
+      [...sc].forEach((i,k)=>i.style.background = col[k]);
+      document.getElementById('thn').textContent = btn.dataset.n + ' 테마';
+      document.getElementById('thimg').src = 'sian5/' + btn.dataset.i + '.webp';
+      document.querySelectorAll('#chips button').forEach(x=>x.classList.toggle('on', x===btn));
+    }
+    document.querySelectorAll('#chips button').forEach(b=>b.addEventListener('click',()=>apply(b)));
+    apply(document.querySelector('#chips button'));
+  }catch(e){ console.log(e); }
+})();
+</script>
+</body>
+</html>
