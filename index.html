@@ -545,6 +545,35 @@ body.night .pl.g{color:#C9D8CC}body.night .pl.p{color:#F0C2D2}body.night .pl.b{c
 .tlnodi{flex:none;display:flex;align-items:flex-end;height:78px;margin-left:2px}
 .tlnodi .loopv{height:78px;width:auto;display:block}
 .tlg.now{min-height:80px!important}
+
+/* ===== 시안 01: 포스터형 오늘 홈 ===== */
+.phero{padding:4px 4px 0}
+.phmain{display:flex;align-items:flex-end;justify-content:space-between}
+.phday{font-size:104px;font-weight:900;line-height:.8;letter-spacing:-.06em;color:var(--ink);padding-left:2px}
+.phday small{display:block;font-size:15px;font-weight:800;letter-spacing:0;color:var(--pink);margin:12px 0 2px 6px}
+.phero .dtodi{width:120px;height:150px;margin:0 -4px -4px 0}
+.phero .dtodi img{height:118px}
+.phero .dtodi .loopv{height:150px}
+.phbar{margin:14px 0 0;height:14px;border:2px solid var(--ink);border-radius:99px;overflow:hidden;background:var(--card)}
+.phbar i{display:block;height:100%;background:var(--mint);border-radius:99px;transition:width .6s cubic-bezier(.22,1,.36,1)}
+.phbar.empty{border-style:dashed;opacity:.5}
+.ph3{display:grid;grid-template-columns:repeat(3,1fr);margin:12px 0 14px;border:2px solid var(--ink);border-radius:16px;background:var(--card);overflow:hidden}
+.ph3 button{border:0;background:none;padding:9px 4px 8px;font-size:12px;font-weight:800;color:var(--muted);font-family:inherit}
+.ph3 button+button{border-left:2px solid var(--ink)}
+.ph3 b{display:block;font-size:21px;font-weight:900;color:var(--ink);letter-spacing:-.02em;margin-bottom:1px}
+.ph3 .o b{color:var(--pink)}.ph3 .n b{color:var(--inc)}
+/* ===== 시안 03: 고급 완료 체크 ===== */
+.chk.cking{background:var(--card)!important;border-color:var(--mint)!important;padding:0;overflow:visible}
+.chk.cking svg{width:100%;height:100%;display:block}
+.chk.cking .cf{fill:var(--mint);transform-origin:14px 14px;transform:scale(0);animation:ckf .42s cubic-bezier(.34,1.56,.64,1) forwards}
+.chk.cking .ct{fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:20;stroke-dashoffset:20;animation:ckt .32s .2s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes ckf{to{transform:scale(1)}}
+@keyframes ckt{to{stroke-dashoffset:0}}
+.strk{background:linear-gradient(var(--muted),var(--muted)) 0 56%/0 2px no-repeat content-box;transition:background-size .38s .26s cubic-bezier(.22,1,.36,1),color .3s .3s}
+.ckrow .strk{background-size:100% 2px;color:var(--muted)}
+.ckrow{animation:ckrow .9s cubic-bezier(.22,1,.36,1)}
+@keyframes ckrow{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--mint) 45%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
+@media(prefers-reduced-motion:reduce){.chk.cking .cf,.chk.cking .ct,.ckrow{animation-duration:.01s}}
 </style>
 </head>
 <body>
@@ -802,7 +831,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.21 13:24';
+const BUILD = '11.21 17:35';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -1219,13 +1248,15 @@ function homePage(){
     ? `<div class="addhint" id="todoPrev"></div><div class="addbar hbar">${hSeg(T)}<input id="todoIn" placeholder="8시 운동" autocomplete="off"><button data-act="addTodo" aria-label="추가">+</button></div>`
     : `<div class="addhint" id="moneyPrev"></div><div class="addbar hbar">${hSeg(T)}<input id="moneyIn" placeholder="${T==='out'?'커피 4500':'용돈 5만'}" autocomplete="off"><button data-act="addMoney" aria-label="추가">+</button></div>`;
   return `<div class="screen home">
-  <div class="dtop"><div><small>${dLabel(t,true)}</small><h1>오늘의<br>할 일 · 돈</h1>
-    <div class="dprog">${Array.from({length:Math.min(10,tasks.length)},(_,i)=>`<i class="${i<Math.round(done/Math.max(1,tasks.length)*Math.min(10,tasks.length))?'on':''}"></i>`).join('')}</div></div>
-    <span class="dtodi" id="dtodiSlot"><img alt="" src="${(TODI_FX.wv && TODI_FX.wv[0]) || (typeof TODI_IMG!=='undefined' && TODI_IMG.idle_0) || ''}"></span></div>
-  <div class="dpills">
-    <button data-tab="plan" class="pl g">할 일 <b class="num">${done} / ${tasks.length}</b></button>
-    <button data-tab="money" class="pl p">지출 <b class="num">${out?'−'+shortWon(out):'0'}</b></button>
-    <button data-tab="money" class="pl b">수입 <b class="num">${inc?'+'+shortWon(inc):'0'}</b></button></div>
+  <div class="phero">
+    <div class="phmain"><div class="phday num">${+t.slice(8)}<small>${+t.slice(5,7)}월 · ${'일월화수목금토'[new Date(t+'T00:00').getDay()]}요일</small></div>
+      <span class="dtodi" id="dtodiSlot"><img alt="" src="${(TODI_FX.wv && TODI_FX.wv[0]) || (typeof TODI_IMG!=='undefined' && TODI_IMG.idle_0) || ''}"></span></div>
+    <div class="phbar ${tasks.length?'':'empty'}"><i style="width:${tasks.length?Math.round(done/tasks.length*100):0}%"></i></div>
+    <div class="ph3">
+      <button data-tab="plan"><b class="num">${done}/${tasks.length}</b>할 일</button>
+      <button data-tab="money" class="o"><b class="num">${out?shortWon(out):'0'}</b>지출</button>
+      <button data-tab="money" class="n"><b class="num">${inc?shortWon(inc):'0'}</b>수입</button></div>
+  </div>
   <section class="lcard tl3">
     <div class="tlhead"><span></span><span class="k1">할 일</span><span class="k2">지출</span><span class="k3">수입</span></div>
     <div class="scroll">${items.length ? body : nowLine + '<div class="empty">아래에서 할 일 · 지출 · 수입을 적어 보세요</div>'}</div>
@@ -1325,7 +1356,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.21 13:24 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.21 17:35 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
@@ -1593,6 +1624,22 @@ document.addEventListener('click', e=>{
       case 'fab': tab = 'plan'; location.hash = 'plan'; render(); setTimeout(()=>{ try{ $('todoIn').focus(); }catch(e){} }, 60); break;
       case 'toggle': {
         if(!T) return;
+        if(!T.done && !b.dataset.ck && S.opt.motion){   // 완료할 때: 동그라미 차오름 → 체크 그리기 → 글자에 줄 긋기, 그다음 영상
+          if(window.__ckBusy) return; window.__ckBusy = true;
+          try{
+            const row = b.closest('[data-row]') || b.parentElement;
+            b.classList.add('cking');
+            b.innerHTML = '<svg viewBox="0 0 28 28"><circle class="cf" cx="14" cy="14" r="13"/><path class="ct" d="M8.5 14.5l3.6 3.6 7.4-7.6"/></svg>';
+            if(row){ row.classList.add('ckrow'); const tx = row.querySelector('.tx1, strong'); if(tx) tx.innerHTML = '<span class="strk">' + tx.innerHTML + '</span>';   /* 글자 길이만큼만 줄 긋기 */ }
+            try{ if(S.opt.vibrate && navigator.vibrate) navigator.vibrate(12); }catch(e){}
+          }catch(e){ console.log('체크 모션', e); }
+          setTimeout(()=>{ window.__ckBusy = false;
+            const nb = document.querySelector('.chk[data-act="toggle"][data-id="'+id+'"]');
+            if(nb){ nb.dataset.ck = '1'; nb.click(); }                       // 같은 버튼으로 원래 완료 처리(저장·영상)
+            else { T.done = true; save(); render(); rowCelebrate(T.id, T.cat); }   // 그사이 화면이 바뀌었으면 바로 완료
+          }, 620);
+          return;
+        }
         T.done = !T.done; save();
         if(T.done){
           let got = false;
