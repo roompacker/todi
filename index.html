@@ -541,7 +541,10 @@ body.night .pl.g{color:#C9D8CC}body.night .pl.p{color:#F0C2D2}body.night .pl.b{c
 .dtop{min-height:112px}
 .dtodi{flex:none;display:flex;align-items:flex-end;justify-content:center;width:96px;height:124px;margin:-8px -6px -9px 0}
 .dtodi img{height:96px}
-.dtodiv{height:124px;width:auto;display:block}
+.dtodi .loopv{height:124px;width:auto;display:block}
+.tlnodi{flex:none;display:flex;align-items:flex-end;height:78px;margin-left:2px}
+.tlnodi .loopv{height:78px;width:auto;display:block}
+.tlg.now{min-height:80px!important}
 </style>
 </head>
 <body>
@@ -799,7 +802,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.21 09:37';
+const BUILD = '11.21 10:19';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -868,22 +871,28 @@ const FXV_ALPHA = (()=>{ try{ return !!document.createElement('video').canPlayTy
 const FXW = {"cook": [488, 644], "dance": [1080, 610], "read": [468, 640], "tiger": [570, 668], "snow": [866, 950], "bike": [594, 692], "wv": [538, 690], "joy": [576, 646], "suit": [418, 676], "doc": [850, 674], "cat": [566, 682], "game": [592, 640], "sleep": [952, 660], "lion": [572, 670], "space": [470, 658], "draw": [488, 690], "car": [664, 646], "oops": [724, 672], "dj": [768, 694], "party": [1280, 708], "plant": [956, 708]};   // 투명 영상 크기
 // 오늘 화면 제목 카드의 투디: 손 흔들고·엄지척·하트·윙크하는 투명 영상을 계속 반복
 //  화면을 다시 그려도 영상이 처음부터 다시 시작하지 않게, 영상 상자 하나를 계속 옮겨 끼움
-let HELLO_V = null;
-function mountHello(){
+const LOOP_V = {};
+function mountLoop(slotId, src){
   try{
-    const slot = document.getElementById('dtodiSlot');
+    const slot = document.getElementById(slotId);
     if(!slot || !FXV_ALPHA || !/^https?:/.test(location.protocol)) return;   // 투명 영상이 안 되는 폰은 그림 그대로
-    if(!HELLO_V){
-      HELLO_V = document.createElement('video');
-      HELLO_V.className = 'dtodiv'; HELLO_V.muted = true; HELLO_V.loop = true; HELLO_V.playsInline = true; HELLO_V.autoplay = true;
-      HELLO_V.setAttribute('playsinline',''); HELLO_V.setAttribute('muted','');
-      HELLO_V.src = 'fxv/hello.webm?v=1';
-      HELLO_V.addEventListener('playing', ()=>{ try{ document.querySelectorAll('#dtodiSlot img').forEach(i=>i.style.display='none'); }catch(e){} });
+    let v = LOOP_V[slotId];
+    if(!v){
+      v = LOOP_V[slotId] = document.createElement('video');
+      v.className = 'loopv'; v.muted = true; v.loop = true; v.playsInline = true; v.autoplay = true;
+      v.setAttribute('playsinline',''); v.setAttribute('muted','');
+      v.src = src;
+      v.addEventListener('playing', ()=>{ try{ document.querySelectorAll('#'+slotId+' img').forEach(i=>i.style.display='none'); }catch(e){} });
     }
-    slot.appendChild(HELLO_V);
-    if(HELLO_V.readyState >= 2) slot.querySelector('img').style.display = 'none';
-    const p = HELLO_V.play(); if(p && p.catch) p.catch(()=>{});
-  }catch(e){ console.log('mountHello', e); }
+    slot.appendChild(v);
+    if(v.readyState >= 2){ const im = slot.querySelector('img'); if(im) im.style.display = 'none'; }
+    const p = v.play(); if(p && p.catch) p.catch(()=>{});
+  }catch(e){ console.log('mountLoop', e); }
+}
+// 오늘 화면: 제목 카드 = 인사하는 투디, "지금" 줄 = 메모하며 ?→! 떠올리는 노디 (화면을 다시 그려도 이어서 재생)
+function mountHello(){
+  mountLoop('dtodiSlot', 'fxv/hello.webm?v=1');
+  mountLoop('tlWalkSlot', 'fxv/nodi.webm?v=1');
 }
 const FXSCENE = {movie:1, drive:1, park:1, study:1, cola:1, soccer:1};                                 // 배경이 있는 장면 영상(초록 배경 아님)
 function playClip(box, kind, onEnd, fallback){
@@ -1194,7 +1203,7 @@ function homePage(){
   const times = Object.keys(groups).sort(), free = items.filter(i=>!i.tm);
   fxsLoad('draw');
   const now = nowHM(), walk = (TODI_FX.draw && TODI_FX.draw[0]) || (typeof TODI_IMG!=='undefined' && TODI_IMG.todi_0) || '';
-  const nowLine = `<div class="tlg now"><span class="tlh">지금</span><i></i><img id="tlWalk" alt="" src="${walk}"></div>`;
+  const nowLine = `<div class="tlg now"><span class="tlh">지금</span><i></i><span class="tlnodi" id="tlWalkSlot"><img id="tlWalk" alt="" src="${walk}"></span></div>`;
   let body = '', put = false;
   times.forEach(tm=>{ if(!put && tm > now){ body += nowLine; put = true; } body += laneRow(tm, groups[tm]); });
   if(!put) body += nowLine;
@@ -1315,7 +1324,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.21 09:37 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.21 10:19 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
