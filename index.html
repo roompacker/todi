@@ -865,7 +865,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.21 20:24';
+const BUILD = '11.21 20:29';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -914,7 +914,7 @@ function fxlPreload(){
     try{ if(typeof FXV!=='undefined' && /^https?:/.test(location.protocol)){
       const ks = new Set(S.tasks.filter(t=>!t.done && t.date===today()).map(t=>celebKind(t, t.cat, false)));
       ks.forEach(k=>{ if(!FXV[k] || fxlPreload._v[k]) return; const v = document.createElement('video'); v.muted = true; v.preload = 'auto';
-        v.src = 'fxv/'+k+((FXV_ALPHA && FXW[k]) ? '.webm?v=9' : '.mp4?v=5'); v.load(); fxlPreload._v[k] = v; });
+        v.src = 'fxv/'+k+((FXV_ALPHA && FXW[k]) ? '.webm?v=9' : '.mp4?v=6'); v.load(); fxlPreload._v[k] = v; });
     } }catch(e){ console.error('영상 미리 받기 오류', e); }
     if((S.opt.layout||'row')!=='mix') return;
     [today(), planDay].forEach(d=>{
@@ -1021,7 +1021,7 @@ function playClip(box, kind, onEnd, fallback){
     v.muted = true; v.defaultMuted = true; v.playsInline = true; v.setAttribute('playsinline',''); v.setAttribute('muted',''); v.preload = 'auto';
     const alpha = FXV_ALPHA && FXW[kind]; v.className = 'clip' + (alpha ? ' alpha' : '');
     if(FXSCENE[kind]){ box.classList.add('scene'); v.style.objectFit = 'cover'; }   // 배경까지 있는 장면 영상은 둥근 액자처럼
-    v.src = 'fxv/'+kind+(alpha ? '.webm?v=9' : '.mp4?v=5');
+    v.src = 'fxv/'+kind+(alpha ? '.webm?v=9' : '.mp4?v=6');
     if(alpha) box.classList.add('alpha');
     let ok = false, fin = false;
     const done = ()=>{ if(fin) return; fin = true; setTimeout(()=>onEnd && onEnd(), 900); };   // 마지막 장면에서 잠깐 멈춤
@@ -1084,8 +1084,9 @@ function bigCelebrate(kind, cat, row, FR){
       if(bigEl){ bigEl.remove(); bigEl = null; }
       const ov = document.createElement('div'); ov.className = 'bigov'; bigEl = ov;
       const [vw, vh] = (FXV_ALPHA && FXW[kind]) || FXV[kind]; let H = Math.min(240, Math.round(window.innerHeight*0.3)), W = Math.round(H*vw/vh);
+      if(FXSCENE[kind] && vw > vh){ W = Math.min(480, window.innerWidth - 24); H = Math.round(W*0.8); }   // 가로 장면 영상: 화면 폭 가득, 4:3으로 가운데를 크게
       if(FXSCENE[kind] && vh > vw){ H = Math.min(520, Math.round(window.innerHeight*0.62)); W = Math.round(H*vw/vh); }   // 세로 장면 영상은 세로로 크게
-      if(W > window.innerWidth - 40){ W = window.innerWidth - 40; H = Math.round(W*vh/vw); }
+      if(!(FXSCENE[kind] && vw > vh) && W > window.innerWidth - 40){ W = window.innerWidth - 40; H = Math.round(W*vh/vw); }
       ov.innerHTML = `<div class="bigin"><div class="bigtag">${celebSay(kind, cat)}</div><div class="clipbox big" style="width:${W}px;height:${H}px"></div></div>`;
       document.body.appendChild(ov);
       const inn = ov.querySelector('.bigin'); let gone = false;
@@ -1204,7 +1205,7 @@ function rowCelebrate(id, cat){
     if((S.opt.layout||'row')==='mix'){
       const rowEl = document.querySelector(`[data-row="${id}"]`);
       const nDone = dayL.filter(x=>x.done).length;
-      if(allDone || nDone <= 2){ bigCelebrate(kind, cat, rowEl, FR); return; }   // 하루 첫·두 번째 완료와 전부 완료는 가운데에 크게
+      if(allDone || nDone <= 2 || FXSCENE[kind]){ bigCelebrate(kind, cat, rowEl, FR); return; }   // 하루 첫·두 번째 완료와 전부 완료는 가운데에 크게
       stripCelebrate(kind, cat, rowEl, FR); return;                              // 3번째부터는 그 줄이 펼쳐지며 작게 (매번 6초 기다리지 않게)
     }
     const box = document.getElementById('todiBox');     // 무대나 카드가 화면에 있으면 무조건 그 안에서 재생
@@ -1454,7 +1455,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.21 20:24 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.21 20:29 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
