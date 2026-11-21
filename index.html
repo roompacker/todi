@@ -574,6 +574,12 @@ body.night .pl.g{color:#C9D8CC}body.night .pl.p{color:#F0C2D2}body.night .pl.b{c
 .ckrow{animation:ckrow .9s cubic-bezier(.22,1,.36,1)}
 @keyframes ckrow{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--mint) 45%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
 @media(prefers-reduced-motion:reduce){.chk.cking .cf,.chk.cking .ct,.ckrow{animation-duration:.01s}}
+
+/* ===== 시안 04: 미끄러지는 선택 표시 ===== */
+.seg.sp{position:relative}
+.seg.sp>button{position:relative;z-index:1;background:transparent!important;transition:color .25s ease-out}
+.seg .segpill{position:absolute;left:0;z-index:0;border-radius:99px;pointer-events:none;
+  transition:transform .45s cubic-bezier(.34,1.56,.64,1),width .45s cubic-bezier(.34,1.56,.64,1),background-color .3s ease-out}
 </style>
 </head>
 <body>
@@ -831,7 +837,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.21 17:35';
+const BUILD = '11.21 17:43';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -900,6 +906,41 @@ const FXV_ALPHA = (()=>{ try{ return !!document.createElement('video').canPlayTy
 const FXW = {"cook": [488, 644], "dance": [1080, 610], "read": [468, 640], "tiger": [570, 668], "snow": [866, 950], "bike": [594, 692], "wv": [538, 690], "joy": [576, 646], "suit": [418, 676], "doc": [850, 674], "cat": [566, 682], "game": [592, 640], "sleep": [952, 660], "lion": [572, 670], "space": [470, 658], "draw": [488, 690], "car": [664, 646], "oops": [724, 672], "dj": [768, 694], "party": [1280, 708], "plant": [956, 708]};   // 투명 영상 크기
 // 오늘 화면 제목 카드의 투디: 손 흔들고·엄지척·하트·윙크하는 투명 영상을 계속 반복
 //  화면을 다시 그려도 영상이 처음부터 다시 시작하지 않게, 영상 상자 하나를 계속 옮겨 끼움
+/* ===== 시안 04: 미세 전환 — 숫자 굴리기 + 미끄러지는 선택 표시 =====
+   곡선 3개만 사용: 나타남 ease-out 0.3초 / 통통 spring 0.45초 / 사라짐 ease-in 0.2초 */
+const CNT_PREV = {}, SEG_PREV = {};
+function motion04(){
+  const calm = !S.opt.motion || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  // 1) 금액 숫자: 바뀐 만큼 0.7초 동안 굴러가며 바뀜
+  document.querySelectorAll('[data-cnt]').forEach(el=>{
+    const k = el.dataset.cnt, to = +el.dataset.v || 0, from = CNT_PREV[k];
+    CNT_PREV[k] = to;
+    if(calm || from === undefined || from === to) return;
+    const fmt = v => el.dataset.f === 's' ? (v ? shortWon(v) : '0') : won(v);
+    const t0 = performance.now(), d = 700;
+    const step = t => { if(!el.isConnected) return; const p = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmt(Math.round(from + (to - from) * e)); if(p < 1) requestAnimationFrame(step); };
+    el.textContent = fmt(from); requestAnimationFrame(step);
+  });
+  // 2) 고르기 버튼(할 일/지출/수입, 목록/분석, 낮/밤 등): 선택 표시가 미끄러지듯 옮겨감
+  document.querySelectorAll('.seg').forEach((sg, i)=>{
+    const on = sg.querySelector('button.on'); if(!on) return;
+    const fb = sg.querySelector('button'), key = (sg.id || sg.className) + ':' + (fb.dataset.act || i);
+    const bg = getComputedStyle(on).backgroundColor;
+    let pill = sg.querySelector('.segpill');
+    if(!pill){ pill = document.createElement('span'); pill.className = 'segpill'; sg.prepend(pill); }
+    sg.classList.add('sp');
+    const x = on.offsetLeft, w = on.offsetWidth, h = on.offsetHeight, y = on.offsetTop, prev = SEG_PREV[key];
+    SEG_PREV[key] = {x, w};
+    pill.style.top = y + 'px'; pill.style.height = h + 'px'; pill.style.background = bg;
+    if(!calm && prev && (prev.x !== x || prev.w !== w)){
+      pill.style.transition = 'none'; pill.style.transform = `translateX(${prev.x}px)`; pill.style.width = prev.w + 'px';
+      void pill.offsetWidth;
+      pill.style.transition = '';
+    }
+    pill.style.transform = `translateX(${x}px)`; pill.style.width = w + 'px';
+  });
+}
 const LOOP_V = {};
 function mountLoop(slotId, src){
   try{
@@ -1177,6 +1218,7 @@ function render(){
     $('main').innerHTML = ({home:homePage, settings:settingsPage, plan:planPage, focus:focusPage, money:moneyPage, report:reportPage, save:savePage, friend:friendPage}[tab] || planPage)();
     if(keep){ $('main').querySelectorAll('.scroll').forEach((e,i)=>{ if(keep[i]) e.scrollTop = keep[i]; }); if(winY) window.scrollTo(0, winY); }
     render._tab = tab;
+    try{ motion04(); }catch(e){ console.log('motion04', e); }
     if(tab === 'home') mountHello();
     updateTimer();
   }catch(e){ console.error('화면 오류', e); }
@@ -1254,8 +1296,8 @@ function homePage(){
     <div class="phbar ${tasks.length?'':'empty'}"><i style="width:${tasks.length?Math.round(done/tasks.length*100):0}%"></i></div>
     <div class="ph3">
       <button data-tab="plan"><b class="num">${done}/${tasks.length}</b>할 일</button>
-      <button data-tab="money" class="o"><b class="num">${out?shortWon(out):'0'}</b>지출</button>
-      <button data-tab="money" class="n"><b class="num">${inc?shortWon(inc):'0'}</b>수입</button></div>
+      <button data-tab="money" class="o"><b class="num" data-cnt="hout" data-v="${out}" data-f="s">${out?shortWon(out):'0'}</b>지출</button>
+      <button data-tab="money" class="n"><b class="num" data-cnt="hin" data-v="${inc}" data-f="s">${inc?shortWon(inc):'0'}</b>수입</button></div>
   </div>
   <section class="lcard tl3">
     <div class="tlhead"><span></span><span class="k1">할 일</span><span class="k2">지출</span><span class="k3">수입</span></div>
@@ -1356,7 +1398,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.21 17:35 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.21 17:43 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
@@ -1457,7 +1499,7 @@ function moneyPage(){
     ${slotDiv('title-money','spend','prep','title-slot','poke',true)}
   </div>
   <div class="tiles">
-    <div class="tile"><small>이달 쓴 돈</small><b class="num">${won(spent)}<u>원</u></b><div class="bar"><i style="width:${budget?Math.min(100,spent/budget*100):0}%;background:var(--pink)"></i></div></div>
+    <div class="tile"><small>이달 쓴 돈</small><b class="num"><span data-cnt="mspent" data-v="${spent}" data-f="w">${won(spent)}</span><u>원</u></b><div class="bar"><i style="width:${budget?Math.min(100,spent/budget*100):0}%;background:var(--pink)"></i></div></div>
     <button class="tile" data-act="budget"><small>${budget==null?'예산 정하기 ›':'예산 수정 ›'}</small><b class="num">${budget==null?'<u>눌러서 설정</u>':won(budget)+'<u>원</u>'}</b><div class="bar"><i style="width:0"></i></div></button>
   </div>
   <section class="lcard"><div class="scroll">${rec.length ? [...rec].sort((a,b)=>b.date.localeCompare(a.date)||String(b.id).localeCompare(String(a.id))).map((x,i)=>{ const mc = MCATS[x.cat]||MCATS['기타'];
