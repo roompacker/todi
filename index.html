@@ -865,7 +865,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.22 09:25';
+const BUILD = '11.22 09:36';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -914,7 +914,7 @@ function fxlPreload(){
     try{ if(typeof FXV!=='undefined' && /^https?:/.test(location.protocol)){
       const ks = new Set(S.tasks.filter(t=>!t.done && t.date===today()).map(t=>celebKind(t, t.cat, false)));
       ks.forEach(k=>{ if(!FXV[k] || fxlPreload._v[k]) return; const v = document.createElement('video'); v.muted = true; v.preload = 'auto';
-        v.src = 'fxv/'+k+((FXV_ALPHA && FXW[k]) ? '.webm?v=9' : '.mp4?v=6'); v.load(); fxlPreload._v[k] = v; });
+        v.src = 'fxv/'+k+((FXV_ALPHA && FXW[k]) ? '.webm?v=9' : '.mp4?v=7'); v.load(); fxlPreload._v[k] = v; });
     } }catch(e){ console.error('영상 미리 받기 오류', e); }
     if((S.opt.layout||'row')!=='mix') return;
     [today(), planDay].forEach(d=>{
@@ -1021,7 +1021,7 @@ function playClip(box, kind, onEnd, fallback){
     v.muted = true; v.defaultMuted = true; v.playsInline = true; v.setAttribute('playsinline',''); v.setAttribute('muted',''); v.preload = 'auto';
     const alpha = FXV_ALPHA && FXW[kind]; v.className = 'clip' + (alpha ? ' alpha' : '');
     if(FXSCENE[kind]){ box.classList.add('scene'); v.style.objectFit = 'cover'; }   // 배경까지 있는 장면 영상은 둥근 액자처럼
-    v.src = 'fxv/'+kind+(alpha ? '.webm?v=9' : '.mp4?v=6');
+    v.src = 'fxv/'+kind+(alpha ? '.webm?v=9' : '.mp4?v=7');
     if(alpha) box.classList.add('alpha');
     let ok = false, fin = false;
     const done = ()=>{ if(fin) return; fin = true; setTimeout(()=>onEnd && onEnd(), 900); };   // 마지막 장면에서 잠깐 멈춤
@@ -1459,7 +1459,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.22 09:25 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.22 09:36 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
