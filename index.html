@@ -865,7 +865,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.22 00:26';
+const BUILD = '11.22 09:25';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -927,7 +927,7 @@ function fxlPreload(){
 /* ───── 완료 동작을 '진짜 영상'으로 재생 (fxv/종류.mp4) ─────
    초록 배경을 카드색으로 바꾸고 발밑 그림자를 살린 영상이라, 오려 붙인 느낌 없이 자연스럽게 움직임.
    영상을 못 불러오면(인터넷 끊김 등) 예전 그림 넘기기 방식으로 대신 보여 줌 */
-const FXV = {"academy": [960, 540], "rain": [960, 540], "beauty": [960, 540], "shop": [960, 540], "perfect": [960, 540], "soccer": [540, 960], "study": [960, 540], "cola": [960, 540], "park": [960, 540], "cook": [498, 650], "drive": [960, 540], "dance": [1088, 618], "read": [478, 648], "movie": [960, 540], "bike": [604, 700], "car": [674, 654], "cat": [576, 690], "dj": [778, 702], "doc": [860, 682], "draw": [496, 694], "game": [602, 648], "joy": [586, 654], "lion": [582, 676], "oops": [734, 680], "party": [1280, 712], "plant": [966, 710], "sleep": [960, 664], "snow": [876, 958], "space": [480, 666], "suit": [426, 684], "tiger": [580, 674], "wv": [548, 696]};
+const FXV = {"jog": [960, 540], "academy": [960, 540], "rain": [960, 540], "beauty": [960, 540], "shop": [960, 540], "perfect": [960, 540], "soccer": [540, 960], "study": [960, 540], "cola": [960, 540], "park": [960, 540], "cook": [498, 650], "drive": [960, 540], "dance": [1088, 618], "read": [478, 648], "movie": [960, 540], "bike": [604, 700], "car": [674, 654], "cat": [576, 690], "dj": [778, 702], "doc": [860, 682], "draw": [496, 694], "game": [602, 648], "joy": [586, 654], "lion": [582, 676], "oops": [734, 680], "party": [1280, 712], "plant": [966, 710], "sleep": [960, 664], "snow": [876, 958], "space": [480, 666], "suit": [426, 684], "tiger": [580, 674], "wv": [548, 696]};
 const FXV_RATE = 2.5;   // 영상 빠르기 (1 = 원래 빠르기)
 /* 투명 영상(WebM, VP9 알파)을 틀 수 있는 폰이면 투명 버전, 아니면 크림색 배경 mp4 */
 const FXV_ALPHA = (()=>{ try{ return !!document.createElement('video').canPlayType('video/webm; codecs="vp09.00.10.08"'); }catch(e){ return false; } })();
@@ -1013,7 +1013,7 @@ function mountHello(){
   mountLoop('tlWalkSlot', 'fxv/nodi.webm?v=1');
   if(!LOOP_V[LOOP_TURN] || !LOOP_V[LOOP_TURN].isConnected) loopNext(LOOP_TURN);
 }
-const FXSCENE = {academy:1, rain:1, beauty:1, shop:1, perfect:1, movie:1, drive:1, park:1, study:1, cola:1, soccer:1};                                 // 배경이 있는 장면 영상(초록 배경 아님)
+const FXSCENE = {jog:1, academy:1, rain:1, beauty:1, shop:1, perfect:1, movie:1, drive:1, park:1, study:1, cola:1, soccer:1};                                 // 배경이 있는 장면 영상(초록 배경 아님)
 function playClip(box, kind, onEnd, fallback){
   try{
     if(!FXV[kind] || !/^https?:/.test(location.protocol)) return fallback();
@@ -1160,6 +1160,7 @@ function celebKind(T, cat, allDone){
   if(allDone === 'perfect') kind = 'perfect';                         // 오늘 할 일(2개 이상)을 전부 끝냄 → 스파키가 "PERFECT!" (액자 영상)
   else if(/화장품|올리브영|뷰티|스킨케어|향수|립스틱|선크림|로션|네일/.test(title)) kind = 'beauty';   // 화장품 가게에서 분홍 병을 고르는 고양이 투디(액자 영상)
   else if(/비 오|비오|우산|우비|장화|장마|빗길|물웅덩이/.test(title)) kind = 'rain';   // 노란 우비 입고 물웅덩이에서 첨벙 뛰는 투디(액자 영상)
+  else if(/러닝|런닝|조깅|달리기|마라톤|뛰기|물 마시기|물마시기|물 2리터|수분/.test(title)) kind = 'jog';   // 꽃길 공원에서 물 마시며 달리는 회색 강아지 귀 투디(액자 영상)
   else if(/장보기|장 보기|마트|쇼핑|시장|편의점|다이소|코스트코|이마트|홈플러스|식료품/.test(title)) kind = 'shop';   // 마트에서 카트 끌며 장보는 노디(액자 영상)
   else if(/산책|공원|걷기|피크닉|강아지|댕댕|반려견|멍멍/.test(title)) kind = 'park';            // 꽃 핀 공원 길을 강아지와 걷는 장면(액자 영상)
   else if(cat === 'dog') kind = 'park';                              // 강아지 일은 모두 공원 산책 장면 (예전 모자 투디 영상은 삭제)
@@ -1458,7 +1459,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.22 00:26 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.22 09:25 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
