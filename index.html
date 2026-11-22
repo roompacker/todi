@@ -25,9 +25,9 @@
 }
 
 /* 롤리 믹스 (밤): 바탕 Midnight blue */
-body.night{--canvas:oklch(34.7% 0.053 212); --paper:oklch(39.9% 0.059 210); --card:oklch(39.9% 0.059 210); --ink:oklch(94.8% 0.019 83); --muted:oklch(75.1% 0.023 158); --line:#f4ede024; --soft:oklch(43.3% 0.062 208);
-  --pink:oklch(70.3% 0.082 356); --mint:oklch(70.7% 0.037 156); --inc:oklch(80.6% 0.057 70); --pink2:oklch(39.1% 0.028 314); --mint2:oklch(43.4% 0.056 204); --inc2:oklch(42.9% 0.029 180); --tan:oklch(43.3% 0.061 208); --tan2:oklch(80.6% 0.057 70);
-  --veil:rgba(15,65,74,.5); --lemon:oklch(39.1% 0.028 314); --sage:oklch(43.4% 0.056 204); --blue:oklch(42.9% 0.029 180); --beige:oklch(43.3% 0.061 208); --lav:oklch(39.1% 0.028 314); --white:oklch(39.9% 0.059 210); --alert:oklch(79.5% 0.094 4); --yellow:oklch(80.6% 0.057 70)}
+body.night{--canvas:oklch(33% 0.05 258); --paper:oklch(38.5% 0.055 258); --card:oklch(38.5% 0.055 258); --ink:oklch(95% 0.015 85); --muted:oklch(78% 0.03 250); --line:#e8eeff22; --soft:oklch(42% 0.06 258);
+  --pink:oklch(76% 0.09 356); --mint:oklch(76% 0.06 170); --inc:oklch(84% 0.07 80); --pink2:oklch(40% 0.045 320); --mint2:oklch(42% 0.05 230); --inc2:oklch(42% 0.04 265); --tan:oklch(42% 0.06 258); --tan2:oklch(84% 0.07 80);
+  --veil:rgba(26,36,72,.5); --lemon:oklch(40% 0.045 320); --sage:oklch(42% 0.05 230); --blue:oklch(42% 0.04 265); --beige:oklch(42% 0.06 258); --lav:oklch(40% 0.045 320); --white:oklch(38.5% 0.055 258); --alert:oklch(80% 0.1 4); --yellow:oklch(84% 0.07 80)}
 body.night input{color:var(--ink)}
 body.night input::placeholder{color:var(--muted)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -870,7 +870,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.22 15:26';
+const BUILD = '11.22 15:36';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -1283,7 +1283,7 @@ function render(){
     try{ motion04(); }catch(e){ console.log('motion04', e); }
     if(tab === 'home') mountHello();
     if(tab === 'money'){                                   // 금융 화면 위: 돼지저금통에 동전 넣는 판다 친구 (계속 반복)
-      mountLoop('mpandaSlot', 'fxv/panda.webm?v=2');
+      mountLoop('mpandaSlot', 'fxv/panda.webm?v=3');
       if(!LOOP_V[LOOP_TURN] || !LOOP_V[LOOP_TURN].isConnected) loopNext('mpandaSlot');
     }
     updateTimer();
@@ -1468,7 +1468,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.22 15:26 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.22 15:36 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
