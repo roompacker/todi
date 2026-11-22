@@ -608,6 +608,11 @@ section.card.set{padding:var(--s4)}
 .ph3 button{padding:var(--s2) var(--s1)}
 .phbar{margin-top:var(--s4)}
 .ph3{margin:var(--s3) 0 var(--s4)}
+
+/* 금융 화면 위 판다 친구 */
+.mpanda{flex:none;display:flex;align-items:flex-end;justify-content:center;width:96px;height:140px;margin:-24px -4px 0 0}
+.mpanda img{height:132px;width:auto}
+.mpanda .loopv{height:140px;width:auto;display:block}
 </style>
 </head>
 <body>
@@ -865,7 +870,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.22 09:36';
+const BUILD = '11.22 15:23';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -1277,6 +1282,10 @@ function render(){
     render._tab = tab;
     try{ motion04(); }catch(e){ console.log('motion04', e); }
     if(tab === 'home') mountHello();
+    if(tab === 'money'){                                   // 금융 화면 위: 돼지저금통에 동전 넣는 판다 친구 (계속 반복)
+      mountLoop('mpandaSlot', 'fxv/panda.webm?v=1');
+      if(!LOOP_V[LOOP_TURN] || !LOOP_V[LOOP_TURN].isConnected) loopNext('mpandaSlot');
+    }
     updateTimer();
   }catch(e){ console.error('화면 오류', e); }
 }
@@ -1459,7 +1468,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.22 09:36 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.22 15:23 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
@@ -1557,7 +1566,7 @@ function moneyPage(){
   <div class="hd2 s">
     <div><div class="overline">${y}년 ${mm}월 <button class="mbtn" data-act="month" data-d="-1">‹</button><button class="mbtn" data-act="month" data-d="1">›</button></div>
       <h1>${remaining==null ? '예산을 정해 볼까요?' : `<em style="color:${remaining<0?'var(--alert)':'var(--pink)'}">${won(Math.abs(remaining))}원</em> ${remaining<0?'넘었어요':'남았어요'}`}</h1></div>
-    ${slotDiv('title-money','spend','prep','title-slot','poke',true)}
+    <span class="mpanda" id="mpandaSlot"><img alt="" src="fr/panda.webp"></span>
   </div>
   <div class="tiles">
     <div class="tile"><small>이달 쓴 돈</small><b class="num"><span data-cnt="mspent" data-v="${spent}" data-f="w">${won(spent)}</span><u>원</u></b><div class="bar"><i style="width:${budget?Math.min(100,spent/budget*100):0}%;background:var(--pink)"></i></div></div>
