@@ -876,7 +876,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.22 15:45';
+const BUILD = '11.22 21:20';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -980,23 +980,23 @@ function motion04(){
     pill.style.transform = `translateX(${x}px)`; pill.style.width = w + 'px';
   });
 }
-/* 금융 판다: 동전이 저금통에 들어갈 때마다 머리 위 금액이 1만 원씩 굴러 올라감 (0 → 3만 → 다시 0) */
+/* 금융 판다: 동전이 저금통에 쏙 들어가면 머리 위 금액이 0 → 30,000₩까지 굴러 올라가고, 영상이 처음으로 돌아가면 다시 0 */
 const PN = {v:0, armed:true};
 function pandaCount(){
   try{
     const v = LOOP_V.mpandaSlot; if(!v || v.__pn) return; v.__pn = true;
+    const show = n => { const el = document.getElementById('pnum'); if(el) el.innerHTML = n.toLocaleString('ko-KR') + '<small>₩</small>'; };
     v.addEventListener('timeupdate', ()=>{
       try{
-        if(v.currentTime < 0.6) PN.armed = true;
-        if(!PN.armed || v.currentTime < 1.72) return;               // 동전이 저금통에 쏙 들어가는 순간
-        PN.armed = false;
-        const el = document.getElementById('pnum'); if(!el) return;
-        const from = PN.v, to = PN.v >= 30000 ? 0 : PN.v + 10000; PN.v = to;
-        const t0 = performance.now(), d = to ? 600 : 250;
+        if(v.currentTime < 0.5){ if(!PN.armed){ PN.armed = true; PN.v = 0; show(0); } return; }
+        if(!PN.armed || v.currentTime < 1.6) return;               // 동전이 저금통에 들어가는 순간
+        PN.armed = false; PN.v = 30000;
+        const t0 = performance.now(), d = 2200;
         const step = t => { const p = Math.min(1,(t-t0)/d), e = 1-Math.pow(1-p,3);
-          el.innerHTML = Math.round(from+(to-from)*e).toLocaleString('ko-KR') + '<small>₩</small>'; if(p<1) requestAnimationFrame(step); };
+          show(Math.round(30000*e/100)*100);
+          if(p<1) requestAnimationFrame(step);
+          else { const el = document.getElementById('pnum'); if(el){ el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); } } };
         requestAnimationFrame(step);
-        if(to){ el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
       }catch(e){}
     });
   }catch(e){ console.log('pandaCount', e); }
@@ -1310,7 +1310,7 @@ function render(){
     try{ motion04(); }catch(e){ console.log('motion04', e); }
     if(tab === 'home') mountHello();
     if(tab === 'money'){                                   // 금융 화면 위: 돼지저금통에 동전 넣는 판다 친구 (계속 반복)
-      mountLoop('mpandaSlot', 'fxv/panda.webm?v=4');
+      mountLoop('mpandaSlot', 'fxv/panda.webm?v=5');
       pandaCount();
       if(!LOOP_V[LOOP_TURN] || !LOOP_V[LOOP_TURN].isConnected) loopNext('mpandaSlot');
     }
@@ -1496,7 +1496,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.22 15:45 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.22 21:20 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
