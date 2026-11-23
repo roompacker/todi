@@ -876,7 +876,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.23 11:15';
+const BUILD = '11.23 17:08';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -1187,47 +1187,49 @@ let cardHold = null, boxRun = 0;   // 카드 모양: 방금 완료해서 투디�
 /* 완료한 할 일에 어떤 투디가 나올지 고르기 */
 function celebKind(T, cat, allDone){
   const title = (T && T.title) || '';
-  // 어떤 투디가 나올지: 강아지 산책 → 모자 투디와 강아지 / 출근·회의 → 정장 투디 / 학원·학교·자전거 → 자전거 탄 너구리 투디 / 오늘 할 일 전부 끝 → 활짝 웃는 투디 / 그 외 → 곰돌이 투디
+  const has = re => re.test(title);
+  // 할 일 이름에 들어간 낱말로 어떤 투디 영상이 나올지 정함 (위에서부터 먼저 맞는 것)
   let kind = 'wv';
-  if(allDone === 'perfect') kind = 'perfect';                         // 오늘 할 일(2개 이상)을 전부 끝냄 → 스파키가 "PERFECT!" (액자 영상)
-  else if(/기상|일어나기|알람|늦잠|지각|출근 준비|등교 준비|외출 준비|나갈 준비/.test(title)) kind = 'wake';   // 알람에 깨서 토스트 물고 가방 메고 뛰어나가는 투디(액자 영상)
-  else if(/짐 싸기|짐싸기|짐 챙기기|캐리어|여행 준비|여행준비|해외여행|여권|출국/.test(title)) kind = 'pack';   // 여행 꿈꾸며 캐리어에 짐 싸는 까만 곰 투디(액자 영상)
-  else if(/빨래|세탁|빨랫감|옷 정리|옷정리|옷 개기|빨래 개기|건조기|다림질|이불 빨래/.test(title)) kind = 'laundry';   // 수북한 빨래를 척척 개는 투디(액자 영상)
-  else if(/계획|체크리스트|플래너|다이어리|할 일 정리|일정 정리|목표 세우기|리스트/.test(title)) kind = 'plan';   // 체크리스트 들고 신나게 춤추는 투디(액자 영상)
-  else if(/화장품|올리브영|뷰티|스킨케어|향수|립스틱|선크림|로션|네일/.test(title)) kind = 'beauty';   // 화장품 가게에서 분홍 병을 고르는 고양이 투디(액자 영상)
-  else if(/비 오|비오|우산|우비|장화|장마|빗길|물웅덩이/.test(title)) kind = 'rain';   // 노란 우비 입고 물웅덩이에서 첨벙 뛰는 투디(액자 영상)
-  else if(/러닝|런닝|조깅|달리기|마라톤|뛰기|물 마시기|물마시기|물 2리터|수분/.test(title)) kind = 'jog';   // 꽃길 공원에서 물 마시며 달리는 회색 강아지 귀 투디(액자 영상)
-  else if(/장보기|장 보기|마트|쇼핑|시장|편의점|다이소|코스트코|이마트|홈플러스|식료품/.test(title)) kind = 'shop';   // 마트에서 카트 끌며 장보는 노디(액자 영상)
-  else if(/산책|공원|걷기|피크닉|강아지|댕댕|반려견|멍멍/.test(title)) kind = 'park';            // 꽃 핀 공원 길을 강아지와 걷는 장면(액자 영상)
-  else if(cat === 'dog') kind = 'park';                              // 강아지 일은 모두 공원 산책 장면 (예전 모자 투디 영상은 삭제)
-  else if(cat === 'cook' || /요리|반찬|베이킹|밥하기|밥 하기|도시락|쿠킹|레시피|볶음|집밥|저녁 준비|아침 준비|점심 준비/.test(title)) kind = 'cook';   // 프라이팬으로 채소 볶는 곰돌이 투디
-  else if(/출근|퇴근|회의|미팅|업무|회사|보고서|출장|면접/.test(title)) kind = 'suit';
-  else if(/음악|노래|디제이|DJ|dj|플레이리스트|콘서트|공연|클럽|악기|기타 연습|피아노|드럼|작곡|믹싱/.test(title)) kind = 'dj';   // 헤드폰 쓴 디제이 투디
-  else if(/물\s?주기|화분|식물|꽃|텃밭|정원|가드닝|분갈이|화초|모종|씨앗|나무 심기/.test(title)) kind = 'plant';   // 초록 후드 투디가 화분에 물 주면 꽃이 핌
-  else if(/택배|선물|언박싱|소포|포장|배송|우체국|반품|교환/.test(title)) kind = 'gift';   // 라벤더 곰 투디가 택배 상자에서 선물을 꺼냄
-  else if(/생일|생파|파티|축하|기념일|케이크|돌잔치/.test(title)) kind = 'party';   // 친구들이 다 모여 생일 케이크 파티
-  else if(/댄스|춤|안무|줌바|에어로빅|케이팝|K팝|k팝|친구|모임|동창|동호회|소풍|놀러/.test(title)) kind = 'dance';   // 분홍·파랑·노랑 곰 친구들이 함께 춤추기
-  else if(/독서|책 읽|책읽|독후감|도서관|소설|만화책|웹툰|책 보기|책보기|북클럽/.test(title)) kind = 'read';   // 초록 소파에서 책 읽는 곰돌이 투디
-  else if(/영화|극장|시네마|CGV|cgv|메가박스|롯데시네마|넷플릭스|넷플|드라마|팝콘|영화관|무비/.test(title)) kind = 'movie';   // 영화관에서 팝콘 먹는 분홍 투디와 너구리 투디
-  else if(/병원|진료|검진|치과|약국|주사|접종|한의원|내과|안과|이비인후과|정형외과|피부과/.test(title)) kind = 'doc';   // 사자 의사 선생님이 곰돌이 투디를 진찰
-  else if(/학원|학교|등교|하교|등원|하원|수업|과외/.test(title)) kind = 'academy';   // 비 오는 거리를 자전거로 달려 학원 앞에 도착하는 까만 곰 투디(액자 영상)
-  else if(/자전거|라이딩/.test(title)) kind = 'bike';   // 학원 가방 멘 너구리 투디가 자전거 타기
-  else if(/고양이|냥이|집사|캣|츄르|모래 갈/.test(title)) kind = 'cat';                     // 고양이 후드 투디
-  else if(/게임|배그|플스|닌텐도|스위치|오락|피시방|PC방|pc방|롤 /.test(title)) kind = 'game';   // 헤드셋 쓴 게이머 투디
-  else if(/낮잠|취침|수면|일찍 자|잠자기|잠 자기|꿀잠|휴식|쉬기|명상/.test(title)) kind = 'sleep';   // 구름 위에서 자는 투디
-  else if(/해외여행|비행기|공항|우주|과학|탐험|천문|별 보기|출국|해외/.test(title)) kind = 'space';    // 우주복 투디
-  else if(/축구|풋살|공차기|공 차기|월드컵|체육대회|운동회/.test(title)) kind = 'soccer';   // 경기장에서 골 넣고 기뻐하는 투디(세로 액자 영상)
-  else if(['run','badminton','gym','sport'].includes(cat) || /운동|헬스|런닝|러닝|달리기|조깅|요가|필라테스|등산|수영|배드민턴|축구|농구|테니스|스트레칭|홈트|PT/.test(title)) kind = 'tiger';   // 호랑이 후드 투디
-  else if(/겨울|눈사람|눈 오|눈오|스키|스노보드|보드장|썰매|크리스마스|김장|패딩/.test(title)) kind = 'snow';   // 털모자 쓰고 눈사람 만든 투디
-  else if(/그림|드로잉|스케치|색칠|미술|낙서|캘리|그리기|일러스트/.test(title)) kind = 'draw';           // 땅에 눈송이 그림 그리는 곰돌이 투디
-  else if(/운전|드라이브|여행|나들이|휴가|바캉스|캠핑|투어/.test(title)) kind = 'drive';   // 해·구름·새가 있는 길을 분홍 오픈카로 달리는 장면
-  else if(/세차|주유|주차|자동차|차 정비|타이어|픽업|데리러|태워/.test(title)) kind = 'car';   // 분홍 자동차 탄 투디
-  else if(/콜라|사이다|탄산|음료|간식|야식|치킨|피자|햄버거|맛집|외식|점심 먹|저녁 먹|밥 먹|밥먹/.test(title)) kind = 'cola';   // 부엌에서 콜라 마시는 곰돌이 투디(액자 영상)
-  else if(/공부|시험|숙제|과제|영어|수학|자격증/.test(title)) kind = 'study';      // 밤에 머리띠 두르고 책상에서 공부하는 회색 곰 투디(액자 영상)
+  if(allDone === 'perfect') kind = 'perfect';                                                                         // 오늘 할 일(2개 이상) 전부 끝 → PERFECT!
+  else if(has(/기상|일어나|알람|모닝콜|늦잠|지각|아침 루틴|미라클 ?모닝|출근 준비|등교 준비|등원 준비|외출 준비|나갈 준비|준비하고 나가/)) kind = 'wake';   // 토스트 물고 뛰어나가는 투디
+  else if(has(/짐 ?싸|짐 ?챙기|캐리어|여행 ?준비|해외여행|여권|출국|환전|항공권|비행기 ?표|비행기 예약|면세/)) kind = 'pack';   // 캐리어에 짐 싸는 까만 곰
+  else if(has(/병원|진료|검진|치과|약국|주사|접종|백신|독감|감기|한의원|내과|안과|이비인후과|정형외과|피부과|소아과|산부인과|물리치료|도수치료|재활|약 ?먹|영양제|비타민|혈압/)) kind = 'doc';   // 사자 의사 선생님 진찰
+  else if(has(/빨래|세탁|빨랫감|옷 ?정리|옷 ?개|건조기|다림질|이불|수건|코인 ?세탁|드라이 ?클리닝|옷장|청소|대청소|설거지|분리수거|쓰레기|집안일|정리 ?정돈|방 ?정리|책상 ?정리|냉장고 ?정리|걸레|빗자루|청소기/)) kind = 'laundry';   // 빨래 척척 개는 투디 (집안일 전부)
+  else if(has(/계획|체크 ?리스트|할 ?일 ?리스트|투두|to ?do|플래너|다이어리|일기|할 ?일 ?정리|일정 ?정리|스케줄|목표|버킷 ?리스트|가계부|예산|저축|적금|저금/i)) kind = 'plan';   // 체크리스트 들고 춤추는 투디
+  else if(has(/화장품|올리브영|뷰티|스킨케어|메이크업|화장(?!실)|향수|립스틱|선크림|로션|네일|마스크 ?팩|미용실|헤어|염색|파마|머리 ?자르|커트|피부 ?관리|속눈썹|눈썹|왁싱/)) kind = 'beauty';   // 화장품 가게의 고양이 투디
+  else if(has(/(?<![준예장설])비 ?(오는|와|온|올|내리)|우산|우비|장화|장마|빗길|물웅덩이|소나기|태풍/)) kind = 'rain';   // 노란 우비 투디
+  else if(has(/러닝|런닝|조깅|달리기|마라톤|뛰기|런데이|인터벌|물 ?마시|물 ?\d ?(리터|L|잔)|수분/i)) kind = 'jog';   // 물 마시며 달리는 투디
+  else if(has(/택배|선물|언박싱|소포|포장(?!마차)|배송|우체국|반품|교환|편지|기프티콘|답례|중고 ?거래/)) kind = 'gift';   // 택배 상자에서 선물 꺼내는 라벤더 곰
+  else if(has(/장 ?보기|장 ?보러|마트|쇼핑|시장|편의점|다이소|코스트코|이마트|홈플러스|식료품|생필품|쿠팡(?!플레이)|사러|구매|올영 세일|아울렛|백화점/)) kind = 'shop';   // 카트 끄는 노디
+  else if(has(/산책|공원|걷기|만 ?보|동네 ?한 ?바퀴|피크닉|한강|둘레길|강아지|댕댕|반려견|애견|멍멍|애견 ?카페/)) kind = 'park';   // 강아지와 꽃길 산책
+  else if(cat === 'dog') kind = 'park';
+  else if(cat === 'cook' || has(/요리|반찬|베이킹|밥 ?하기|도시락|쿠킹|레시피|볶음|집밥|(아침|점심|저녁) ?준비|라면 ?끓|국 ?끓|찌개|김밥|샌드위치|빵 ?굽|쿠키|케이크 ?만들|이유식|밀프렙|장아찌|김치/)) kind = 'cook';   // 프라이팬 볶는 곰돌이
+  else if(has(/출근|퇴근|회의|미팅|업무|회사|보고서|출장|면접|야근|발표|프레젠테이션|메일|결재|거래처|클라이언트|계약|정산|세금|은행|서류|외근|사무실/)) kind = 'suit';   // 정장 투디
+  else if(has(/음악|노래|디제이|dj|플레이 ?리스트|콘서트|공연|클럽|악기|기타 ?연습|피아노|드럼|작곡|믹싱|노래방|코노|버스킹|우쿨렐레|바이올린|첼로|플루트|색소폰|페스티벌|뮤지컬|합창|보컬|앨범|덕질/i)) kind = 'dj';   // 헤드폰 쓴 DJ 투디
+  else if(has(/물 ?주기|화분|식물|꽃|텃밭|정원|가드닝|분갈이|화초|모종|씨앗|나무 ?심|다육|선인장|몬스테라|잔디/)) kind = 'plant';   // 화분에 물 주면 꽃이 핌
+  else if(has(/생일|생파|파티|축하|기념일|케이크|돌잔치|백일|결혼식|웨딩|청첩장|집들이|송년회|신년회|회식|환갑|칠순|졸업식|입학식/)) kind = 'party';   // 생일 케이크 파티
+  else if(has(/댄스|춤|안무|줌바|에어로빅|케이팝|k ?팝|챌린지/i)) kind = 'dance';   // 곰 친구들이 함께 춤
+  else if(has(/독서|책 ?읽|독후감|도서관|소설|만화책|웹툰|책 ?보|북클럽|필사|전자책|e ?북|오디오북|잡지|신문/i)) kind = 'read';   // 초록 소파에서 독서
+  else if(has(/영화|극장|시네마|cgv|메가박스|롯데시네마|넷플|드라마|팝콘|무비|유튜브|티빙|왓챠|디즈니|쿠팡플레이|애니|예능|ott|정주행/i)) kind = 'movie';   // 영화관 팝콘
+  else if(has(/학원|학교|등교|하교|등원|하원|수업|과외|강의|인강|레슨|특강|어린이집|유치원|방과 ?후/)) kind = 'academy';   // 자전거로 학원 도착
+  else if(has(/자전거|라이딩|따릉이|킥보드|사이클|바이크/)) kind = 'bike';   // 자전거 탄 너구리
+  else if(has(/고양이|냥|집사|캣|츄르|모래 ?갈|사료/)) kind = 'cat';   // 고양이 후드 투디
+  else if(has(/게임|배그|플스|닌텐도|스위치|오락|피시방|pc방|롤(\s|$)|오버워치|발로란트|마인크래프트|포켓몬|보드 ?게임|퍼즐|레고|스팀/i)) kind = 'game';   // 게이머 투디
+  else if(has(/낮잠|취침|수면|일찍 ?자|잠 ?자기|자기 ?전|꿀잠|숙면|휴식|쉬기|쉬는 ?날|휴무|명상|힐링|반신욕|목욕|스파|찜질/)) kind = 'sleep';   // 구름 위에서 자는 투디
+  else if(has(/비행기|공항|우주|과학|탐험|천문|별 ?보|박물관|과학관|천체|로켓|실험|전시회|해외/)) kind = 'space';   // 우주복 투디
+  else if(has(/축구|풋살|공 ?차기|월드컵|체육대회|운동회|야구|농구|배구|직관|경기 ?보|응원/)) kind = 'soccer';   // 골 넣고 기뻐하는 투디
+  else if(['run','badminton','gym','sport','kick','board'].includes(cat) || has(/운동|헬스|요가|필라테스|등산|수영|배드민턴|테니스|탁구|스트레칭|홈트|pt|스쿼트|플랭크|줄넘기|크로스핏|클라이밍|복싱|태권도|다이어트|근력|폼롤러/i)) kind = 'tiger';   // 호랑이 후드 투디
+  else if(has(/겨울|눈사람|눈 ?(오|내|싸움)|스키|스노보드|보드장|썰매|크리스마스|성탄|트리|연말|김장|패딩|붕어빵|호빵|핫초코|군고구마/)) kind = 'snow';   // 눈사람 만든 투디
+  else if(has(/그림|드로잉|스케치|색칠|미술|낙서|캘리|그리기|일러스트|수채화|유화|공예|뜨개|십자수|클레이|diy|디자인|굿즈|스티커|다꾸|사진|촬영|브이로그|영상 ?편집/i)) kind = 'draw';   // 그림 그리는 곰돌이
+  else if(has(/운전|드라이브|여행|나들이|휴가|바캉스|캠핑|글램핑|투어|바다|해변|계곡|당일치기|호캉스|제주|강릉|부산|경주/)) kind = 'drive';   // 분홍 오픈카 드라이브
+  else if(has(/세차|주유|주차|자동차|차 ?정비|정비소|카센터|타이어|엔진 ?오일|차 ?검사|하이패스|픽업|데리러|태워|데려다/)) kind = 'car';   // 분홍 자동차 투디
+  else if(has(/공부|시험|숙제|과제|영어|수학|국어|외국어|중국어|일본어|자격증|토익|토플|오픽|단어|암기|복습|예습|코딩|문제집|모의고사|수능|논문|면허/)) kind = 'study';   // 머리띠 두르고 밤샘 공부
+  else if(has(/콜라|사이다|탄산|음료|간식|야식|치킨|피자|햄버거|맛집|외식|(아침|점심|저녁|밥) ?먹|커피|카페|디저트|빵집|떡볶이|아이스크림|배달|맥주|와인/)) kind = 'cola';   // 부엌에서 콜라 마시는 곰돌이
+  else if(has(/친구|모임|동창|동호회|소풍|놀러|데이트|약속|만나|번개|수다|브런치/)) kind = 'dance';   // 친구 만나는 날 → 곰 친구들 춤
   else if(allDone) kind = 'joy';
   else { const id = String((T && T.id) || title); let h = 0; for(const ch of id) h = (h*31 + ch.charCodeAt(0)) | 0;
     kind = ['wv','lion','tiger','cat'][Math.abs(h)%4]; }                                     // 그 외: 곰돌이·사자·호랑이·고양이 중 하나 (할 일마다 정해짐)
-  if(!TODI_FX[kind]){ fxsLoad(kind); if(!(typeof FXV!=='undefined' && FXV[kind] && /^https?:/.test(location.protocol))) kind = allDone ? 'joy' : 'wv'; }   // 영상이 있으면 그대로, 없으면 곰돌이로                        // 그림을 아직 못 받았으면 곰돌이로
+  if(!TODI_FX[kind]){ fxsLoad(kind); if(!(typeof FXV!=='undefined' && FXV[kind] && /^https?:/.test(location.protocol))) kind = allDone ? 'joy' : 'wv'; }   // 영상이 있으면 그대로, 없으면 곰돌이로
   return kind;
 }
 function celebSay(kind, cat){
@@ -1264,7 +1266,7 @@ function rowCelebrate(id, cat){
     const row = document.querySelector(`[data-row="${id}"]`); if(!row) return;
     try{ row.scrollIntoView({block:'nearest'}); }catch(e){}          // 줄이 화면 밖이면 보이는 곳으로
     const rb = row.getBoundingClientRect(), H = kind==='party' ? 112 : 84;   // 친구가 여럿인 장면은 조금 크게
-    const WK = {doc:107, dogw:74, bike:70, party:204, dj:92, plant:96}, W = WK[kind] || 63;      // 장면 가로 크기
+    const WK = {doc:107, bike:70, party:204, dj:92, plant:96}, W = WK[kind] || 63;      // 장면 가로 크기
     // 그 줄의 글씨 바로 옆에 서도록: 글씨가 끝나는 곳을 잼
     let textR = rb.left + 120;
     try{ const tx = row.querySelector('.tx1'), rg = document.createRange(); rg.selectNodeContents(tx); textR = Math.min(rg.getBoundingClientRect().right, tx.getBoundingClientRect().right); }catch(e){}
@@ -1501,7 +1503,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.23 11:15 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.23 17:08 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
