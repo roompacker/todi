@@ -876,7 +876,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.23 17:08';
+const BUILD = '11.24 09:17';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -889,7 +889,7 @@ const BUILD = '11.23 17:08';
   }catch(e){ console.error('새 버전 확인 오류', e); }
 })();
 /* 가운데 크게: 큰 그림은 따로 둔 파일(fx/종류.webp)을 필요할 때만 불러옴 */
-const FXL = {"wv": {"n": 30, "cols": 6, "w": 488, "h": 640, "sw": 229, "sh": 300, "sn": 30}, "joy": {"n": 30, "cols": 6, "w": 529, "h": 601, "sw": 264, "sh": 300, "sn": 30}, "suit": {"n": 30, "cols": 6, "w": 370, "h": 628, "sw": 177, "sh": 300, "sn": 30}, "bike": {"n": 30, "cols": 6, "w": 541, "h": 640, "sw": 254, "sh": 300, "sn": 30}, "doc": {"n": 24, "cols": 6, "w": 801, "h": 629, "sw": 382, "sh": 300, "sn": 24}, "party": {"n": 22, "cols": 6, "w": 600, "h": 330, "sw": 545, "sh": 300, "sn": 22}, "cat": {"n": 30, "cols": 6, "w": 519, "h": 637, "sw": 244, "sh": 300, "sn": 30}, "game": {"n": 30, "cols": 6, "w": 543, "h": 595, "sw": 274, "sh": 300, "sn": 30}, "sleep": {"n": 30, "cols": 6, "w": 904, "h": 619, "sw": 438, "sh": 300, "sn": 30}, "lion": {"n": 30, "cols": 6, "w": 525, "h": 623, "sw": 253, "sh": 300, "sn": 30}, "tiger": {"n": 30, "cols": 6, "w": 521, "h": 620, "sw": 252, "sh": 300, "sn": 30}, "space": {"n": 30, "cols": 6, "w": 423, "h": 613, "sw": 207, "sh": 300, "sn": 30}, "snow": {"n": 30, "cols": 6, "w": 585, "h": 640, "sw": 274, "sh": 300, "sn": 30}, "draw": {"n": 30, "cols": 6, "w": 442, "h": 640, "sw": 207, "sh": 300, "sn": 30}, "car": {"n": 30, "cols": 6, "w": 617, "h": 601, "sw": 308, "sh": 300, "sn": 30}, "oops": {"n": 30, "cols": 6, "w": 663, "h": 623, "sw": 319, "sh": 300, "sn": 30}, "dj": {"n": 29, "cols": 6, "w": 709, "h": 640, "sw": 332, "sh": 300, "sn": 29}, "plant": {"n": 23, "cols": 6, "w": 684, "h": 639, "sw": 321, "sh": 300, "sn": 23}};
+const FXL = {"wv": {"n": 30, "cols": 6, "w": 488, "h": 640, "sw": 229, "sh": 300, "sn": 30}, "joy": {"n": 30, "cols": 6, "w": 529, "h": 601, "sw": 264, "sh": 300, "sn": 30}, "bike": {"n": 30, "cols": 6, "w": 541, "h": 640, "sw": 254, "sh": 300, "sn": 30}, "doc": {"n": 24, "cols": 6, "w": 801, "h": 629, "sw": 382, "sh": 300, "sn": 24}, "party": {"n": 22, "cols": 6, "w": 600, "h": 330, "sw": 545, "sh": 300, "sn": 22}, "space": {"n": 30, "cols": 6, "w": 423, "h": 613, "sw": 207, "sh": 300, "sn": 30}, "snow": {"n": 30, "cols": 6, "w": 585, "h": 640, "sw": 274, "sh": 300, "sn": 30}};
 const fxlImg = {};
 /* 완료 동작 작은 그림: 앱에는 곰돌이(wv)·하루 끝(joy)만 넣고, 나머지는 fx/s_종류.webp 를 받아서 잘라 씀 → 앱이 가벼워짐 */
 const fxsBusy = {};
@@ -938,11 +938,11 @@ function fxlPreload(){
 /* ───── 완료 동작을 '진짜 영상'으로 재생 (fxv/종류.mp4) ─────
    초록 배경을 카드색으로 바꾸고 발밑 그림자를 살린 영상이라, 오려 붙인 느낌 없이 자연스럽게 움직임.
    영상을 못 불러오면(인터넷 끊김 등) 예전 그림 넘기기 방식으로 대신 보여 줌 */
-const FXV = {"laundry": [960, 540], "pack": [960, 540], "plan": [960, 540], "wake": [960, 540], "gift": [602, 686], "jog": [960, 540], "academy": [960, 540], "rain": [960, 540], "beauty": [960, 540], "shop": [960, 540], "perfect": [960, 540], "soccer": [540, 960], "study": [960, 540], "cola": [960, 540], "park": [960, 540], "cook": [498, 650], "drive": [960, 540], "dance": [1088, 618], "read": [478, 648], "movie": [960, 540], "bike": [604, 700], "car": [674, 654], "cat": [576, 690], "dj": [778, 702], "doc": [860, 682], "draw": [496, 694], "game": [602, 648], "joy": [586, 654], "lion": [582, 676], "oops": [734, 680], "party": [1280, 712], "plant": [966, 710], "sleep": [960, 664], "snow": [876, 958], "space": [480, 666], "suit": [426, 684], "tiger": [580, 674], "wv": [548, 696]};
+const FXV = {"laundry": [960, 540], "pack": [960, 540], "plan": [960, 540], "wake": [960, 540], "gift": [602, 686], "jog": [960, 540], "academy": [960, 540], "rain": [960, 540], "beauty": [960, 540], "shop": [960, 540], "perfect": [960, 540], "soccer": [540, 960], "study": [960, 540], "cola": [960, 540], "park": [960, 540], "cook": [498, 650], "drive": [960, 540], "movie": [960, 540], "bike": [604, 700], "doc": [860, 682], "joy": [586, 654], "party": [1280, 712], "snow": [876, 958], "space": [480, 666], "wv": [548, 696]};
 const FXV_RATE = 2.5;   // 영상 빠르기 (1 = 원래 빠르기)
 /* 투명 영상(WebM, VP9 알파)을 틀 수 있는 폰이면 투명 버전, 아니면 크림색 배경 mp4 */
 const FXV_ALPHA = (()=>{ try{ return !!document.createElement('video').canPlayType('video/webm; codecs="vp09.00.10.08"'); }catch(e){ return false; } })();
-const FXW = {"gift": [592, 678], "cook": [488, 644], "dance": [1080, 610], "read": [468, 640], "tiger": [570, 668], "snow": [866, 950], "bike": [594, 692], "wv": [538, 690], "joy": [576, 646], "suit": [418, 676], "doc": [850, 674], "cat": [566, 682], "game": [592, 640], "sleep": [952, 660], "lion": [572, 670], "space": [470, 658], "draw": [488, 690], "car": [664, 646], "oops": [724, 672], "dj": [768, 694], "party": [1280, 708], "plant": [956, 708]};   // 투명 영상 크기
+const FXW = {"gift": [592, 678], "cook": [488, 644], "snow": [866, 950], "bike": [594, 692], "wv": [538, 690], "joy": [576, 646], "doc": [850, 674], "space": [470, 658], "party": [1280, 708]};   // 투명 영상 크기
 // 오늘 화면 제목 카드의 투디: 손 흔들고·엄지척·하트·윙크하는 투명 영상을 계속 반복
 //  화면을 다시 그려도 영상이 처음부터 다시 시작하지 않게, 영상 상자 하나를 계속 옮겨 끼움
 /* ===== 시안 04: 미세 전환 — 숫자 굴리기 + 미끄러지는 선택 표시 =====
@@ -1042,7 +1042,6 @@ document.addEventListener('visibilitychange', ()=>{                 // 앱을 �
 // 오늘 화면: 제목 = 인사하는 투디, "지금" 줄 = 메모하며 ?→! 떠올리는 노디 (번갈아 한 번씩)
 function mountHello(){
   mountLoop('dtodiSlot', 'fxv/hello.webm?v=1');
-  mountLoop('tlWalkSlot', 'fxv/nodi.webm?v=1');
   if(!LOOP_V[LOOP_TURN] || !LOOP_V[LOOP_TURN].isConnected) loopNext(LOOP_TURN);
 }
 const FXSCENE = {laundry:1, pack:1, plan:1, wake:1, jog:1, academy:1, rain:1, beauty:1, shop:1, perfect:1, movie:1, drive:1, park:1, study:1, cola:1, soccer:1};                                 // 배경이 있는 장면 영상(초록 배경 아님)
@@ -1204,31 +1203,18 @@ function celebKind(T, cat, allDone){
   else if(has(/산책|공원|걷기|만 ?보|동네 ?한 ?바퀴|피크닉|한강|둘레길|강아지|댕댕|반려견|애견|멍멍|애견 ?카페/)) kind = 'park';   // 강아지와 꽃길 산책
   else if(cat === 'dog') kind = 'park';
   else if(cat === 'cook' || has(/요리|반찬|베이킹|밥 ?하기|도시락|쿠킹|레시피|볶음|집밥|(아침|점심|저녁) ?준비|라면 ?끓|국 ?끓|찌개|김밥|샌드위치|빵 ?굽|쿠키|케이크 ?만들|이유식|밀프렙|장아찌|김치/)) kind = 'cook';   // 프라이팬 볶는 곰돌이
-  else if(has(/출근|퇴근|회의|미팅|업무|회사|보고서|출장|면접|야근|발표|프레젠테이션|메일|결재|거래처|클라이언트|계약|정산|세금|은행|서류|외근|사무실/)) kind = 'suit';   // 정장 투디
-  else if(has(/음악|노래|디제이|dj|플레이 ?리스트|콘서트|공연|클럽|악기|기타 ?연습|피아노|드럼|작곡|믹싱|노래방|코노|버스킹|우쿨렐레|바이올린|첼로|플루트|색소폰|페스티벌|뮤지컬|합창|보컬|앨범|덕질/i)) kind = 'dj';   // 헤드폰 쓴 DJ 투디
-  else if(has(/물 ?주기|화분|식물|꽃|텃밭|정원|가드닝|분갈이|화초|모종|씨앗|나무 ?심|다육|선인장|몬스테라|잔디/)) kind = 'plant';   // 화분에 물 주면 꽃이 핌
   else if(has(/생일|생파|파티|축하|기념일|케이크|돌잔치|백일|결혼식|웨딩|청첩장|집들이|송년회|신년회|회식|환갑|칠순|졸업식|입학식/)) kind = 'party';   // 생일 케이크 파티
-  else if(has(/댄스|춤|안무|줌바|에어로빅|케이팝|k ?팝|챌린지/i)) kind = 'dance';   // 곰 친구들이 함께 춤
-  else if(has(/독서|책 ?읽|독후감|도서관|소설|만화책|웹툰|책 ?보|북클럽|필사|전자책|e ?북|오디오북|잡지|신문/i)) kind = 'read';   // 초록 소파에서 독서
   else if(has(/영화|극장|시네마|cgv|메가박스|롯데시네마|넷플|드라마|팝콘|무비|유튜브|티빙|왓챠|디즈니|쿠팡플레이|애니|예능|ott|정주행/i)) kind = 'movie';   // 영화관 팝콘
   else if(has(/학원|학교|등교|하교|등원|하원|수업|과외|강의|인강|레슨|특강|어린이집|유치원|방과 ?후/)) kind = 'academy';   // 자전거로 학원 도착
   else if(has(/자전거|라이딩|따릉이|킥보드|사이클|바이크/)) kind = 'bike';   // 자전거 탄 너구리
-  else if(has(/고양이|냥|집사|캣|츄르|모래 ?갈|사료/)) kind = 'cat';   // 고양이 후드 투디
-  else if(has(/게임|배그|플스|닌텐도|스위치|오락|피시방|pc방|롤(\s|$)|오버워치|발로란트|마인크래프트|포켓몬|보드 ?게임|퍼즐|레고|스팀/i)) kind = 'game';   // 게이머 투디
-  else if(has(/낮잠|취침|수면|일찍 ?자|잠 ?자기|자기 ?전|꿀잠|숙면|휴식|쉬기|쉬는 ?날|휴무|명상|힐링|반신욕|목욕|스파|찜질/)) kind = 'sleep';   // 구름 위에서 자는 투디
   else if(has(/비행기|공항|우주|과학|탐험|천문|별 ?보|박물관|과학관|천체|로켓|실험|전시회|해외/)) kind = 'space';   // 우주복 투디
   else if(has(/축구|풋살|공 ?차기|월드컵|체육대회|운동회|야구|농구|배구|직관|경기 ?보|응원/)) kind = 'soccer';   // 골 넣고 기뻐하는 투디
-  else if(['run','badminton','gym','sport','kick','board'].includes(cat) || has(/운동|헬스|요가|필라테스|등산|수영|배드민턴|테니스|탁구|스트레칭|홈트|pt|스쿼트|플랭크|줄넘기|크로스핏|클라이밍|복싱|태권도|다이어트|근력|폼롤러/i)) kind = 'tiger';   // 호랑이 후드 투디
   else if(has(/겨울|눈사람|눈 ?(오|내|싸움)|스키|스노보드|보드장|썰매|크리스마스|성탄|트리|연말|김장|패딩|붕어빵|호빵|핫초코|군고구마/)) kind = 'snow';   // 눈사람 만든 투디
-  else if(has(/그림|드로잉|스케치|색칠|미술|낙서|캘리|그리기|일러스트|수채화|유화|공예|뜨개|십자수|클레이|diy|디자인|굿즈|스티커|다꾸|사진|촬영|브이로그|영상 ?편집/i)) kind = 'draw';   // 그림 그리는 곰돌이
   else if(has(/운전|드라이브|여행|나들이|휴가|바캉스|캠핑|글램핑|투어|바다|해변|계곡|당일치기|호캉스|제주|강릉|부산|경주/)) kind = 'drive';   // 분홍 오픈카 드라이브
-  else if(has(/세차|주유|주차|자동차|차 ?정비|정비소|카센터|타이어|엔진 ?오일|차 ?검사|하이패스|픽업|데리러|태워|데려다/)) kind = 'car';   // 분홍 자동차 투디
   else if(has(/공부|시험|숙제|과제|영어|수학|국어|외국어|중국어|일본어|자격증|토익|토플|오픽|단어|암기|복습|예습|코딩|문제집|모의고사|수능|논문|면허/)) kind = 'study';   // 머리띠 두르고 밤샘 공부
   else if(has(/콜라|사이다|탄산|음료|간식|야식|치킨|피자|햄버거|맛집|외식|(아침|점심|저녁|밥) ?먹|커피|카페|디저트|빵집|떡볶이|아이스크림|배달|맥주|와인/)) kind = 'cola';   // 부엌에서 콜라 마시는 곰돌이
-  else if(has(/친구|모임|동창|동호회|소풍|놀러|데이트|약속|만나|번개|수다|브런치/)) kind = 'dance';   // 친구 만나는 날 → 곰 친구들 춤
   else if(allDone) kind = 'joy';
-  else { const id = String((T && T.id) || title); let h = 0; for(const ch of id) h = (h*31 + ch.charCodeAt(0)) | 0;
-    kind = ['wv','lion','tiger','cat'][Math.abs(h)%4]; }                                     // 그 외: 곰돌이·사자·호랑이·고양이 중 하나 (할 일마다 정해짐)
+  else kind = 'wv';   // 그 외: 기본 곰돌이 투디
   if(!TODI_FX[kind]){ fxsLoad(kind); if(!(typeof FXV!=='undefined' && FXV[kind] && /^https?:/.test(location.protocol))) kind = allDone ? 'joy' : 'wv'; }   // 영상이 있으면 그대로, 없으면 곰돌이로
   return kind;
 }
@@ -1375,8 +1361,7 @@ function homePage(){
   const items = [...tasks.map(o=>({k:'t', tm:o.time||'', o})), ...txs.map(o=>({k:o.type, tm:o.at||'', o}))];
   const groups = {}; items.filter(i=>i.tm).forEach(i=>(groups[i.tm] = groups[i.tm] || []).push(i));
   const times = Object.keys(groups).sort(), free = items.filter(i=>!i.tm);
-  fxsLoad('draw');
-  const now = nowHM(), walk = (TODI_FX.draw && TODI_FX.draw[0]) || (typeof TODI_IMG!=='undefined' && TODI_IMG.todi_0) || '';
+  const now = nowHM(), walk = (typeof TODI_IMG!=='undefined' && TODI_IMG.todi_0) || '';
   const nowLine = `<div class="tlg now"><span class="tlh">지금</span><i></i><span class="tlnodi" id="tlWalkSlot"><img id="tlWalk" alt="" src="${walk}"></span></div>`;
   let body = '', put = false;
   times.forEach(tm=>{ if(!put && tm > now){ body += nowLine; put = true; } body += laneRow(tm, groups[tm]); });
@@ -1413,8 +1398,7 @@ function hSeg(T){ return `<div class="seg hseg">${[['todo','할 일'],['out','�
 /* 지금 시각 줄의 투디: 정면에서 땅에 낙서하는 투디 (그림을 아직 못 받았으면 걷는 투디) */
 setInterval(()=>{ try{
   const w = document.getElementById('tlWalk'); if(!w || !S.opt.motion) return;
-  if(TODI_FX.draw){ window._wk = ((window._wk||0)+1) % TODI_FX.draw.length; w.src = TODI_FX.draw[window._wk]; w.classList.add('drw'); }
-  else if(typeof TODI_IMG!=='undefined'){ window._wk = ((window._wk||0)+1)%10; const f = TODI_IMG['todi_'+window._wk]; if(f) w.src = f; }
+  if(typeof TODI_IMG!=='undefined'){ window._wk = ((window._wk||0)+1)%10; const f = TODI_IMG['todi_'+window._wk]; if(f) w.src = f; }
 }catch(e){} }, 240);   // 낙서하는 모습이 보이게 천천히
 
 /* ───── 할 일 · 금융 화면 위의 [목록 / 분석] 고르기 ───── */
@@ -1503,7 +1487,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.23 17:08 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.24 09:17 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
@@ -1907,9 +1891,8 @@ function addMoney(){
       let msg = '';
       if(before.remaining!=null && before.remaining>=0 && after.remaining<0) msg = '앗, 이번 달 예산 넘었어…';
       else if(isToday && allow!=null && allow>0 && todayOut0<=allow && todayOut1>allow) msg = '앗, 오늘 쓸 돈 넘었어…';
-      if(msg && S.opt.motion && window._oopsDay !== dd+msg){
-        window._oopsDay = dd+msg; window._oopsMsg = msg; fxsLoad('oops'); fxlLoad('oops');
-        setTimeout(()=>bigCelebrate('oops', 'spend', document.querySelector(`[data-row="${nid}"]`), TODI_FX.oops || TODI_FX.wv), 500);
+      if(msg && window._oopsDay !== dd+msg){
+        window._oopsDay = dd+msg; setTimeout(()=>toast('😵 '+msg), 900);   // 예산 넘음 알림 (영상은 친구 재정리로 잠시 뺌)
       }
     }catch(e){ console.error('예산 확인 오류', e); }
   }
