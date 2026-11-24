@@ -376,6 +376,9 @@ body.fit{padding-bottom:0}
 .hd2 h1{font-size:27px;line-height:1.25;font-weight:900;letter-spacing:-.05em}
 .hd2 h1 em{font-style:normal;color:var(--mint)}
 .hd2 .title-slot{width:104px;height:118px;flex:none;background:transparent!important;margin-bottom:24px;margin-top:-28px}   /* 아래 날짜 글자에 안 붙게 살짝 위로 */   /* 아래 날짜 글자에 안 붙게 살짝 위로 */
+.hd2 .ptodi{width:100px;height:116px;flex:none;margin:-44px 0 0;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.hd2 .ptodi img{height:104px;width:auto;display:block}
+.hd2 .ptodi .loopv{height:116px;width:auto;display:block}
 .hd2.s h1{font-size:25px}.hd2.s .title-slot{width:84px;height:94px}
 .tiles{display:flex;gap:10px;margin-bottom:10px;flex:none}
 .tile{flex:1;min-width:0;background:var(--card);border-radius:20px;padding:12px 14px;box-shadow:0 1px 0 #2b2b3312;text-align:left;display:block}
@@ -883,7 +886,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.24 22:56';
+const BUILD = '11.25 07:43';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -1309,6 +1312,7 @@ function render(){
     render._tab = tab;
     try{ motion04(); }catch(e){ console.log('motion04', e); }
     if(tab === 'home') mountHello();
+    if(tab === 'plan' && document.getElementById('ptodiSlot')){ mountLoop('ptodiSlot', 'fxv/hello.webm?v=1'); if(!LOOP_V[LOOP_TURN] || !LOOP_V[LOOP_TURN].isConnected) loopNext('ptodiSlot'); }   // 할 일 화면 제목 옆: 인사하는 투디 (3D 대신 영상)
     if(tab === 'money'){                                   // 금융 화면 위: 돼지저금통에 동전 넣는 판다 친구 (계속 반복)
       mountLoop('mpandaSlot', 'fxv/panda.webm?v=5');
       pandaCount();
@@ -1489,7 +1493,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.24 22:56 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.25 07:43 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
@@ -1523,7 +1527,7 @@ function planPage(){
     top = `<div class="hd2 s">
     <div><div class="overline">${over}</div>
       <h1>${ttl}</h1></div>
-    ${slotDiv('title-plan','hello', allDone?'idle':'prep','title-slot','poke',true)}
+    <span class="ptodi" id="ptodiSlot"><img alt="" src="${(TODI_FX.wv && TODI_FX.wv[0]) || idleImg}"></span>
   </div>`;
   }
   const laySw = `<div class="laysw"><span>완료 동작</span>${[['row','줄 옆에 작게'],['mix','줄 펼침']].map(([k,n])=>`<button class="${layNow===k?'on':''}" data-act="layout" data-v="${k}">${n}</button>`).join('')}</div>`;
