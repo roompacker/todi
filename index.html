@@ -492,6 +492,13 @@ body.night .pl.g{color:#C9D8CC}body.night .pl.p{color:#F0C2D2}body.night .pl.b{c
 .tl3 .tlhead>span{font-size:12px;font-weight:900;text-align:center;padding:8px 0;border-left:1.5px solid var(--line)}
 .tl3 .tlhead>span:first-child{border:none}
 .tl3 .tlhead .k1{background:var(--mint2);color:var(--mint)}.tl3 .tlhead .k2{background:var(--pink2);color:var(--pink)}.tl3 .tlhead .k3{background:var(--inc2);color:var(--inc)}
+.tl3 .tlhead>span{cursor:pointer;padding:9px 2px;line-height:1.25}
+.tl3 .tlhead>span b{display:inline;font-size:14px;margin-left:3px;letter-spacing:-.02em}
+.tl3 .tlhead .k1{background:linear-gradient(90deg,color-mix(in oklch,var(--mint) 24%,var(--mint2)) var(--p,0%),var(--mint2) var(--p,0%))}
+.tlempty{display:flex;flex-direction:column;align-items:center;gap:6px}
+.tlempty{padding-top:28px}
+.tlempty .tlnodi{margin:0;height:76px}
+.tlempty .tlnodi img{height:76px;width:auto;display:block}
 .tlhead,.tlg{grid-template-columns:50px minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr)!important}
 .tlg{border-bottom:1.5px solid var(--line)!important;position:relative}
 .tlg .tlh{font-size:15px!important;font-weight:900!important;color:var(--ink)!important;text-align:center!important;padding-top:4px!important}
@@ -548,7 +555,7 @@ body.night .pl.g{color:#C9D8CC}body.night .pl.p{color:#F0C2D2}body.night .pl.b{c
 .tlg.now{min-height:80px!important}
 
 /* ===== 시안 01: 포스터형 오늘 홈 ===== */
-.phero{padding:4px 4px 0}
+.phero{padding:4px 4px 14px}
 .phmain{display:flex;align-items:flex-end;justify-content:space-between}
 .phday{font-size:104px;font-weight:900;line-height:.8;letter-spacing:-.06em;color:var(--ink);padding-left:2px}
 .phday small{display:block;font-size:15px;font-weight:800;letter-spacing:0;color:var(--pink);margin:12px 0 2px 6px}
@@ -876,7 +883,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.24 09:17';
+const BUILD = '11.24 22:56';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -1380,15 +1387,10 @@ function homePage(){
   <div class="phero">
     <div class="phmain"><div class="phday num">${+t.slice(8)}<small>${+t.slice(5,7)}월 · ${'일월화수목금토'[new Date(t+'T00:00').getDay()]}요일</small></div>
       <span class="dtodi" id="dtodiSlot"><img alt="" src="${(TODI_FX.wv && TODI_FX.wv[0]) || (typeof TODI_IMG!=='undefined' && TODI_IMG.idle_0) || ''}"></span></div>
-    <div class="phbar ${tasks.length?'':'empty'}"><i style="width:${tasks.length?Math.round(done/tasks.length*100):0}%"></i></div>
-    <div class="ph3">
-      <button data-tab="plan"><b class="num">${done}/${tasks.length}</b>할 일</button>
-      <button data-tab="money" class="o"><b class="num" data-cnt="hout" data-v="${out}" data-f="s">${out?shortWon(out):'0'}</b>지출</button>
-      <button data-tab="money" class="n"><b class="num" data-cnt="hin" data-v="${inc}" data-f="s">${inc?shortWon(inc):'0'}</b>수입</button></div>
   </div>
   <section class="lcard tl3">
-    <div class="tlhead"><span></span><span class="k1">할 일</span><span class="k2">지출</span><span class="k3">수입</span></div>
-    <div class="scroll">${items.length ? body : nowLine + '<div class="empty">아래에서 할 일 · 지출 · 수입을 적어 보세요</div>'}</div>
+    <div class="tlhead"><span></span><span class="k1" data-tab="plan" style="--p:${tasks.length?Math.round(done/tasks.length*100):0}%">할 일 <b class="num">${done}/${tasks.length}</b></span><span class="k2" data-tab="money">지출 <b class="num" data-cnt="hout" data-v="${out}" data-f="s">${out?shortWon(out):'0'}</b></span><span class="k3" data-tab="money">수입 <b class="num" data-cnt="hin" data-v="${inc}" data-f="s">${inc?shortWon(inc):'0'}</b></span></div>
+    <div class="scroll">${items.length ? body : `<div class="empty tlempty"><span class="tlnodi" id="tlWalkSlot"><img id="tlWalk" alt="" src="${walk}"></span>아래에서 할 일 · 지출 · 수입을 적어 보세요</div>`}</div>
   </section>
   ${inp}
   </div>`;
@@ -1487,7 +1489,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.24 09:17 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.24 22:56 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
