@@ -886,7 +886,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.25 07:43';
+const BUILD = '11.25 14:53';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -948,11 +948,11 @@ function fxlPreload(){
 /* ───── 완료 동작을 '진짜 영상'으로 재생 (fxv/종류.mp4) ─────
    초록 배경을 카드색으로 바꾸고 발밑 그림자를 살린 영상이라, 오려 붙인 느낌 없이 자연스럽게 움직임.
    영상을 못 불러오면(인터넷 끊김 등) 예전 그림 넘기기 방식으로 대신 보여 줌 */
-const FXV = {"laundry": [960, 540], "pack": [960, 540], "plan": [960, 540], "wake": [960, 540], "gift": [602, 686], "jog": [960, 540], "academy": [960, 540], "rain": [960, 540], "beauty": [960, 540], "shop": [960, 540], "perfect": [960, 540], "soccer": [540, 960], "study": [960, 540], "cola": [960, 540], "park": [960, 540], "cook": [498, 650], "drive": [960, 540], "movie": [960, 540], "bike": [604, 700], "doc": [860, 682], "joy": [586, 654], "party": [1280, 712], "snow": [876, 958], "space": [480, 666], "wv": [548, 696]};
+const FXV = {"laundry": [960, 540], "pack": [960, 540], "plan": [960, 540], "wake": [960, 540], "gift": [602, 686], "jog": [960, 540], "academy": [960, 540], "rain": [960, 540], "beauty": [960, 540], "shop": [960, 540], "perfect": [960, 540], "soccer": [540, 960], "study": [960, 540], "cola": [960, 540], "park": [960, 540], "cook": [498, 650], "drive": [960, 540], "movie": [960, 540], "bike": [604, 700], "doc": [860, 682], "joy": [586, 654], "party": [1280, 712], "snow": [876, 958], "space": [480, 666], "wv": [548, 696], "music": [500, 696], "meet": [520, 684], "book": [452, 698], "garden": [468, 666], "art": [512, 702], "sport": [382, 578], "work": [488, 714], "grump": [438, 738], "nap": [528, 726]};
 const FXV_RATE = 2.5;   // 영상 빠르기 (1 = 원래 빠르기)
 /* 투명 영상(WebM, VP9 알파)을 틀 수 있는 폰이면 투명 버전, 아니면 크림색 배경 mp4 */
 const FXV_ALPHA = (()=>{ try{ return !!document.createElement('video').canPlayType('video/webm; codecs="vp09.00.10.08"'); }catch(e){ return false; } })();
-const FXW = {"gift": [592, 678], "cook": [488, 644], "snow": [866, 950], "bike": [594, 692], "wv": [538, 690], "joy": [576, 646], "doc": [850, 674], "space": [470, 658], "party": [1280, 708]};   // 투명 영상 크기
+const FXW = {"gift": [592, 678], "cook": [488, 644], "snow": [866, 950], "bike": [594, 692], "wv": [538, 690], "joy": [576, 646], "doc": [850, 674], "space": [470, 658], "party": [1280, 708], "music": [490, 690], "meet": [510, 676], "book": [442, 690], "garden": [458, 658], "art": [504, 694], "sport": [372, 570], "work": [480, 706], "grump": [430, 730], "nap": [518, 720]};   // 투명 영상 크기
 // 오늘 화면 제목 카드의 투디: 손 흔들고·엄지척·하트·윙크하는 투명 영상을 계속 반복
 //  화면을 다시 그려도 영상이 처음부터 다시 시작하지 않게, 영상 상자 하나를 계속 옮겨 끼움
 /* ===== 시안 04: 미세 전환 — 숫자 굴리기 + 미끄러지는 선택 표시 =====
@@ -1213,23 +1213,32 @@ function celebKind(T, cat, allDone){
   else if(has(/산책|공원|걷기|만 ?보|동네 ?한 ?바퀴|피크닉|한강|둘레길|강아지|댕댕|반려견|애견|멍멍|애견 ?카페/)) kind = 'park';   // 강아지와 꽃길 산책
   else if(cat === 'dog') kind = 'park';
   else if(cat === 'cook' || has(/요리|반찬|베이킹|밥 ?하기|도시락|쿠킹|레시피|볶음|집밥|(아침|점심|저녁) ?준비|라면 ?끓|국 ?끓|찌개|김밥|샌드위치|빵 ?굽|쿠키|케이크 ?만들|이유식|밀프렙|장아찌|김치/)) kind = 'cook';   // 프라이팬 볶는 곰돌이
+  else if(has(/출근|퇴근|회의|미팅|업무|회사|보고서|출장|면접|야근|발표|프레젠테이션|메일|결재|거래처|클라이언트|계약|정산|세금|은행|서류|외근|사무실/)) kind = 'work';   // 노란 니트 모자 친구 (회사·업무)
+  else if(has(/음악|노래|디제이|dj|플레이 ?리스트|콘서트|공연|클럽|악기|기타 ?연습|피아노|드럼|작곡|믹싱|노래방|코노|버스킹|우쿨렐레|바이올린|첼로|플루트|색소폰|페스티벌|뮤지컬|합창|보컬|앨범|덕질/i)) kind = 'music';   // 헤드폰 야구점퍼 친구 (음악)
+  else if(has(/물 ?주기|화분|식물|꽃|텃밭|정원|가드닝|분갈이|화초|모종|씨앗|나무 ?심|다육|선인장|몬스테라|잔디/)) kind = 'garden';   // 빨간 모자 조끼 친구 (식물)
   else if(has(/생일|생파|파티|축하|기념일|케이크|돌잔치|백일|결혼식|웨딩|청첩장|집들이|송년회|신년회|회식|환갑|칠순|졸업식|입학식/)) kind = 'party';   // 생일 케이크 파티
+  else if(has(/댄스|춤|안무|줌바|에어로빅|케이팝|k ?팝|챌린지/i)) kind = 'meet';   // 크로스백 친구 (춤·친구)
+  else if(has(/독서|책 ?읽|독후감|도서관|소설|만화책|웹툰|책 ?보|북클럽|필사|전자책|e ?북|오디오북|잡지|신문/i)) kind = 'book';   // 니트 카디건 친구 (독서)
   else if(has(/영화|극장|시네마|cgv|메가박스|롯데시네마|넷플|드라마|팝콘|무비|유튜브|티빙|왓챠|디즈니|쿠팡플레이|애니|예능|ott|정주행/i)) kind = 'movie';   // 영화관 팝콘
   else if(has(/학원|학교|등교|하교|등원|하원|수업|과외|강의|인강|레슨|특강|어린이집|유치원|방과 ?후/)) kind = 'academy';   // 자전거로 학원 도착
   else if(has(/자전거|라이딩|따릉이|킥보드|사이클|바이크/)) kind = 'bike';   // 자전거 탄 너구리
+  else if(has(/낮잠|취침|수면|일찍 ?자|잠 ?자기|자기 ?전|꿀잠|숙면|휴식|쉬기|쉬는 ?날|휴무|명상|힐링|반신욕|목욕|스파|찜질/)) kind = 'nap';   // 잠옷 친구 (휴식·잠)
   else if(has(/비행기|공항|우주|과학|탐험|천문|별 ?보|박물관|과학관|천체|로켓|실험|전시회|해외/)) kind = 'space';   // 우주복 투디
   else if(has(/축구|풋살|공 ?차기|월드컵|체육대회|운동회|야구|농구|배구|직관|경기 ?보|응원/)) kind = 'soccer';   // 골 넣고 기뻐하는 투디
+  else if(['run','badminton','gym','sport','kick','board'].includes(cat) || has(/운동|헬스|요가|필라테스|등산|수영|배드민턴|테니스|탁구|스트레칭|홈트|pt|스쿼트|플랭크|줄넘기|크로스핏|클라이밍|복싱|태권도|다이어트|근력|폼롤러/i)) kind = 'sport';   // 폴로 치마 친구 (운동)
   else if(has(/겨울|눈사람|눈 ?(오|내|싸움)|스키|스노보드|보드장|썰매|크리스마스|성탄|트리|연말|김장|패딩|붕어빵|호빵|핫초코|군고구마/)) kind = 'snow';   // 눈사람 만든 투디
+  else if(has(/그림|드로잉|스케치|색칠|미술|낙서|캘리|그리기|일러스트|수채화|유화|공예|뜨개|십자수|클레이|diy|디자인|굿즈|스티커|다꾸|사진|촬영|브이로그|영상 ?편집/i)) kind = 'art';   // 베레모 친구 (그림·만들기)
   else if(has(/운전|드라이브|여행|나들이|휴가|바캉스|캠핑|글램핑|투어|바다|해변|계곡|당일치기|호캉스|제주|강릉|부산|경주/)) kind = 'drive';   // 분홍 오픈카 드라이브
   else if(has(/공부|시험|숙제|과제|영어|수학|국어|외국어|중국어|일본어|자격증|토익|토플|오픽|단어|암기|복습|예습|코딩|문제집|모의고사|수능|논문|면허/)) kind = 'study';   // 머리띠 두르고 밤샘 공부
   else if(has(/콜라|사이다|탄산|음료|간식|야식|치킨|피자|햄버거|맛집|외식|(아침|점심|저녁|밥) ?먹|커피|카페|디저트|빵집|떡볶이|아이스크림|배달|맥주|와인/)) kind = 'cola';   // 부엌에서 콜라 마시는 곰돌이
+  else if(has(/친구|모임|동창|동호회|소풍|놀러|데이트|약속|만나|번개|수다|브런치/)) kind = 'meet';   // 친구 만나는 날 → 크로스백 친구
   else if(allDone) kind = 'joy';
   else kind = 'wv';   // 그 외: 기본 곰돌이 투디
   if(!TODI_FX[kind]){ fxsLoad(kind); if(!(typeof FXV!=='undefined' && FXV[kind] && /^https?:/.test(location.protocol))) kind = allDone ? 'joy' : 'wv'; }   // 영상이 있으면 그대로, 없으면 곰돌이로
   return kind;
 }
 function celebSay(kind, cat){
-  return kind==='joy' ? '오늘 끝!' : kind==='bike' ? '다녀왔어!' : kind==='doc' ? '튼튼해요!' : kind==='party' ? '축하해!' : kind==='dj' ? '둠칫 둠칫!' : kind==='plant' ? '활짝 폈어!' : kind==='cat' ? '냥냥!' : kind==='game' ? '이겼다!' : kind==='sleep' ? '푹 잤어~' : kind==='space' ? '출발!' : kind==='tiger' ? '불끈!' : kind==='lion' ? '해냈어!' : kind==='snow' ? '따뜻하게!' : kind==='draw' ? '완성!' : kind==='car' ? '부릉부릉!' : kind==='oops' ? (window._oopsMsg || '앗, 예산 넘었어…') : ((CATS[cat]||CATS.etc).head || '해냈다!');
+  return kind==='joy' ? '오늘 끝!' : kind==='bike' ? '다녀왔어!' : kind==='doc' ? '튼튼해요!' : kind==='party' ? '축하해!' : kind==='dj' ? '둠칫 둠칫!' : kind==='plant' ? '활짝 폈어!' : kind==='cat' ? '냥냥!' : kind==='game' ? '이겼다!' : kind==='sleep' ? '푹 잤어~' : kind==='space' ? '출발!' : kind==='tiger' ? '불끈!' : kind==='lion' ? '해냈어!' : kind==='snow' ? '따뜻하게!' : kind==='draw' ? '완성!' : kind==='car' ? '부릉부릉!' : kind==='music' ? '둠칫 둠칫!' : kind==='garden' ? '활짝 폈어!' : kind==='book' ? '한 장 더!' : kind==='meet' ? '반가워!' : kind==='art' ? '완성!' : kind==='sport' ? '불끈!' : kind==='work' ? '수고했어!' : kind==='nap' ? '푹 잤어~' : kind==='grump' ? (window._oopsMsg || '앗, 예산 넘었어…') : kind==='oops' ? (window._oopsMsg || '앗, 예산 넘었어…') : ((CATS[cat]||CATS.etc).head || '해냈다!');
 }
 
 /* 할 일을 완료한 순간: 투디가 그 줄로 달려와서 → 정면으로 서고 → 스르륵 사라짐 */
@@ -1493,7 +1502,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.25 07:43 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.25 14:53 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
@@ -1898,7 +1907,9 @@ function addMoney(){
       if(before.remaining!=null && before.remaining>=0 && after.remaining<0) msg = '앗, 이번 달 예산 넘었어…';
       else if(isToday && allow!=null && allow>0 && todayOut0<=allow && todayOut1>allow) msg = '앗, 오늘 쓸 돈 넘었어…';
       if(msg && window._oopsDay !== dd+msg){
-        window._oopsDay = dd+msg; setTimeout(()=>toast('😵 '+msg), 900);   // 예산 넘음 알림 (영상은 친구 재정리로 잠시 뺌)
+        window._oopsDay = dd+msg; window._oopsMsg = msg;
+        if(S.opt.motion) setTimeout(()=>bigCelebrate('grump', 'spend', document.querySelector(`[data-row="${nid}"]`), TODI_FX.grump || TODI_FX.wv), 500);   // 팔짱 낀 체크셔츠 친구
+        else setTimeout(()=>toast('😵 '+msg), 900);
       }
     }catch(e){ console.error('예산 확인 오류', e); }
   }
