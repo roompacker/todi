@@ -886,7 +886,7 @@ const slotDiv = (id, cat, mode, cls, tap, arrive) => `<div class="${cls||'slot'}
 
 let lastTab = null, openRow = null;
 /* 새 버전이 올라왔으면 스스로 새로고침 (폰에 남은 예전 화면 때문에 안 바뀌어 보이는 문제 방지) */
-const BUILD = '11.27 10:17';
+const BUILD = '11.27 20:26';
 (function autoUpdate(){
   try{
     if(!/^https?:/.test(location.protocol)) return;
@@ -948,11 +948,11 @@ function fxlPreload(){
 /* ───── 완료 동작을 '진짜 영상'으로 재생 (fxv/종류.mp4) ─────
    초록 배경을 카드색으로 바꾸고 발밑 그림자를 살린 영상이라, 오려 붙인 느낌 없이 자연스럽게 움직임.
    영상을 못 불러오면(인터넷 끊김 등) 예전 그림 넘기기 방식으로 대신 보여 줌 */
-const FXV = {"laundry": [960, 540], "pack": [960, 540], "plan": [960, 540], "wake": [960, 540], "gift": [602, 686], "jog": [960, 540], "academy": [960, 540], "rain": [960, 540], "beauty": [960, 540], "shop": [960, 540], "perfect": [960, 540], "soccer": [540, 960], "study": [960, 540], "cola": [960, 540], "park": [960, 540], "cook": [498, 650], "drive": [960, 540], "movie": [960, 540], "bike": [604, 700], "doc": [860, 682], "joy": [586, 654], "party": [1280, 712], "snow": [876, 958], "space": [480, 666], "wv": [548, 696], "music": [500, 696], "meet": [520, 684], "book": [452, 698], "garden": [468, 666], "art": [512, 702], "sport": [382, 578], "work": [488, 714], "grump": [438, 738], "nap": [528, 726], "lift": [652, 720], "write": [824, 720]};
+const FXV = {"laundry": [960, 540], "pack": [960, 540], "plan": [960, 540], "wake": [960, 540], "gift": [602, 686], "jog": [960, 540], "academy": [960, 540], "rain": [960, 540], "beauty": [960, 540], "shop": [960, 540], "perfect": [960, 540], "soccer": [540, 960], "study": [960, 540], "cola": [960, 540], "park": [960, 540], "cook": [498, 650], "drive": [960, 540], "movie": [960, 540], "bike": [604, 700], "doc": [860, 682], "joy": [586, 654], "party": [1280, 712], "snow": [876, 958], "space": [480, 666], "wv": [548, 696], "music": [500, 696], "meet": [520, 684], "book": [452, 698], "garden": [468, 666], "art": [512, 702], "sport": [382, 578], "work": [488, 714], "grump": [438, 738], "nap": [528, 726], "lift": [652, 720], "write": [824, 720], "lint": [646, 720], "tea": [628, 720]};
 const FXV_RATE = 2.5;   // 영상 빠르기 (1 = 원래 빠르기)
 /* 투명 영상(WebM, VP9 알파)을 틀 수 있는 폰이면 투명 버전, 아니면 크림색 배경 mp4 */
 const FXV_ALPHA = (()=>{ try{ return !!document.createElement('video').canPlayType('video/webm; codecs="vp09.00.10.08"'); }catch(e){ return false; } })();
-const FXW = {"gift": [592, 678], "cook": [488, 644], "snow": [866, 950], "bike": [594, 692], "wv": [538, 690], "joy": [576, 646], "doc": [850, 674], "space": [470, 658], "party": [1280, 708], "music": [490, 690], "meet": [510, 676], "book": [442, 690], "garden": [458, 658], "art": [504, 694], "sport": [372, 570], "work": [480, 706], "grump": [430, 730], "nap": [518, 720], "lift": [642, 720], "write": [816, 714]};   // 투명 영상 크기
+const FXW = {"gift": [592, 678], "cook": [488, 644], "snow": [866, 950], "bike": [594, 692], "wv": [538, 690], "joy": [576, 646], "doc": [850, 674], "space": [470, 658], "party": [1280, 708], "music": [490, 690], "meet": [510, 676], "book": [442, 690], "garden": [458, 658], "art": [504, 694], "sport": [372, 570], "work": [480, 706], "grump": [430, 730], "nap": [518, 720], "lift": [642, 720], "write": [816, 714], "lint": [636, 720], "tea": [618, 720]};   // 투명 영상 크기
 // 오늘 화면 제목 카드의 투디: 손 흔들고·엄지척·하트·윙크하는 투명 영상을 계속 반복
 //  화면을 다시 그려도 영상이 처음부터 다시 시작하지 않게, 영상 상자 하나를 계속 옮겨 끼움
 /* ===== 시안 04: 미세 전환 — 숫자 굴리기 + 미끄러지는 선택 표시 =====
@@ -1194,6 +1194,7 @@ function bigCelebrate(kind, cat, row, FR){
 }
 let cardHold = null, boxRun = 0;   // 카드 모양: 방금 완료해서 투디가 움직이는 중인 할 일 / 무대·카드 재생 번호
 /* 완료한 할 일에 어떤 투디가 나올지 고르기 */
+function TODI_PICK(T, n){ const id = String((T && (T.id || T.title)) || ''); let h = 0; for(const ch of id) h = (h*31 + ch.charCodeAt(0)) | 0; return Math.abs(h) % n; }   // 할 일마다 정해진 번호(0~n-1)
 function celebKind(T, cat, allDone){
   const title = (T && T.title) || '';
   const has = re => re.test(title);
@@ -1203,7 +1204,8 @@ function celebKind(T, cat, allDone){
   else if(has(/기상|일어나|알람|모닝콜|늦잠|지각|아침 루틴|미라클 ?모닝|출근 준비|등교 준비|등원 준비|외출 준비|나갈 준비|준비하고 나가/)) kind = 'wake';   // 토스트 물고 뛰어나가는 투디
   else if(has(/짐 ?싸|짐 ?챙기|캐리어|여행 ?준비|해외여행|여권|출국|환전|항공권|비행기 ?표|비행기 예약|면세/)) kind = 'pack';   // 캐리어에 짐 싸는 까만 곰
   else if(has(/병원|진료|검진|치과|약국|주사|접종|백신|독감|감기|한의원|내과|안과|이비인후과|정형외과|피부과|소아과|산부인과|물리치료|도수치료|재활|약 ?먹|영양제|비타민|혈압/)) kind = 'doc';   // 사자 의사 선생님 진찰
-  else if(has(/빨래|세탁|빨랫감|옷 ?정리|옷 ?개|건조기|다림질|이불|수건|코인 ?세탁|드라이 ?클리닝|옷장|청소|대청소|설거지|분리수거|쓰레기|집안일|정리 ?정돈|방 ?정리|책상 ?정리|냉장고 ?정리|걸레|빗자루|청소기/)) kind = 'laundry';   // 빨래 척척 개는 투디 (집안일 전부)
+  else if(has(/돌돌이|먼지|보풀|털 ?(제거|정리|떼|밀)|옷 ?손질|코트 ?손질|롤러/)) kind = 'lint';   // 돌돌이로 옷 털 떼는 청록 곰 후드 친구
+  else if(has(/빨래|세탁|빨랫감|옷 ?정리|옷 ?개|건조기|다림질|이불|수건|코인 ?세탁|드라이 ?클리닝|옷장|청소|대청소|설거지|분리수거|쓰레기|집안일|정리 ?정돈|방 ?정리|책상 ?정리|냉장고 ?정리|걸레|빗자루|청소기/)) kind = (has(/빨래|세탁|빨랫감|옷 ?개|건조기|다림질|이불|수건|코인 ?세탁|드라이 ?클리닝/) || !TODI_PICK(T, 2)) ? 'laundry' : 'lint';   // 빨래 척척 개는 투디 (집안일 전부)
   else if(has(/글 ?쓰|메모|일기|다이어리|필기|필사|작문|에세이|블로그|원고|손글씨|숙제|과제|리포트|레포트|독후감/)) kind = 'write';   // 날아가는 연필 탄 투디 (글쓰기·숙제)
   else if(has(/계획|체크 ?리스트|할 ?일 ?리스트|투두|to ?do|플래너|다이어리|일기|할 ?일 ?정리|일정 ?정리|스케줄|목표|버킷 ?리스트|가계부|예산|저축|적금|저금/i)) kind = 'plan';   // 체크리스트 들고 춤추는 투디
   else if(has(/화장품|올리브영|뷰티|스킨케어|메이크업|화장(?!실)|향수|립스틱|선크림|로션|네일|마스크 ?팩|미용실|헤어|염색|파마|머리 ?자르|커트|피부 ?관리|속눈썹|눈썹|왁싱/)) kind = 'beauty';   // 화장품 가게의 고양이 투디
@@ -1223,6 +1225,7 @@ function celebKind(T, cat, allDone){
   else if(has(/영화|극장|시네마|cgv|메가박스|롯데시네마|넷플|드라마|팝콘|무비|유튜브|티빙|왓챠|디즈니|쿠팡플레이|애니|예능|ott|정주행/i)) kind = 'movie';   // 영화관 팝콘
   else if(has(/학원|학교|등교|하교|등원|하원|수업|과외|강의|인강|레슨|특강|어린이집|유치원|방과 ?후/)) kind = 'academy';   // 자전거로 학원 도착
   else if(has(/자전거|라이딩|따릉이|킥보드|사이클|바이크/)) kind = 'bike';   // 자전거 탄 너구리
+  else if(has(/커피|카페(?!인)|라떼|아메리카노|차 ?(한 ?잔|마시)|티 ?타임|코코아|핫초코|녹차|홍차|허브티|보리차|유자차|따뜻한 ?(차|물)/)) kind = 'tea';   // 따뜻한 컵 들고 호호 부는 투디
   else if(has(/낮잠|취침|수면|일찍 ?자|잠 ?자기|자기 ?전|꿀잠|숙면|휴식|쉬기|쉬는 ?날|휴무|명상|힐링|반신욕|목욕|스파|찜질/)) kind = 'nap';   // 잠옷 친구 (휴식·잠)
   else if(has(/비행기|공항|우주|과학|탐험|천문|별 ?보|박물관|과학관|천체|로켓|실험|전시회|해외/)) kind = 'space';   // 우주복 투디
   else if(has(/축구|풋살|공 ?차기|월드컵|체육대회|운동회|야구|농구|배구|직관|경기 ?보|응원/)) kind = 'soccer';   // 골 넣고 기뻐하는 투디
@@ -1240,7 +1243,7 @@ function celebKind(T, cat, allDone){
   return kind;
 }
 function celebSay(kind, cat){
-  return kind==='joy' ? '오늘 끝!' : kind==='bike' ? '다녀왔어!' : kind==='doc' ? '튼튼해요!' : kind==='party' ? '축하해!' : kind==='dj' ? '둠칫 둠칫!' : kind==='plant' ? '활짝 폈어!' : kind==='cat' ? '냥냥!' : kind==='game' ? '이겼다!' : kind==='sleep' ? '푹 잤어~' : kind==='space' ? '출발!' : kind==='tiger' ? '불끈!' : kind==='lion' ? '해냈어!' : kind==='snow' ? '따뜻하게!' : kind==='draw' ? '완성!' : kind==='car' ? '부릉부릉!' : kind==='music' ? '둠칫 둠칫!' : kind==='lift' ? '번쩍!' : kind==='write' ? '슝~ 다 썼다!' : kind==='garden' ? '활짝 폈어!' : kind==='book' ? '한 장 더!' : kind==='meet' ? '반가워!' : kind==='art' ? '완성!' : kind==='sport' ? '불끈!' : kind==='work' ? '수고했어!' : kind==='nap' ? '푹 잤어~' : kind==='grump' ? (window._oopsMsg || '앗, 예산 넘었어…') : kind==='oops' ? (window._oopsMsg || '앗, 예산 넘었어…') : ((CATS[cat]||CATS.etc).head || '해냈다!');
+  return kind==='joy' ? '오늘 끝!' : kind==='bike' ? '다녀왔어!' : kind==='doc' ? '튼튼해요!' : kind==='party' ? '축하해!' : kind==='dj' ? '둠칫 둠칫!' : kind==='plant' ? '활짝 폈어!' : kind==='cat' ? '냥냥!' : kind==='game' ? '이겼다!' : kind==='sleep' ? '푹 잤어~' : kind==='space' ? '출발!' : kind==='tiger' ? '불끈!' : kind==='lion' ? '해냈어!' : kind==='snow' ? '따뜻하게!' : kind==='draw' ? '완성!' : kind==='car' ? '부릉부릉!' : kind==='music' ? '둠칫 둠칫!' : kind==='lift' ? '번쩍!' : kind==='lint' ? '반짝반짝!' : kind==='tea' ? '후~ 따뜻해' : kind==='write' ? '슝~ 다 썼다!' : kind==='garden' ? '활짝 폈어!' : kind==='book' ? '한 장 더!' : kind==='meet' ? '반가워!' : kind==='art' ? '완성!' : kind==='sport' ? '불끈!' : kind==='work' ? '수고했어!' : kind==='nap' ? '푹 잤어~' : kind==='grump' ? (window._oopsMsg || '앗, 예산 넘었어…') : kind==='oops' ? (window._oopsMsg || '앗, 예산 넘었어…') : ((CATS[cat]||CATS.etc).head || '해냈다!');
 }
 
 /* 할 일을 완료한 순간: 투디가 그 줄로 달려와서 → 정면으로 서고 → 스르륵 사라짐 */
@@ -1504,7 +1507,7 @@ function settingsPage(){
     <div class="srow"><div><strong>예시 기록으로 다시 시작</strong><span class="small">처음 열었을 때의 예시로 돌아가요</span></div><button class="sbtn" data-act="resetDemo">다시 시작</button></div>
     <div class="srow"><div><strong>모든 기록 지우기</strong><span class="small">할 일·가계부·걸음을 전부 비워요. 되돌릴 수 없어요</span></div><button class="sbtn red" data-act="wipe">전부 지우기</button></div>
   </section>
-  <p class="foot">투디 v1.0 · 11.27 10:17 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
+  <p class="foot">투디 v1.0 · 11.27 20:26 판 · 영상 ${FXV_ALPHA?'투명':'크림'} 지원 · 마지막 재생: ${(()=>{ try{ return localStorage.getItem('투디-재생방식')||'없음'; }catch(e){ return '?'; } })()} · 기록은 이 휴대폰의 이 브라우저에만 저장돼요</p>`;
 }
 /* 백업·복원 */
 function exportText(){ return JSON.stringify({app:'todi', ver:1, at:new Date().toISOString(), data:S}); }
